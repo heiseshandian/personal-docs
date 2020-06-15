@@ -1,3 +1,4 @@
 {
-  "MarkdownPaste.path": "${workspaceRoot}/assets/"
+  "MarkdownPaste.path": "${workspaceRoot}/assets/",
+  "eslint.enable": false
 }
