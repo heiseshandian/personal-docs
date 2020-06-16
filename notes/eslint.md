@@ -13,3 +13,8 @@
 | eslint-plugin-import              | 解析 es6 的 import/export                                       |
 | eslint-import-resolver-typescript | 为 eslint-plugin-import 添加 ts 支持                            |
 | @typescript-eslint/parser         | eslint 默认解析器仅支持 es5，本包用于生成 ESTree 供 eslint 使用 |
+
+### 参考资料
+
+- [eslint architecture](https://eslint.org/docs/developer-guide/architecture)
+- [how-to-write-your-first-eslint-plugin-145](https://dev.to/spukas/how-to-write-your-first-eslint-plugin-145)
