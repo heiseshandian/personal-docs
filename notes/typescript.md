@@ -1,5 +1,11 @@
 [toc]
 
+### [typescript 官网文档](https://www.typescriptlang.org/docs/home.html)
+
+#### ReadonlyArray
+
+此类型移除了所有可能会改变数组本身的属性和方法，适合用在函数式编程中
+
 ### FAQ
 
 #### Cannot write file '\*.js' because it would overwrite input file.
@@ -24,5 +30,20 @@ interface Window {
 // tsconfig.json
 {
   "include": ["file.d.ts"]
+}
+```
+
+### [typescript-evolution](https://mariusschulz.com/blog/series/typescript-evolution)
+
+#### [Non-Nullable Types in TypeScript](https://mariusschulz.com/blog/non-nullable-types-in-typescript)
+
+通过以下编译选项开启严格 null 和 undefined 检测
+
+```json
+{
+  "compilerOptions": {
+    "strictNullChecks": true
+    // ...
+  }
 }
 ```
