@@ -7,7 +7,7 @@
   ![](../assets/2020-07-30-08-50-48.png)
 
 ```sh
-wget https://nginx.org/download/nginx-1.18.0.tar.gz
+wget http://nginx.org/download/nginx-1.18.0.tar.gz
 ```
 
 - 解压
