@@ -1,3 +1,5 @@
+[toc]
+
 > 记录基本的 nginx 配置项
 
 #### location
