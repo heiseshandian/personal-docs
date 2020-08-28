@@ -89,7 +89,12 @@ play(url: string, slot: HTMLElement) {
 
 #### 同层播放
 
-![](../assets/2020-07-16-20-08-26.png)
+```js
+this.videoElem.setAttribute("playsinline", "true");
+this.videoElem.setAttribute("webkit-playsinline", "true");
+// https://x5.tencent.com/tbs/guide/video.html
+this.videoElem.setAttribute("x5-video-player-type", "h5-page");
+```
 
 #### 客户端默认 poster 问题
 
