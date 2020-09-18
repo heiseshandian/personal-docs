@@ -25,3 +25,48 @@ const compose = (...args) => (x) => args.reduceRight((acc, fn) => fn(acc), x);
 - Separation
 - Composition
 - Flow
+
+## 函数式编程发展史
+
+lambda calculus
+
+- 一切函数都是匿名函数
+- 一切函数都是一元表达式（只有一个参数）
+- 函数是一等公民，意味着函数可以作为参数，可以作为返回值
+
+## 纯函数
+
+- 同样的输入产生同样的输出
+- 无副作用（不能改变任何外部状态）
+
+纯函数是函数的最简形式，纯函数使得并发计算变得简单，同时，纯函数容易重构，可测试，使得你的代码具备灵活性与可扩展性，因为你不用担心修改一个纯函数会导致什么未知的后果，你只需要保证同样的输入，输出不变就行了。
+
+```js
+// 模拟根据用户输入异步请求数据后展示tips
+// （异步执行先后顺序不确定，需要确保有新的输入后旧的任务取消，且过时的数据不再展示出来）
+const taskManager = {
+  tasks: [],
+  addTask(task) {
+    this.clearPendingTasks();
+
+    task.timeout = setTimeout(() => {
+      if (task.timeout !== null) {
+        task();
+        task.timeout = null;
+      }
+    }, Math.random() * 2000);
+
+    this.tasks.push(task);
+  },
+  clearPendingTasks() {
+    this.tasks.forEach((task) => {
+      if (task.timeout) {
+        clearTimeout(task.timeout);
+        task.timeout = null;
+      }
+    });
+
+    this.tasks.length = 0;
+  },
+};
+```
