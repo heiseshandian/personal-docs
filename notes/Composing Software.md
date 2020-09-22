@@ -84,4 +84,29 @@ const taskManager = {
 
 - race condition bug （异步请求到达的顺序与发出的顺序不一致导致旧的数据覆盖新的数据）
 
-## 抽象与组合
+## functors
+
+```js
+const mapObject = (obj) => ({
+  map(fn) {
+    return mapObject(
+      Object.keys(obj).reduce((acc, key) => {
+        acc[key] = fn(obj[key]);
+        return acc;
+      }, {})
+    );
+  },
+  value() {
+    return obj;
+  },
+});
+```
+
+## monads
+
+```js
+const composeM = (method) => (...ms) => ms.reduce((f, g) => (x) => g(x)[method](f));
+const pipeM = (method) => (...ms) => ms.reduce((f, g) => (x) => f(x)[method](g));
+
+const composePromises = composeM("then");
+```
