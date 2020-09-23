@@ -1,4 +1,5 @@
 {
   "MarkdownPaste.path": "${workspaceRoot}/assets/",
-  "eslint.enable": false
+  "eslint.enable": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
