@@ -1,0 +1,14 @@
+{
+  "name": "auto-add-subtitle",
+  "version": "1.0.0",
+  "description": "自动为视频添加字幕",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "gqzhang5@iflytek.com",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint-config-prettier": "^6.12.0"
+  }
+}

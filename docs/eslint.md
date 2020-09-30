@@ -8,11 +8,10 @@
 
 ### 常用包
 
-| 包名                              | 用途                                                            |
-| --------------------------------- | --------------------------------------------------------------- |
-| eslint-plugin-import              | 解析 es6 的 import/export                                       |
-| eslint-import-resolver-typescript | 为 eslint-plugin-import 添加 ts 支持                            |
-| @typescript-eslint/parser         | eslint 默认解析器仅支持 es5，本包用于生成 ESTree 供 eslint 使用 |
+| 包名                                                        | 用途                                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| @typescript-eslint/eslint-plugin，@typescript-eslint/parser | 为 eslint 添加 ts 支持（使用 eslint --init 选择 typescript 即可） |
+| eslint-config-prettier                                      | 关闭一切可能会与 prettier 冲突的规则                              |
 
 ### 参考资料
 
