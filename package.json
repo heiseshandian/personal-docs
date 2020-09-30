@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "commit": "cz"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,31 @@
   },
   "homepage": "https://github.com/heiseshandian/personal-docs#readme",
   "dependencies": {
-    "@babel/parser": "^7.9.6",
-    "@commitlint/load": "^8.3.5",
-    "node-xlsx": "^0.15.0"
+    "axios": "^0.20.0",
+    "puppeteer": "^5.3.1",
+    "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-lerna-scopes": "^11.0.0",
+    "@types/jest": "^26.0.14",
+    "@types/puppeteer": "^3.0.2",
+    "cz-lerna-changelog": "^2.0.3",
+    "husky": "^4.3.0",
+    "ject": "^1.1.0",
+    "lerna": "^3.4.3",
+    "lint-staged": "^10.4.0",
+    "ts-jest": "^26.4.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-lerna-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

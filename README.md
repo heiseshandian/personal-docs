@@ -1,3 +1,3 @@
 [toc]
 
-业务无关的技术类文档
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
