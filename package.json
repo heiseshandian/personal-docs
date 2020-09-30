@@ -46,6 +46,12 @@
       "path": "./node_modules/cz-lerna-changelog"
     }
   },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e .git/COMMIT_EDITMSG",
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "*.{ts,js}": [
       "prettier --write",
