@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "commit": "cz"
+    "commit": "cz",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,7 @@
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "husky": "^4.3.0",
-    "ject": "^1.1.0",
+    "jest": "^26.4.2",
     "lerna": "^3.4.3",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",

@@ -1,29 +1,59 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import fs from 'fs';
 import filenamify from 'filenamify';
 import path from 'path';
+import ProgressBar from 'progress';
 
 // 下载文件到本地
-export async function download(
-  url: string,
-  dest: string,
-): Promise<void | AxiosError> {
+export async function download(url: string, dest: string) {
+  if (!url || !dest || !filenamify(dest)) {
+    return Promise.resolve(false);
+  }
+
   const response = await axios({
     method: 'GET',
     url,
     responseType: 'stream',
   });
 
-  const { dir, base } = path.parse(dest);
+  showProgressBar(response);
+  writeStreamToFile(response.data, dest);
 
-  response.data.pipe(fs.createWriteStream(path.resolve(dir, filenamify(base))));
-
-  return new Promise((resolve, reject) => {
+  return new Promise<boolean | AxiosError>((resolve, reject) => {
     response.data.on('end', () => {
-      resolve();
+      resolve(true);
     });
     response.data.on('error', (err: AxiosError) => {
       reject(err);
     });
+  });
+}
+
+// 去掉文件名中的非法字符
+export function toValidFilePath(filePath: string) {
+  const { dir, base } = path.parse(filePath);
+  return path.resolve(dir, filenamify(base));
+}
+
+function writeStreamToFile(stream: any, filePath: string) {
+  stream.pipe(fs.createWriteStream(toValidFilePath(filePath)));
+}
+
+// 展示下载进度条
+function showProgressBar(response: AxiosResponse) {
+  const total = parseInt(response.headers['content-length'], 10);
+  if (isNaN(total)) {
+    return;
+  }
+
+  const bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 20,
+    total,
+  });
+
+  response.data.on('data', (chunk: any) => {
+    bar.tick(chunk.length);
   });
 }

@@ -1,12 +1,9 @@
 import puppeteer from 'puppeteer';
 import { download } from './downloader';
 import path from 'path';
+import { BilibiliParser } from './bilibili-parser';
 
 const config = {
-  url: 'https://xbeibeix.com/api/bilibili/',
-  inputSelector: '[aria-describedby]',
-  submitBtnSelector: '#button-1',
-  mp4UrlSelector: '#mp4-url2',
   videoUrlsToParse: new Array(52)
     .fill(0)
     .map((_, i) => `https://www.bilibili.com/video/BV1Mh411Z7LC?p=${i + 1}`),
@@ -66,38 +63,8 @@ const config = {
   ].map(title => `${title.replace(':', '')}.mp4`),
 };
 
-// 将blob形式的地址转为实际地址
-export async function blob2RealUrl(blobUrls: string | Array<string>) {
-  if (typeof blobUrls === 'string') {
-    blobUrls = [blobUrls];
-  }
-
-  return puppeteer.launch({ headless: false }).then(async browser => {
-    const page = await browser.newPage();
-    await page.goto(config.url);
-
-    let result: Array<string> = [];
-    for await (const url of blobUrls) {
-      await page.type(config.inputSelector, url);
-      await page.click(config.submitBtnSelector);
-      await page.waitForSelector(config.mp4UrlSelector);
-      await page.waitForFunction(
-        `document.querySelector("${config.mp4UrlSelector}").value!==""`,
-      );
-      const mp4Url = await page.evaluate(selector => {
-        return document.querySelector(selector).value;
-      }, config.mp4UrlSelector);
-      result.push(mp4Url);
-    }
-
-    await browser.close();
-
-    return result;
-  });
-}
-
 async function main() {
-  const mp4Urls = await blob2RealUrl(config.videoUrlsToParse);
+  const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
   mp4Urls.forEach((url, i) =>
     download(url, path.resolve(__dirname, config.videoTitles[i])),
   );
