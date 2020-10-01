@@ -28,10 +28,9 @@ export function withCache(
       });
     }
 
-    return fn(params).then(async result => {
-      await writeFile(filePath, JSON.stringify(result));
-      return result;
-    });
+    const result = await fn(params);
+    await writeFile(filePath, JSON.stringify(result));
+    return result;
   };
 }
 
