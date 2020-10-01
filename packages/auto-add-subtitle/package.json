@@ -4,11 +4,15 @@
   "description": "自动为视频添加字幕",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node ./src/index.ts"
   },
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
-  "devDependencies": {
-    "eslint-config-prettier": "^6.12.0"
+  "dependencies": {
+    "axios": "^0.20.0",
+    "filenamify": "^4.2.0",
+    "puppeteer": "^5.3.1",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   }
 }
