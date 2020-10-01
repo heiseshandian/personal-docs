@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { withCache } from './cache';
 
 interface Config {
   url: string;
@@ -16,7 +17,7 @@ export class BilibiliParser {
     mp4UrlSelector: '#mp4-url2',
   };
 
-  public static async parse(blobs: string | Array<string>) {
+  private static async _parse(blobs: string | Array<string>) {
     if (typeof blobs === 'string') {
       blobs = [blobs];
     }
@@ -47,6 +48,10 @@ export class BilibiliParser {
 
       return result;
     });
+  }
+
+  public static async parse(blobs: string | Array<string>) {
+    return withCache(this._parse.bind(this))(blobs);
   }
 }
 

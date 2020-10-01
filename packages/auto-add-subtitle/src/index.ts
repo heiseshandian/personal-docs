@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import { download } from './downloader';
 import path from 'path';
 import { BilibiliParser } from './bilibili-parser';
