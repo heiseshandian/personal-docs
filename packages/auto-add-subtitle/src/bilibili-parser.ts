@@ -1,5 +1,7 @@
 import puppeteer from 'puppeteer';
 import { withCache } from './cache';
+import ProgressBar from 'progress';
+import { MultiProgressBar } from './progress';
 
 interface Config {
   url: string;
@@ -17,32 +19,49 @@ export class BilibiliParser {
     mp4UrlSelector: '#mp4-url2',
   };
 
+  private static maxConcurrent = 8;
+
   private static async _parse(blobs: string | Array<string>) {
     if (typeof blobs === 'string') {
       blobs = [blobs];
     }
-    const { config } = this;
+    const { config, maxConcurrent } = this;
 
-    return puppeteer.launch({ headless: true }).then(async browser => {
-      const result = await Promise.all(
-        (blobs as Array<string>).map(async url => {
-          const page = await browser.newPage();
-          clearCookies(page);
-          await page.goto(config.url);
+    const progressBar = MultiProgressBar.getProgressBar('parsing', {
+      total: blobs.length,
+    });
 
-          await page.type(config.inputSelector, url);
-          await page.click(config.submitBtnSelector);
-          await page.waitForSelector(config.mp4UrlSelector);
-          await page.waitForFunction(
-            `document.querySelector("${config.mp4UrlSelector}").value!==""`,
-          );
+    return puppeteer.launch({ headless: false }).then(async browser => {
+      const result: Array<string> = [];
 
-          const mp4Url = await page.evaluate(selector => {
-            return document.querySelector(selector).value;
-          }, config.mp4UrlSelector);
-          return mp4Url;
-        }),
-      );
+      for (let i = 0; i < Math.ceil(blobs.length / this.maxConcurrent); i++) {
+        const subResult = await Promise.all(
+          (blobs.slice(i * maxConcurrent, (i + 1) * maxConcurrent) as Array<
+            string
+          >).map(
+            withProgress(async url => {
+              const page = await browser.newPage();
+              clearCookies(page);
+              await page.goto(config.url);
+
+              await page.type(config.inputSelector, url);
+              clearCookies(page);
+              await page.click(config.submitBtnSelector);
+              await page.waitForSelector(config.mp4UrlSelector);
+              await page.waitForFunction(
+                `document.querySelector("${config.mp4UrlSelector}").value!==""`,
+              );
+
+              const mp4Url = await page.evaluate(selector => {
+                return document.querySelector(selector).value;
+              }, config.mp4UrlSelector);
+              await page.close();
+              return mp4Url;
+            }, progressBar),
+          ),
+        );
+        result.push(...subResult);
+      }
 
       await browser.close();
 
@@ -55,6 +74,14 @@ export class BilibiliParser {
   ): Promise<Array<string>> {
     return withCache(this._parse.bind(this))(blobs);
   }
+}
+
+function withProgress(fn: (...rest: any) => Promise<any>, bar: ProgressBar) {
+  return async (...rest: any) => {
+    const result = await fn(...rest);
+    bar.tick();
+    return result;
+  };
 }
 
 async function clearCookies(page: puppeteer.Page) {

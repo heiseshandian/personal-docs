@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import fs from 'fs';
 import filenamify from 'filenamify';
 import path from 'path';
-import ProgressBar from 'progress';
+import { MultiProgressBar } from './progress';
 
 // 下载文件到本地
 export async function download(url: string, dest: string) {
@@ -46,12 +46,7 @@ function showProgressBar(response: AxiosResponse) {
     return;
   }
 
-  const bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
-    complete: '=',
-    incomplete: ' ',
-    width: 20,
-    total,
-  });
+  const bar = MultiProgressBar.getProgressBar('downloading', { total });
 
   response.data.on('data', (chunk: any) => {
     bar.tick(chunk.length);
