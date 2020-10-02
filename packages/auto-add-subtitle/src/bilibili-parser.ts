@@ -31,7 +31,7 @@ export class BilibiliParser {
       total: blobs.length,
     });
 
-    return puppeteer.launch({ headless: false }).then(async browser => {
+    return puppeteer.launch({ headless: true }).then(async browser => {
       const result: Array<string> = [];
 
       for (let i = 0; i < Math.ceil(blobs.length / this.maxConcurrent); i++) {
