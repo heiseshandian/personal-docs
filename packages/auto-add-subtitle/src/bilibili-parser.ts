@@ -50,7 +50,9 @@ export class BilibiliParser {
     });
   }
 
-  public static async parse(blobs: string | Array<string>) {
+  public static async parse(
+    blobs: string | Array<string>,
+  ): Promise<Array<string>> {
     return withCache(this._parse.bind(this))(blobs);
   }
 }

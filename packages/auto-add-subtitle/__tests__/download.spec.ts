@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 beforeAll(() => {
-  jest.setTimeout(1000 * 10);
+  jest.setTimeout(1000 * 50);
 });
 
 test('download file', async () => {
