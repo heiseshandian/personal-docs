@@ -41,11 +41,11 @@ export class BilibiliParser {
           >).map(
             withProgress(async url => {
               const page = await browser.newPage();
-              clearCookies(page);
+              await clearCookies(page);
               await page.goto(config.url);
 
               await page.type(config.inputSelector, url);
-              clearCookies(page);
+              await clearCookies(page);
               await page.click(config.submitBtnSelector);
               await page.waitForSelector(config.mp4UrlSelector);
               await page.waitForFunction(
