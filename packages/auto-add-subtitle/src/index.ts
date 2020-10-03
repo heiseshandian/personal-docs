@@ -1,6 +1,8 @@
 import { download } from './downloader';
 import path from 'path';
 import { BilibiliParser } from './bilibili-parser';
+import { getClosestNodeModulesPath } from './utils';
+import fs from 'fs';
 
 const config = {
   videoUrlsToParse: new Array(52)
@@ -64,9 +66,16 @@ const config = {
 
 async function main() {
   const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
-  mp4Urls.forEach((url, i) =>
-    download(url, path.resolve(__dirname, config.videoTitles[i])),
-  );
+  mp4Urls.forEach((url, i) => download(url, getVideoPath()));
+}
+
+function getVideoPath() {
+  const nodeModulesPath = getClosestNodeModulesPath();
+  const videoPath = path.resolve(nodeModulesPath || __dirname, '.cache/videos');
+  if (fs.existsSync(videoPath)) {
+    fs.mkdirSync(videoPath);
+  }
+  return videoPath;
 }
 
 main();
