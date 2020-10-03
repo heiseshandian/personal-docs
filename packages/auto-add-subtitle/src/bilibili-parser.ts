@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import { withCache } from './cache';
 import ProgressBar from 'progress';
 import { MultiProgressBar } from './progress';
+import { ConcurrentTasks } from './concurrent-tasks';
 
 interface Config {
   url: string;
@@ -31,37 +32,30 @@ export class BilibiliParser {
       total: blobs.length,
     });
 
-    return puppeteer.launch({ headless: true }).then(async browser => {
-      const result: Array<string> = [];
+    return puppeteer.launch({ headless: false }).then(async browser => {
+      const result: Array<string> = await new ConcurrentTasks(
+        (blobs as Array<string>).map(url =>
+          withProgress(async () => {
+            const page = await browser.newPage();
+            await clearCookies(page);
+            await page.goto(config.url);
 
-      for (let i = 0; i < Math.ceil(blobs.length / this.maxConcurrent); i++) {
-        const subResult = await Promise.all(
-          (blobs.slice(i * maxConcurrent, (i + 1) * maxConcurrent) as Array<
-            string
-          >).map(
-            withProgress(async url => {
-              const page = await browser.newPage();
-              await clearCookies(page);
-              await page.goto(config.url);
+            await page.type(config.inputSelector, url);
+            await clearCookies(page);
+            await page.click(config.submitBtnSelector);
+            await page.waitForSelector(config.mp4UrlSelector);
+            await page.waitForFunction(
+              `document.querySelector("${config.mp4UrlSelector}").value!==""`,
+            );
 
-              await page.type(config.inputSelector, url);
-              await clearCookies(page);
-              await page.click(config.submitBtnSelector);
-              await page.waitForSelector(config.mp4UrlSelector);
-              await page.waitForFunction(
-                `document.querySelector("${config.mp4UrlSelector}").value!==""`,
-              );
-
-              const mp4Url = await page.evaluate(selector => {
-                return document.querySelector(selector).value;
-              }, config.mp4UrlSelector);
-              await page.close();
-              return mp4Url;
-            }, progressBar),
-          ),
-        );
-        result.push(...subResult);
-      }
+            const mp4Url = await page.evaluate(selector => {
+              return document.querySelector(selector).value;
+            }, config.mp4UrlSelector);
+            await page.close();
+            return mp4Url;
+          }, progressBar),
+        ),
+      ).run(maxConcurrent);
 
       await browser.close();
 
