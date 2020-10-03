@@ -66,13 +66,15 @@ const config = {
 
 async function main() {
   const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
-  mp4Urls.forEach((url, i) => download(url, getVideoPath()));
+  mp4Urls.forEach((url, i) =>
+    download(url, path.resolve(getVideoPath(), config.videoTitles[i])),
+  );
 }
 
 function getVideoPath() {
   const nodeModulesPath = getClosestNodeModulesPath();
   const videoPath = path.resolve(nodeModulesPath || __dirname, '.cache/videos');
-  if (fs.existsSync(videoPath)) {
+  if (!fs.existsSync(videoPath)) {
     fs.mkdirSync(videoPath);
   }
   return videoPath;

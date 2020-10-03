@@ -19,7 +19,7 @@ export class BilibiliParser {
     mp4UrlSelector: '#mp4-url2',
   };
 
-  private static maxConcurrent = 8;
+  private static maxConcurrent = 4;
 
   private static async _parse(blobs: string | Array<string>) {
     if (typeof blobs === 'string') {
