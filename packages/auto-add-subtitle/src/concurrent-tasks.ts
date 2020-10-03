@@ -1,4 +1,4 @@
-type Task = (...rest: any) => Promise<any>;
+type Task = () => Promise<any>;
 
 export class ConcurrentTasks {
   private tasks: Array<Task>;
@@ -6,10 +6,8 @@ export class ConcurrentTasks {
   private ranTasks: number;
 
   constructor(tasks: Array<Task>) {
-    this.tasks = tasks.map((task, i) => async (...rest: any) => {
-      const result = await task(...rest).catch(err =>
-        this._reject?.call(this, err),
-      );
+    this.tasks = tasks.map((task, i) => async () => {
+      const result = await task().catch(err => this._reject?.call(this, err));
       this._results[i] = result;
       this.doneTasks += 1;
 
@@ -38,19 +36,17 @@ export class ConcurrentTasks {
   private _reject: ((reason?: any) => void) | null;
   private _results: Array<any>;
 
-  private runTask(task: Task, ...rest: any) {
+  private runTask(task: Task) {
     this.ranTasks++;
-    task(...rest);
+    task();
   }
 
-  public run(maxConcurrent: number, ...rest: any): Promise<any> {
+  public run(maxConcurrent: number): Promise<any> {
     return new Promise((resolve, reject) => {
       this._resolve = resolve;
       this._reject = reject;
 
-      this.tasks
-        .slice(0, maxConcurrent)
-        .forEach(task => this.runTask(task, ...rest));
+      this.tasks.slice(0, maxConcurrent).forEach(task => this.runTask(task));
     });
   }
 }
