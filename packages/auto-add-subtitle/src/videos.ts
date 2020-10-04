@@ -41,10 +41,13 @@ function parseDuration(duration: string = '') {
   if (!match) {
     return 0;
   }
+
   const [, hours, minutes, seconds, milliseconds] = match;
-  return [hours, minutes, seconds, milliseconds]
-    .map(val => parseInt(val, 10))
-    .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
+  return Math.ceil(
+    [hours, minutes, seconds, milliseconds]
+      .map(val => parseInt(val, 10))
+      .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0),
+  );
 }
 
 export async function sliceVideo(videoPath: string, maxSize: string) {
