@@ -13,6 +13,18 @@ test('slice video', async () => {
   expect(result).toBe(true);
 });
 
+test('slice video, handle space', async () => {
+  const result = await sliceVideo(
+    path.resolve(
+      __dirname,
+      '../node_modules/.cache/videos/01-Why Functional Programming1000.mp4',
+    ),
+    '30m',
+  );
+
+  expect(result).toBe(true);
+});
+
 test('concat videos', async () => {
   const result = await concatVideos(
     [

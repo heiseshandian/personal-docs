@@ -3,6 +3,8 @@ import path from 'path';
 import { BilibiliParser } from './bilibili-parser';
 import { getClosestNodeModulesPath, toValidFilePath } from './utils';
 import fs from 'fs';
+import { ConcurrentTasks } from './concurrent-tasks';
+import { sliceVideo } from './videos';
 
 const config = {
   videoUrlsToParse: new Array(52)
@@ -65,14 +67,30 @@ const config = {
 };
 
 async function main() {
+  // parse url
   const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
-  mp4Urls.forEach((url, i) => {
-    const filePath = toValidFilePath(
-      path.resolve(getVideoPath(), config.videoTitles[i]),
-    );
-    if (!fs.existsSync(filePath)) {
-      download(url, filePath);
-    }
+
+  const getFilePath = (i: number) =>
+    toValidFilePath(path.resolve(getVideoPath(), config.videoTitles[i]));
+
+  // download
+  new ConcurrentTasks(
+    mp4Urls
+      .filter((_, i) => !fs.existsSync(getFilePath(i)))
+      .map((url, i) => async () => {
+        await download(url, getFilePath(i));
+      }),
+  ).run(config.videoTitles.length);
+
+  // slice video
+  fs.readdir(getVideoPath(), (_, files) => {
+    new ConcurrentTasks(
+      files.map(file => async () => {
+        await sliceVideo(path.resolve(getVideoPath(), file), '50m').catch(err =>
+          console.log('err', file),
+        );
+      }),
+    ).run(files.length);
   });
 }
 

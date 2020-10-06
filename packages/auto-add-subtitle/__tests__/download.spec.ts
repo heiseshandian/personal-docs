@@ -1,6 +1,7 @@
-import { download, toValidFilePath } from '../src/downloader';
+import { download } from '../src/downloader';
 import path from 'path';
 import fs from 'fs';
+import { toValidFilePath } from '../src/utils';
 
 beforeAll(() => {
   jest.setTimeout(1000 * 50);

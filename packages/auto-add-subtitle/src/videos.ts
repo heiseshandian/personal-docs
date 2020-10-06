@@ -28,7 +28,7 @@ function parseSize(size: string = '') {
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 function getDuration(videoPath: string) {
   return new Promise(resolve => {
-    exec(`ffmpeg -i ${videoPath}`, (_, __, stderr) => {
+    exec(`ffmpeg -i ${JSON.stringify(videoPath)}`, (_, __, stderr) => {
       const match = (stderr || '').match(durationInfoReg);
       resolve(match && match[1]);
     });
@@ -53,6 +53,11 @@ function parseDuration(duration: string = '') {
 export async function sliceVideo(videoPath: string, maxSize: string) {
   const duration = await getDuration(videoPath);
   const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
+
+  if (chunks <= 1 || !duration) {
+    return Promise.resolve(true);
+  }
+
   const chunkDuration = parseDuration(duration as string) / chunks;
 
   const { ext, name, dir } = path.parse(videoPath);
@@ -62,11 +67,10 @@ export async function sliceVideo(videoPath: string, maxSize: string) {
       .fill(0)
       .map(
         (_, i) =>
-          `ffmpeg -y -i ${videoPath} -ss ${
+          `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
             i * chunkDuration
-          } -t ${chunkDuration} ${path.resolve(
-            dir,
-            `${name}_chunks_${i}${ext}`,
+          } -t ${chunkDuration} ${JSON.stringify(
+            path.resolve(dir, `${name}_chunks_${i}${ext}`),
           )}`,
       )
       .join(' & ');
