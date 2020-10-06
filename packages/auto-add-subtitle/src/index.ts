@@ -1,7 +1,7 @@
 import { download } from './downloader';
 import path from 'path';
 import { BilibiliParser } from './bilibili-parser';
-import { getClosestNodeModulesPath } from './utils';
+import { getClosestNodeModulesPath, toValidFilePath } from './utils';
 import fs from 'fs';
 
 const config = {
@@ -61,14 +61,17 @@ const config = {
     'Immutable.js Overview04:56',
     'Immutability Exercise02:18',
     'Immutability Solution07:40',
-  ].map(title => `${title.replace(':', '')}.mp4`),
+  ].map((title, i) => `0${i}-${title.replace(':', '')}.mp4`),
 };
 
 async function main() {
   const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
   mp4Urls.forEach((url, i) => {
-    if (!fs.existsSync(path.resolve(getVideoPath(), config.videoTitles[i]))) {
-      download(url, path.resolve(getVideoPath(), config.videoTitles[i]));
+    const filePath = toValidFilePath(
+      path.resolve(getVideoPath(), config.videoTitles[i]),
+    );
+    if (!fs.existsSync(filePath)) {
+      download(url, filePath);
     }
   });
 }

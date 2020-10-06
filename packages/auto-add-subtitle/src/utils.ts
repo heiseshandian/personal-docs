@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 import puppeteer from 'puppeteer';
+import filenamify from 'filenamify';
 
 const pwd = __dirname.split(path.sep);
 
@@ -68,4 +69,10 @@ export async function clearCookies(page: puppeteer.Page) {
   await page._client.send('Network.clearBrowserCookies');
   // @ts-ignore
   await page._client.send('Network.clearBrowserCache');
+}
+
+// 去掉文件名中的非法字符
+export function toValidFilePath(filePath: string) {
+  const { dir, base } = path.parse(filePath);
+  return path.resolve(dir, filenamify(base));
 }

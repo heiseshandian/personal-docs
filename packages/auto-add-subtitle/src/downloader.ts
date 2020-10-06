@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import fs from 'fs';
 import filenamify from 'filenamify';
-import path from 'path';
 import { MultiProgressBar } from './progress';
+import { toValidFilePath } from './utils';
 
 // 下载文件到本地
 export async function download(url: string, dest: string) {
@@ -27,12 +27,6 @@ export async function download(url: string, dest: string) {
       reject(err);
     });
   });
-}
-
-// 去掉文件名中的非法字符
-export function toValidFilePath(filePath: string) {
-  const { dir, base } = path.parse(filePath);
-  return path.resolve(dir, filenamify(base));
 }
 
 function writeStreamToFile(stream: any, filePath: string) {
