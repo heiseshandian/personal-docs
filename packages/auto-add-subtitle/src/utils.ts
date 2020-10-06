@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
+import puppeteer from 'puppeteer';
 
 const pwd = __dirname.split(path.sep);
 
@@ -60,4 +61,11 @@ export async function writeFile(filePath: string, content: any) {
       }
     });
   });
+}
+
+export async function clearCookies(page: puppeteer.Page) {
+  // @ts-ignore
+  await page._client.send('Network.clearBrowserCookies');
+  // @ts-ignore
+  await page._client.send('Network.clearBrowserCache');
 }

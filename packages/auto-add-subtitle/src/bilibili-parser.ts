@@ -3,6 +3,7 @@ import { withCache } from './cache';
 import ProgressBar from 'progress';
 import { MultiProgressBar } from './progress';
 import { ConcurrentTasks } from './concurrent-tasks';
+import { clearCookies } from './utils';
 
 interface Config {
   url: string;
@@ -76,11 +77,4 @@ function withProgress(fn: (...rest: any) => Promise<any>, bar: ProgressBar) {
     bar.tick();
     return result;
   };
-}
-
-async function clearCookies(page: puppeteer.Page) {
-  // @ts-ignore
-  await page._client.send('Network.clearBrowserCookies');
-  // @ts-ignore
-  await page._client.send('Network.clearBrowserCache');
 }
