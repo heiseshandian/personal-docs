@@ -66,9 +66,11 @@ const config = {
 
 async function main() {
   const mp4Urls = await BilibiliParser.parse(config.videoUrlsToParse);
-  mp4Urls.forEach((url, i) =>
-    download(url, path.resolve(getVideoPath(), config.videoTitles[i])),
-  );
+  mp4Urls.forEach((url, i) => {
+    if (!fs.existsSync(path.resolve(getVideoPath(), config.videoTitles[i]))) {
+      download(url, path.resolve(getVideoPath(), config.videoTitles[i]));
+    }
+  });
 }
 
 function getVideoPath() {

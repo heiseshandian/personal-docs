@@ -33,7 +33,7 @@ export class BilibiliParser {
       total: blobs.length,
     });
 
-    return puppeteer.launch({ headless: false }).then(async browser => {
+    return puppeteer.launch({ headless: true }).then(async browser => {
       const result: Array<string> = await new ConcurrentTasks(
         (blobs as Array<string>).map(url =>
           withProgress(async () => {
