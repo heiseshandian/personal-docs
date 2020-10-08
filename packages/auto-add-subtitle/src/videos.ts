@@ -91,7 +91,9 @@ export async function concatVideos(videos: Array<string>, output: string) {
 
   return new Promise((resolve, reject) => {
     exec(
-      `ffmpeg -y -f concat -safe 0 -i ${tmpFilePath} -c copy ${output}`,
+      `ffmpeg -y -f concat -safe 0 -i ${JSON.stringify(
+        tmpFilePath,
+      )} -c copy ${output}`,
       err => {
         fs.unlink(tmpFilePath, () => {
           if (err) {
