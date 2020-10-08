@@ -1,9 +1,12 @@
-import puppeteer from 'puppeteer';
-import { withCache } from './cache';
 import ProgressBar from 'progress';
-import { MultiProgressBar } from './progress';
-import { ConcurrentTasks } from './concurrent-tasks';
-import { clearCookies } from './utils';
+import puppeteer from 'puppeteer';
+
+import {
+  clearCookies,
+  ConcurrentTasks,
+  MultiProgressBar,
+  withCache,
+} from './utils';
 
 interface Config {
   url: string;

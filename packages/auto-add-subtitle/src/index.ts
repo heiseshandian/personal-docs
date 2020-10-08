@@ -1,9 +1,13 @@
-import { download } from './downloader';
-import path from 'path';
-import { BilibiliParser } from './bilibili-parser';
-import { getClosestNodeModulesPath, toValidFilePath } from './utils';
 import fs from 'fs';
-import { ConcurrentTasks } from './concurrent-tasks';
+import path from 'path';
+
+import { BilibiliParser } from './bilibili-parser';
+import { download } from './downloader';
+import {
+  ConcurrentTasks,
+  getClosestNodeModulesPath,
+  toValidFilePath,
+} from './utils';
 import { sliceVideo } from './videos';
 
 const config = {

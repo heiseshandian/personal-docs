@@ -1,6 +1,7 @@
-import { download } from '../src/downloader';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import { download } from '../src/downloader';
 import { toValidFilePath } from '../src/utils';
 
 beforeAll(() => {

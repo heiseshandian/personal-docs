@@ -1,8 +1,9 @@
 import { exec } from 'child_process';
 import fs from 'fs';
-import path from 'path';
-import { writeFile } from './utils';
 import os from 'os';
+import path from 'path';
+
+import { writeFile } from './utils';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));

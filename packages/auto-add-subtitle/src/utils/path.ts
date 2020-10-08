@@ -1,8 +1,6 @@
-import path from 'path';
-import fs from 'fs';
-import crypto from 'crypto';
-import puppeteer from 'puppeteer';
 import filenamify from 'filenamify';
+import fs from 'fs';
+import path from 'path';
 
 const pwd = __dirname.split(path.sep);
 
@@ -34,41 +32,6 @@ function logError(moduleName: string = '', folder: Array<string>) {
       moduleName ? 'which contains ' + moduleName : ''
     } in ${folder.join(path.sep)}`,
   );
-}
-
-export function md5(data: string) {
-  return crypto.createHash('md5').update(data).digest('hex');
-}
-
-export async function readFile(filePath: string) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
-export async function writeFile(filePath: string, content: any) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, content, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(true);
-      }
-    });
-  });
-}
-
-export async function clearCookies(page: puppeteer.Page) {
-  // @ts-ignore
-  await page._client.send('Network.clearBrowserCookies');
-  // @ts-ignore
-  await page._client.send('Network.clearBrowserCache');
 }
 
 // 去掉文件名中的非法字符

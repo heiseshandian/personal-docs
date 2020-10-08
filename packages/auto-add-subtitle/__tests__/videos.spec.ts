@@ -1,5 +1,6 @@
-import { concatVideos, sliceVideo } from '../src/videos';
 import path from 'path';
+
+import { concatVideos, sliceVideo } from '../src/videos';
 
 test('slice video', async () => {
   const result = await sliceVideo(

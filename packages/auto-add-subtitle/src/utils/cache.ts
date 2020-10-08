@@ -1,6 +1,9 @@
-import { getClosestNodeModulesPath, md5, readFile, writeFile } from './utils';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import { md5 } from './base';
+import { readFile, writeFile } from './fs';
+import { getClosestNodeModulesPath } from './path';
 
 const CACHE_FOLDER = '.cache';
 
