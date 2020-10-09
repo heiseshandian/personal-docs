@@ -13,3 +13,4 @@ export * from './path';
 export * from './cache';
 export * from './concurrent-tasks';
 export * from './progress';
+export * from './downloader';

@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 
 import { BilibiliParser } from './bilibili-parser';
-import { download } from './downloader';
 import {
   ConcurrentTasks,
+  download,
   getClosestNodeModulesPath,
   toValidFilePath,
 } from './utils';
