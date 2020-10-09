@@ -16,14 +16,14 @@ const sizeMap: Record<string, number> = {
   default: 1,
 };
 
-const sizeReg = /^(\d+)([km]?)$/i;
+const sizeReg = /^(\d*\.?\d+)([km]?)$/i;
 function parseSize(size: string = '') {
   const match = size.match(sizeReg);
   if (!match) {
     return 0;
   }
   const [, num, unit] = match;
-  return parseInt(num, 10) * (sizeMap[unit] || sizeMap.default);
+  return parseFloat(num) * (sizeMap[unit] || sizeMap.default);
 }
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
