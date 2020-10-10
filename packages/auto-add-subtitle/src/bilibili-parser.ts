@@ -1,5 +1,6 @@
 import ProgressBar from 'progress';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 import {
   clearCookies,
@@ -7,6 +8,8 @@ import {
   MultiProgressBar,
   withCache,
 } from './utils';
+
+puppeteer.use(StealthPlugin());
 
 interface Config {
   url: string;
