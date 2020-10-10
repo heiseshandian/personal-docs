@@ -1,12 +1,8 @@
-import path from 'path';
-import puppeteer from 'puppeteer';
-import fs from 'fs';
-import { preventingPuppeteerDetectionOptions } from './puppeteer';
-import {
-  clearCookies,
-  ConcurrentTasks,
-  getClosestNodeModulesPath,
-} from './utils';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { clearCookies, ConcurrentTasks } from './utils';
+
+puppeteer.use(StealthPlugin());
 
 interface Config {
   url: string;
@@ -34,7 +30,6 @@ export class Veed {
     // https://stackoverflow.com/questions/48013969/how-to-maximise-screen-use-in-pupeteer-non-headless
     return puppeteer
       .launch({
-        ...preventingPuppeteerDetectionOptions,
         headless: false,
         defaultViewport: null,
       })
@@ -42,12 +37,6 @@ export class Veed {
         await new ConcurrentTasks(
           videos.map(video => async () => {
             const page = await browser.newPage();
-            await page.evaluateOnNewDocument(
-              fs.readFileSync(
-                path.resolve(__dirname, './puppeteer/preload.js'),
-                'utf-8',
-              ),
-            );
             await clearCookies(page);
             await page.goto(url);
 
@@ -72,14 +61,7 @@ export class Veed {
           }),
         ).run(maxConcurrent);
 
-        // await browser.close();
+        await browser.close();
       });
   }
 }
-
-Veed.autoAddSubtitle([
-  path.resolve(
-    getClosestNodeModulesPath() as string,
-    '.cache/videos/00-Introduction1004_chunks_0_chunks_1_chunks_0.mp4',
-  ),
-]);
