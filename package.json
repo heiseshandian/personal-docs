@@ -9,7 +9,7 @@
   "scripts": {
     "commit": "cz",
     "test": "jest",
-    "test1": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
+    "debug": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
   },
   "repository": {
     "type": "git",
