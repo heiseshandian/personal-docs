@@ -1,3 +1,4 @@
+import path from 'path';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import {
@@ -5,7 +6,6 @@ import {
   ConcurrentTasks,
   getClosestNodeModulesPath,
 } from './utils';
-import path from 'path';
 
 puppeteer.use(StealthPlugin());
 

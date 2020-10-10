@@ -1,14 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-
 import { BilibiliParser } from './bilibili-parser';
 import {
   ConcurrentTasks,
   download,
   getClosestNodeModulesPath,
+  sliceVideo,
   toValidFilePath,
 } from './utils';
-import { sliceVideo } from './videos';
 
 const config = {
   videoUrlsToParse: new Array(52)

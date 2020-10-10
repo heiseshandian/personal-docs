@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-
 import { md5 } from './base';
 import { readFile, writeFile } from './fs';
 import { getClosestNodeModulesPath } from './path';

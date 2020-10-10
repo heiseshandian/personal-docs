@@ -2,8 +2,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-
-import { writeFile } from './utils';
+import { writeFile } from './fs';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));

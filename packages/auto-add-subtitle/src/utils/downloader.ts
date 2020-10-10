@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import filenamify from 'filenamify';
 import fs from 'fs';
-
 import { toValidFilePath } from './path';
 import { MultiProgressBar } from './progress';
 

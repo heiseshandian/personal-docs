@@ -1,7 +1,6 @@
 import ProgressBar from 'progress';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-
 import {
   clearCookies,
   ConcurrentTasks,
