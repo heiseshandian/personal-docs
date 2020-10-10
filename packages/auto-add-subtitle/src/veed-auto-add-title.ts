@@ -1,29 +1,41 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { clearCookies, ConcurrentTasks } from './utils';
+import {
+  clearCookies,
+  ConcurrentTasks,
+  getClosestNodeModulesPath,
+} from './utils';
+import path from 'path';
 
 puppeteer.use(StealthPlugin());
 
 interface Config {
   url: string;
-  inputSelector: string;
+  inputFileSelector: string;
   subtitleSelector: string;
   autoSubtitleSelector: string;
+  startSelector: string;
 }
 
 export class Veed {
   private static config: Config = {
     url: 'https://www.veed.io/',
-    inputSelector: '[data-testid="file-input-dropzone"]',
-    subtitleSelector: '[href="/edit/sample/subtitles"]',
+    inputFileSelector: '[data-testid="file-input-dropzone"]',
+    subtitleSelector: '[href$="subtitles"]',
     autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
+    startSelector: '.sc-pIJJz',
   };
 
   private static maxConcurrent = 4;
 
   public static async autoAddSubtitle(videos: Array<string>) {
     const {
-      config: { url, inputSelector, subtitleSelector, autoSubtitleSelector },
+      config: {
+        url,
+        inputFileSelector: inputSelector,
+        subtitleSelector,
+        autoSubtitleSelector,
+      },
       maxConcurrent,
     } = this;
 
@@ -43,9 +55,6 @@ export class Veed {
             // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
             const uploadBtn = await page.$(inputSelector);
             await uploadBtn?.uploadFile(video);
-            await uploadBtn?.evaluate(upload =>
-              upload.dispatchEvent(new Event('change', { bubbles: true })),
-            );
 
             // 跳转编辑页面
             // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
@@ -65,3 +74,10 @@ export class Veed {
       });
   }
 }
+
+Veed.autoAddSubtitle([
+  path.resolve(
+    getClosestNodeModulesPath() as string,
+    '.cache/videos/1_chunks_0.webm',
+  ),
+]);

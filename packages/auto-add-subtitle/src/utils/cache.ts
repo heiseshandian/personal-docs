@@ -39,6 +39,6 @@ export function withCache(
 
 function ensureCacheDirExists(cachePath: string) {
   if (!fs.existsSync(cachePath)) {
-    fs.mkdirSync(cachePath);
+    fs.mkdirSync(cachePath, { recursive: true });
   }
 }

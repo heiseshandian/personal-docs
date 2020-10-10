@@ -102,7 +102,7 @@ function getVideoPath() {
   const nodeModulesPath = getClosestNodeModulesPath();
   const videoPath = path.resolve(nodeModulesPath || __dirname, '.cache/videos');
   if (!fs.existsSync(videoPath)) {
-    fs.mkdirSync(videoPath);
+    fs.mkdirSync(videoPath, { recursive: true });
   }
   return videoPath;
 }
