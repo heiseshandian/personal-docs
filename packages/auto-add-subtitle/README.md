@@ -8,9 +8,9 @@
 
 ### 待实现功能
 
-- 视频切割进度通知
-- exec 执行的 cmd 过长导致报错
-- 视频切割保持清晰度（-codec copy）
+- 抽取音频
+- https://trac.ffmpeg.org/wiki/HowToBurnSubtitlesIntoVideo
+- 下载字幕
 
 ### 视频基本概念
 
