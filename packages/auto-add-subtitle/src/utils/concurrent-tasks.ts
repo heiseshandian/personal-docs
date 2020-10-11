@@ -1,4 +1,5 @@
 import os from 'os';
+import { MultiProgressBar, withProgress } from './progress';
 
 type Task = () => Promise<any>;
 
@@ -7,7 +8,18 @@ export class ConcurrentTasks {
   private doneTasks: number;
   private ranTasks: number;
 
-  constructor(tasks: Array<Task>) {
+  private bar: ProgressBar | null = null;
+  private withProgress(msg: string) {
+    const bar =
+      this.bar ||
+      (this.bar = MultiProgressBar.getProgressBar(msg, {
+        total: this.tasks.length,
+      }));
+
+    this.tasks = this.tasks.map(task => withProgress(task, bar));
+  }
+
+  constructor(tasks: Array<Task>, msg?: string) {
     this.tasks = tasks.map((task, i) => async () => {
       const result = await task().catch(err => this._reject?.call(this, err));
       this._results[i] = result;
@@ -25,6 +37,10 @@ export class ConcurrentTasks {
 
       return result;
     });
+
+    if (msg) {
+      this.withProgress(msg);
+    }
 
     this.ranTasks = 0;
     this.doneTasks = 0;

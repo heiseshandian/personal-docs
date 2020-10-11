@@ -1,12 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-import {
-  clearCookies,
-  ConcurrentTasks,
-  withCache,
-  withProgress,
-} from './utils';
+import { clearCookies, ConcurrentTasks, withCache } from './utils';
 
 puppeteer.use(StealthPlugin());
 
@@ -36,29 +31,27 @@ export class BilibiliParser {
 
     return puppeteer.launch({ headless: true }).then(async browser => {
       const result: Array<string> = await new ConcurrentTasks(
-        (blobs as Array<string>).map(url =>
-          withProgress(
-            async () => {
-              const page = await browser.newPage();
-              await clearCookies(page);
-              await page.goto(config.url);
+        (blobs as Array<string>).map(
+          url => async () => {
+            const page = await browser.newPage();
+            await clearCookies(page);
+            await page.goto(config.url);
 
-              await page.type(config.inputSelector, url);
-              await clearCookies(page);
-              await page.click(config.submitBtnSelector);
-              await page.waitForSelector(config.mp4UrlSelector);
-              await page.waitForFunction(
-                `document.querySelector("${config.mp4UrlSelector}").value!==""`,
-              );
+            await page.type(config.inputSelector, url);
+            await clearCookies(page);
+            await page.click(config.submitBtnSelector);
+            await page.waitForSelector(config.mp4UrlSelector);
+            await page.waitForFunction(
+              `document.querySelector("${config.mp4UrlSelector}").value!==""`,
+            );
 
-              const mp4Url = await page.evaluate(selector => {
-                return document.querySelector(selector).value;
-              }, config.mp4UrlSelector);
-              await page.close();
-              return mp4Url;
-            },
-            { msg: 'parsing', total: blobs.length },
-          ),
+            const mp4Url = await page.evaluate(selector => {
+              return document.querySelector(selector).value;
+            }, config.mp4UrlSelector);
+            await page.close();
+            return mp4Url;
+          },
+          'parsing',
         ),
       ).run(maxConcurrent);
 

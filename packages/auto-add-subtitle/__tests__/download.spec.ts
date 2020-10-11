@@ -4,7 +4,7 @@ import path from 'path';
 import { download, toValidFilePath } from '../src/utils';
 
 beforeAll(() => {
-  jest.setTimeout(1000 * 50);
+  jest.setTimeout(1000 * 100);
 });
 
 test('download file', async () => {

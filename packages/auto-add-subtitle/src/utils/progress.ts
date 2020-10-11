@@ -126,18 +126,11 @@ export class MultiProgressBar {
 
 export function withProgress(
   fn: (...rest: any) => Promise<any>,
-  bar: ProgressBar | (Progress.ProgressBarOptions & { msg: string }),
+  bar: ProgressBar,
 ) {
-  let tmpBar: ProgressBar;
-  if (!(bar instanceof Progress)) {
-    tmpBar = MultiProgressBar.getProgressBar(bar.msg, bar);
-  } else {
-    tmpBar = bar;
-  }
-
   return async (...rest: any) => {
     const result = await fn(...rest);
-    tmpBar.tick();
+    bar.tick();
     return result;
   };
 }

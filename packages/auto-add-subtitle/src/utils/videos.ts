@@ -5,7 +5,6 @@ import path from 'path';
 
 import { ConcurrentTasks } from './concurrent-tasks';
 import { writeFile } from './fs';
-import { withProgress } from './progress';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
@@ -72,28 +71,24 @@ export async function sliceVideo(
     await new ConcurrentTasks(
       Array(chunks)
         .fill(0)
-        .map((_, i) =>
-          withProgress(
-            () => {
-              const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
-                i * chunkDuration
-              } -t ${chunkDuration} -codec copy ${JSON.stringify(
-                path.resolve(dir, `${name}_chunks_${i}${ext}`),
-              )}`;
+        .map((_, i) => () => {
+          const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
+            i * chunkDuration
+          } -t ${chunkDuration} -codec copy ${JSON.stringify(
+            path.resolve(dir, `${name}_chunks_${i}${ext}`),
+          )}`;
 
-              return new Promise((resolve, reject) => {
-                exec(cmd, err => {
-                  if (err) {
-                    reject(err);
-                  } else {
-                    resolve(true);
-                  }
-                });
-              });
-            },
-            { msg: 'slicing', total: chunks },
-          ),
-        ),
+          return new Promise((resolve, reject) => {
+            exec(cmd, err => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(true);
+              }
+            });
+          });
+        }),
+      'slicing',
     ).run(maxConcurrent);
     return true;
   } catch (error) {
@@ -138,28 +133,22 @@ export async function changeFormat(
 
   try {
     await new ConcurrentTasks(
-      videoPaths.map(videoPath =>
-        withProgress(
-          () => {
-            const cmd = `ffmpeg -y -i ${JSON.stringify(
-              videoPath,
-            )} ${JSON.stringify(
-              videoPath.replace(/\.\w+$/, `.${outputFormat}`),
-            )}`;
+      videoPaths.map(videoPath => () => {
+        const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
+          videoPath.replace(/\.\w+$/, `.${outputFormat}`),
+        )}`;
 
-            return new Promise((resolve, reject) => {
-              exec(cmd, err => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve(true);
-                }
-              });
-            });
-          },
-          { msg: 'changing format', total: videoPaths.length },
-        ),
-      ),
+        return new Promise((resolve, reject) => {
+          exec(cmd, err => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(true);
+            }
+          });
+        });
+      }),
+      'changing format',
     ).run();
     return true;
   } catch (error) {
