@@ -2,9 +2,10 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+
 import { ConcurrentTasks } from './concurrent-tasks';
 import { writeFile } from './fs';
-import { MultiProgressBar, withProgress } from './progress';
+import { withProgress } from './progress';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
@@ -67,31 +68,31 @@ export async function sliceVideo(
 
   const { ext, name, dir } = path.parse(videoPath);
 
-  const progressBar = MultiProgressBar.getProgressBar('slicing', {
-    total: chunks,
-  });
   try {
     await new ConcurrentTasks(
       Array(chunks)
         .fill(0)
         .map((_, i) =>
-          withProgress(() => {
-            const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
-              i * chunkDuration
-            } -t ${chunkDuration} -codec copy ${JSON.stringify(
-              path.resolve(dir, `${name}_chunks_${i}${ext}`),
-            )}`;
+          withProgress(
+            () => {
+              const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
+                i * chunkDuration
+              } -t ${chunkDuration} -codec copy ${JSON.stringify(
+                path.resolve(dir, `${name}_chunks_${i}${ext}`),
+              )}`;
 
-            return new Promise((resolve, reject) => {
-              exec(cmd, err => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve(true);
-                }
+              return new Promise((resolve, reject) => {
+                exec(cmd, err => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(true);
+                  }
+                });
               });
-            });
-          }, progressBar),
+            },
+            { msg: 'slicing', total: chunks },
+          ),
         ),
     ).run(maxConcurrent);
     return true;
@@ -120,6 +121,50 @@ export async function concatVideos(videos: Array<string>, output: string) {
       },
     );
   });
+}
+
+const parseFormat = (filePath: string) => path.parse(filePath).ext.slice(1);
+
+export async function changeFormat(
+  videoPaths: string | Array<string>,
+  outputFormat: string,
+) {
+  if (typeof videoPaths === 'string') {
+    videoPaths = [videoPaths];
+  }
+  videoPaths = videoPaths.filter(
+    videoPath => parseFormat(videoPath) !== outputFormat,
+  );
+
+  try {
+    await new ConcurrentTasks(
+      videoPaths.map(videoPath =>
+        withProgress(
+          () => {
+            const cmd = `ffmpeg -y -i ${JSON.stringify(
+              videoPath,
+            )} ${JSON.stringify(
+              videoPath.replace(/\.\w+$/, `.${outputFormat}`),
+            )}`;
+
+            return new Promise((resolve, reject) => {
+              exec(cmd, err => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(true);
+                }
+              });
+            });
+          },
+          { msg: 'changing format', total: videoPaths.length },
+        ),
+      ),
+    ).run();
+    return true;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function prepareTmpFiles(videos: Array<string>) {

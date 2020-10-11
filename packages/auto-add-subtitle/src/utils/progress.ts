@@ -118,19 +118,26 @@ export class MultiProgressBar {
     return this.multi.newBar(`${msg} [:bar] :rate/bps :percent :etas`, {
       complete: '=',
       incomplete: ' ',
-      width: options.width || 30,
-      total: options.total,
+      width: 30,
+      ...options,
     });
   }
 }
 
 export function withProgress(
   fn: (...rest: any) => Promise<any>,
-  bar: ProgressBar,
+  bar: ProgressBar | (Progress.ProgressBarOptions & { msg: string }),
 ) {
+  let tmpBar: ProgressBar;
+  if (!(bar instanceof Progress)) {
+    tmpBar = MultiProgressBar.getProgressBar(bar.msg, bar);
+  } else {
+    tmpBar = bar;
+  }
+
   return async (...rest: any) => {
     const result = await fn(...rest);
-    bar.tick();
+    tmpBar.tick();
     return result;
   };
 }
