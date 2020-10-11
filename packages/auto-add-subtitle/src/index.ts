@@ -106,4 +106,7 @@ function getVideoPath() {
   return videoPath;
 }
 
-main();
+// main();
+
+const getVideoFilePath = (name: string) =>
+  path.resolve(getClosestNodeModulesPath() as string, `.cache/videos/${name}`);
