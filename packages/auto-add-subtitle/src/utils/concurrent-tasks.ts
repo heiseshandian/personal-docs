@@ -1,3 +1,5 @@
+import os from 'os';
+
 type Task = () => Promise<any>;
 
 export class ConcurrentTasks {
@@ -41,7 +43,7 @@ export class ConcurrentTasks {
     task();
   }
 
-  public run(maxConcurrent: number): Promise<any> {
+  public run(maxConcurrent: number = os.cpus().length): Promise<any> {
     return new Promise((resolve, reject) => {
       this._resolve = resolve;
       this._reject = reject;

@@ -123,3 +123,14 @@ export class MultiProgressBar {
     });
   }
 }
+
+export function withProgress(
+  fn: (...rest: any) => Promise<any>,
+  bar: ProgressBar,
+) {
+  return async (...rest: any) => {
+    const result = await fn(...rest);
+    bar.tick();
+    return result;
+  };
+}

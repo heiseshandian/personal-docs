@@ -2,7 +2,9 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { ConcurrentTasks } from './concurrent-tasks';
 import { writeFile } from './fs';
+import { MultiProgressBar, withProgress } from './progress';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
@@ -43,14 +45,17 @@ function parseDuration(duration: string = '') {
   }
 
   const [, hours, minutes, seconds, milliseconds] = match;
-  return Math.ceil(
-    [hours, minutes, seconds, milliseconds]
-      .map(val => parseInt(val, 10))
-      .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0),
-  );
+
+  return [hours, minutes, seconds, milliseconds]
+    .map(val => parseInt(val, 10))
+    .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
 }
 
-export async function sliceVideo(videoPath: string, maxSize: string) {
+export async function sliceVideo(
+  videoPath: string,
+  maxSize: string,
+  maxConcurrent?: number,
+) {
   const duration = await getDuration(videoPath);
   const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
 
@@ -58,31 +63,41 @@ export async function sliceVideo(videoPath: string, maxSize: string) {
     return Promise.resolve(true);
   }
 
-  const chunkDuration = parseDuration(duration as string) / chunks;
+  const chunkDuration = Math.ceil(parseDuration(duration as string) / chunks);
 
   const { ext, name, dir } = path.parse(videoPath);
 
-  return new Promise((resolve, reject) => {
-    const cmd = new Array(chunks)
-      .fill(0)
-      .map(
-        (_, i) =>
-          `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
-            i * chunkDuration
-          } -t ${chunkDuration} ${JSON.stringify(
-            path.resolve(dir, `${name}_chunks_${i}${ext}`),
-          )}`,
-      )
-      .join(' & ');
-
-    exec(cmd, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(true);
-      }
-    });
+  const progressBar = MultiProgressBar.getProgressBar('slicing', {
+    total: chunks,
   });
+  try {
+    await new ConcurrentTasks(
+      Array(chunks)
+        .fill(0)
+        .map((_, i) =>
+          withProgress(() => {
+            const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
+              i * chunkDuration
+            } -t ${chunkDuration} -codec copy ${JSON.stringify(
+              path.resolve(dir, `${name}_chunks_${i}${ext}`),
+            )}`;
+
+            return new Promise((resolve, reject) => {
+              exec(cmd, err => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(true);
+                }
+              });
+            });
+          }, progressBar),
+        ),
+    ).run(maxConcurrent);
+    return true;
+  } catch (error) {
+    throw error;
+  }
 }
 
 // https://trac.ffmpeg.org/wiki/Concatenate

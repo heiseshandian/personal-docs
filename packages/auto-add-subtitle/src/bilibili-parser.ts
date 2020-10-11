@@ -1,11 +1,12 @@
-import ProgressBar from 'progress';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+
 import {
   clearCookies,
   ConcurrentTasks,
   MultiProgressBar,
   withCache,
+  withProgress,
 } from './utils';
 
 puppeteer.use(StealthPlugin());
@@ -74,12 +75,4 @@ export class BilibiliParser {
   ): Promise<Array<string>> {
     return withCache(this._parse.bind(this))(blobs);
   }
-}
-
-function withProgress(fn: (...rest: any) => Promise<any>, bar: ProgressBar) {
-  return async (...rest: any) => {
-    const result = await fn(...rest);
-    bar.tick();
-    return result;
-  };
 }
