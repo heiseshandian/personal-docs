@@ -1,25 +1,16 @@
 import fs from 'fs';
+import { callback2Promise } from './base';
 
-export async function readFile(filePath: string) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
+export const readFile = callback2Promise<Buffer>(fs.readFile);
 
-export async function writeFile(filePath: string, content: any) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, content, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(true);
-      }
-    });
-  });
+export const writeFile = callback2Promise<boolean>(fs.writeFile);
+
+export const del = callback2Promise<boolean>(fs.unlink);
+
+export async function ensurePathExists(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    fs.mkdirSync(filePath, { recursive: true });
+  }
+
+  return filePath;
 }

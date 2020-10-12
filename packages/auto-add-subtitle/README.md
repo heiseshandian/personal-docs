@@ -8,9 +8,8 @@
 
 ### 待实现功能
 
-- 抽取音频
-- https://trac.ffmpeg.org/wiki/HowToBurnSubtitlesIntoVideo
 - 下载字幕
+- videos 测试部分需要准备测试数据（测试数据也是测试的一部分，需要提交到 git 中，不然换设备之后测试就运行不过了）
 
 ### 视频基本概念
 

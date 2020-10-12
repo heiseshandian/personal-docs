@@ -184,3 +184,25 @@ async function prepareTmpFiles(videos: Array<string>) {
 
   return tmpFilePath;
 }
+
+export function burnSubtitlesIntoVideo(
+  srcVideoPath: string,
+  subtitlePath: string,
+  destVideoPath?: string,
+) {
+  const cmd = `ffmpeg -i ${JSON.stringify(
+    srcVideoPath,
+  )} -vf subtitles=${JSON.stringify(subtitlePath)} ${JSON.stringify(
+    destVideoPath,
+  )}`;
+
+  return new Promise((resolve, reject) => {
+    exec(cmd, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}

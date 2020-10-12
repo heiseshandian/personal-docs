@@ -15,3 +15,4 @@ export * from './fs';
 export * from './path';
 export * from './progress';
 export * from './videos';
+export * from './shell';
