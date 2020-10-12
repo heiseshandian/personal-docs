@@ -26,7 +26,7 @@ export function withCache(
     // hit cache
     if (fs.existsSync(filePath)) {
       return readFile(filePath).then(data => {
-        return JSON.parse(data as string);
+        return JSON.parse(data as any);
       });
     }
 
