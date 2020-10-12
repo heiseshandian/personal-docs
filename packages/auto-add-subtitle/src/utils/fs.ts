@@ -5,6 +5,8 @@ export const readFile = callback2Promise<Buffer>(fs.readFile);
 
 export const writeFile = callback2Promise<boolean>(fs.writeFile);
 
+export const readdir = callback2Promise<string[]>(fs.readdir);
+
 export const del = callback2Promise<boolean>(fs.unlink);
 
 export async function ensurePathExists(filePath: string) {

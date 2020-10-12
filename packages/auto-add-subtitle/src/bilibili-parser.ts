@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-
 import { clearCookies, ConcurrentTasks, withCache } from './utils';
 
 puppeteer.use(StealthPlugin());

@@ -1,10 +1,30 @@
-import puppeteer from 'puppeteer';
+import { Page } from 'puppeteer';
 
-export async function clearCookies(page: puppeteer.Page) {
+// https://chromedevtools.github.io/devtools-protocol/tot/Network/#method-clearBrowserCookies
+export async function clearCookies(page: Page) {
   // @ts-ignore
   await page._client.send('Network.clearBrowserCookies');
+}
+
+export async function clearCache(page: Page) {
   // @ts-ignore
   await page._client.send('Network.clearBrowserCache');
+}
+
+export async function clearCookiesAndCache(page: Page) {
+  await clearCookies(page);
+  await clearCache(page);
+}
+
+// https://github.com/puppeteer/puppeteer/issues/3339
+// https://github.com/WICG/page-lifecycle
+export async function setWebLifecycleState(
+  page: Page,
+  state: string = 'active',
+) {
+  const session = await page.target().createCDPSession();
+  await session.send('Page.enable');
+  await session.send('Page.setWebLifecycleState', { state });
 }
 
 export * from './base';
