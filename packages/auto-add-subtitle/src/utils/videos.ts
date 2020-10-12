@@ -2,7 +2,6 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-
 import { ConcurrentTasks } from './concurrent-tasks';
 import { writeFile } from './fs';
 
@@ -29,10 +28,14 @@ function parseSize(size: string = '') {
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 function getDuration(videoPath: string) {
-  return new Promise(resolve => {
-    exec(`ffmpeg -i ${JSON.stringify(videoPath)}`, (_, __, stderr) => {
-      const match = (stderr || '').match(durationInfoReg);
-      resolve(match && match[1]);
+  return new Promise((resolve, reject) => {
+    exec(`ffprobe ${JSON.stringify(videoPath)}`, (err, _, stderr) => {
+      if (err) {
+        reject(err);
+      } else {
+        const match = (stderr || '').match(durationInfoReg);
+        resolve(match && match[1]);
+      }
     });
   });
 }
