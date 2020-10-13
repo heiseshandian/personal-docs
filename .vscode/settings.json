@@ -1,6 +1,5 @@
 {
   "MarkdownPaste.path": "${workspaceRoot}/assets/",
-  "eslint.enable": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.validate": ["javascript", "html", "typescript", "vue"],
   "editor.codeActionsOnSave": {
