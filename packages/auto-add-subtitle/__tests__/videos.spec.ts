@@ -1,60 +1,47 @@
 import path from 'path';
-import { concatVideos, sliceVideo } from '../src/utils';
+import { concatVideos, del, handleError, sliceVideo } from '../src/utils';
+
+async function cleanup(files: string[]) {
+  await Promise.all([
+    files.map(file =>
+      del(
+        path.isAbsolute(file)
+          ? file
+          : path.resolve(__dirname, `./videos/${file}`),
+      ).catch(handleError),
+    ),
+  ]);
+}
+
+const getVideoPath = (name: string) =>
+  path.resolve(__dirname, `./videos/${name}`);
 
 test('slice video', async () => {
-  const result = await sliceVideo(
-    path.resolve(
-      __dirname,
-      '../node_modules/.cache/videos/00-Introduction1004.mp4',
+  const [result1, result2] = await Promise.all(
+    ['video1.webm', 'video with space.webm'].map(file =>
+      sliceVideo(getVideoPath(file), '100k'),
     ),
-    '50m',
   );
 
-  expect(result).toBe(true);
-});
-
-test('slice video, handle space', async () => {
-  const result = await sliceVideo(
-    path.resolve(
-      __dirname,
-      '../node_modules/.cache/videos/01-Why Functional Programming1000.mp4',
+  await Promise.all(
+    [result1, result2].map(result =>
+      result ? cleanup(result) : Promise.resolve(),
     ),
-    '30m',
   );
 
-  expect(result).toBe(true);
+  expect(result1 !== undefined).toBe(true);
+  expect(result2 !== undefined).toBe(true);
 });
 
 test('concat videos', async () => {
   const result = await concatVideos(
-    [
-      '00-Introduction1004_chunks_0.mp4',
-      '00-Introduction1004_chunks_1.mp4',
-    ].map(val =>
-      path.resolve(__dirname, `../node_modules/.cache/videos/${val}`),
-    ),
-    path.resolve(
-      __dirname,
-      `../node_modules/.cache/videos/00-Introduction1004_concat.mp4`,
-    ),
+    ['video1.webm', 'video with space.webm'].map(getVideoPath),
+    getVideoPath('video1_out.webm'),
   );
 
-  expect(result).toBe(true);
-});
+  if (result !== undefined) {
+    await cleanup([result]);
+  }
 
-test('concat videos, handle space', async () => {
-  const result = await concatVideos(
-    [
-      '01-Why Functional Programming1000.mp4',
-      '00-Introduction1004_chunks_1.mp4',
-    ].map(val =>
-      path.resolve(__dirname, `../node_modules/.cache/videos/${val}`),
-    ),
-    path.resolve(
-      __dirname,
-      `../node_modules/.cache/videos/00-Introduction1004_concat.mp4`,
-    ),
-  );
-
-  expect(result).toBe(true);
+  expect(result !== undefined).toBe(true);
 });

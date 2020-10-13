@@ -19,3 +19,7 @@ export function callback2Promise<T>(fn: Function) {
     });
   };
 }
+
+export function handleError(err: Error) {
+  console.error(err);
+}
