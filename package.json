@@ -8,6 +8,7 @@
   },
   "scripts": {
     "commit": "cz",
+    "test:o": "jest -o",
     "test": "jest",
     "debug": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
   },
