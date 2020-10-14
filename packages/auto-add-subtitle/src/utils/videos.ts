@@ -29,10 +29,10 @@ function parseSize(size = '') {
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 function getDuration(videoPath: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<string | null | undefined>(resolve => {
     exec(`ffprobe ${JSON.stringify(videoPath)}`, (err, _, stderr) => {
       if (err) {
-        reject(err);
+        handleError(err);
       } else {
         const match = (stderr || '').match(durationInfoReg);
         resolve(match && match[1]);
@@ -82,10 +82,10 @@ export async function sliceVideo(
           path.resolve(dir, outputPath),
         )}`;
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
           exec(cmd, err => {
             if (err) {
-              reject(err);
+              handleError(err);
             } else {
               resolve(outputPath);
             }
@@ -101,6 +101,9 @@ export async function sliceVideo(
 // https://trac.ffmpeg.org/wiki/Concatenate
 export async function concatVideos(videos: Array<string>, output: string) {
   const tmpFilePath = await prepareTmpFiles(videos);
+  if (!tmpFilePath) {
+    return Promise.resolve();
+  }
 
   return new Promise<string>(resolve => {
     exec(
@@ -140,10 +143,10 @@ export async function changeFormat(
         outputFile,
       )}`;
 
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         exec(cmd, err => {
           if (err) {
-            reject(err);
+            handleError(err);
           } else {
             resolve(outputFile);
           }
@@ -158,7 +161,8 @@ export async function changeFormat(
 
 async function prepareTmpFiles(videos: Array<string>) {
   if (videos.length <= 0) {
-    throw new Error('videos is empty');
+    handleError(new Error('videos is empty'));
+    return;
   }
 
   const { dir, name } = path.parse(videos[0]);
@@ -175,9 +179,7 @@ async function prepareTmpFiles(videos: Array<string>) {
             .replace(/\\\\/g, '/')}`,
       )
       .join(os.EOL),
-  ).catch(err => {
-    throw new Error(err);
-  });
+  ).catch(handleError);
 
   return tmpFilePath;
 }
@@ -193,10 +195,10 @@ export function burnSubtitlesIntoVideo(
     destVideoPath,
   )}`;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     exec(cmd, err => {
       if (err) {
-        reject(err);
+        handleError(err);
       } else {
         resolve(true);
       }
