@@ -1,5 +1,5 @@
 import path from 'path';
-import { concatVideos, del, handleError, sliceVideo } from '../src/utils';
+import { concatMedias, del, handleError, sliceMedia } from '../src/utils';
 
 async function cleanup(files: string[]) {
   await Promise.all([
@@ -19,7 +19,7 @@ const getVideoPath = (name: string) =>
 test('slice video', async () => {
   const [result1, result2] = await Promise.all(
     ['video1.webm', 'video with space.webm'].map(file =>
-      sliceVideo(getVideoPath(file), '100k'),
+      sliceMedia(getVideoPath(file), '100k'),
     ),
   );
 
@@ -34,7 +34,7 @@ test('slice video', async () => {
 });
 
 test('concat videos', async () => {
-  const result = await concatVideos(
+  const result = await concatMedias(
     ['video1.webm', 'video with space.webm'].map(getVideoPath),
     getVideoPath('video1_out.webm'),
   );

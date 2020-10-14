@@ -7,7 +7,7 @@ import { MultiProgressBar } from './progress';
 // 下载文件到本地
 export async function download(url: string, dest: string) {
   if (!url || !dest || !filenamify(dest)) {
-    return Promise.resolve(false);
+    return false;
   }
 
   const response = await axios({
@@ -19,7 +19,7 @@ export async function download(url: string, dest: string) {
   showProgressBar(response);
   writeStreamToFile(response.data, dest);
 
-  return new Promise<boolean | AxiosError>((resolve, reject) => {
+  return await new Promise<boolean | AxiosError>((resolve, reject) => {
     response.data.on('end', () => {
       resolve(true);
     });

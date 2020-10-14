@@ -55,28 +55,21 @@ function parseDuration(duration = '') {
     .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
 }
 
-export async function sliceVideo(
-  videoPath: string,
-  maxSize: string,
-  maxConcurrent?: number,
-) {
-  const duration = await getDuration(videoPath);
-  const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
-
-  if (chunks <= 1 || !duration) {
-    return Promise.resolve([]);
+async function sliceMediaByChunks(mediaPath: string, chunks: number) {
+  const { ext, name, dir } = path.parse(mediaPath);
+  const duration = await getDuration(mediaPath);
+  if (!duration) {
+    return;
   }
 
-  const chunkDuration = Math.ceil(parseDuration(duration as string) / chunks);
-
-  const { ext, name, dir } = path.parse(videoPath);
+  const chunkDuration = Math.ceil(parseDuration(duration) / chunks);
 
   return await new ConcurrentTasks<string>(
     Array(chunks)
       .fill(0)
       .map((_, i) => () => {
         const outputPath = `${name}_chunks_${i}${ext}`;
-        const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} -ss ${
+        const cmd = `ffmpeg -y -i ${JSON.stringify(mediaPath)} -ss ${
           i * chunkDuration
         } -t ${chunkDuration} -codec copy ${JSON.stringify(
           path.resolve(dir, outputPath),
@@ -94,18 +87,23 @@ export async function sliceVideo(
       }),
     'slicing',
   )
-    .run(maxConcurrent)
+    .run()
     .catch(handleError);
 }
 
+export async function sliceMedia(videoPath: string, maxSize: string) {
+  const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
+  return await sliceMediaByChunks(videoPath, chunks);
+}
+
 // https://trac.ffmpeg.org/wiki/Concatenate
-export async function concatVideos(videos: Array<string>, output: string) {
-  const tmpFilePath = await prepareTmpFiles(videos);
+export async function concatMedias(medias: Array<string>, output: string) {
+  const tmpFilePath = await prepareTmpFiles(medias);
   if (!tmpFilePath) {
-    return Promise.resolve();
+    return;
   }
 
-  return new Promise<string>(resolve => {
+  return await new Promise<string>(resolve => {
     exec(
       `ffmpeg -y -f concat -safe 0 -i ${JSON.stringify(
         tmpFilePath,
@@ -182,26 +180,4 @@ async function prepareTmpFiles(videos: Array<string>) {
   ).catch(handleError);
 
   return tmpFilePath;
-}
-
-export function burnSubtitlesIntoVideo(
-  srcVideoPath: string,
-  subtitlePath: string,
-  destVideoPath?: string,
-) {
-  const cmd = `ffmpeg -i ${JSON.stringify(
-    srcVideoPath,
-  )} -vf subtitles=${JSON.stringify(subtitlePath)} ${JSON.stringify(
-    destVideoPath,
-  )}`;
-
-  return new Promise(resolve => {
-    exec(cmd, err => {
-      if (err) {
-        handleError(err);
-      } else {
-        resolve(true);
-      }
-    });
-  });
 }
