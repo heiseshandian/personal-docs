@@ -1,5 +1,5 @@
 import path from 'path';
-import { concatMedias, del, handleError, sliceMedia } from '../src/utils';
+import { concatMedias, del, handleError, sliceMediaBySize } from '../src/utils';
 
 async function cleanup(files: string[]) {
   await Promise.all([
@@ -19,7 +19,7 @@ const getVideoPath = (name: string) =>
 test('slice video', async () => {
   const [result1, result2] = await Promise.all(
     ['video1.webm', 'video with space.webm'].map(file =>
-      sliceMedia(getVideoPath(file), '100k'),
+      sliceMediaBySize(getVideoPath(file), '100k'),
     ),
   );
 

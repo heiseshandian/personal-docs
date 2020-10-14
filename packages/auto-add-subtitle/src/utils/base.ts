@@ -6,10 +6,11 @@ export function md5(data: string) {
 
 export function callback2Promise<T>(fn: (...params: Array<any>) => void) {
   return (...rest: Array<any>): Promise<T> => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       fn(...rest, (err: NodeJS.ErrnoException, ...args: Array<any>) => {
         if (err) {
-          handleError(err);
+          // 此处直接handleError会导致程序退出（迷惑中）
+          reject(err);
         } else {
           resolve(
             args.length === 0 ? true : args.length === 1 ? args[0] : args,
@@ -38,4 +39,10 @@ export function makeMap(
   }, Object.create(null));
 
   return expectsLowerCase ? val => map[val.toLowerCase()] : val => map[val];
+}
+
+export function delay(timeout: number) {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(), timeout);
+  });
 }

@@ -56,13 +56,13 @@ function parseDuration(duration = '') {
 }
 
 async function sliceMediaByChunks(mediaPath: string, chunks: number) {
-  const { ext, name, dir } = path.parse(mediaPath);
   const duration = await getDuration(mediaPath);
   if (!duration) {
     return;
   }
 
   const chunkDuration = Math.ceil(parseDuration(duration) / chunks);
+  const { ext, name, dir } = path.parse(mediaPath);
 
   return await new ConcurrentTasks<string>(
     Array(chunks)
@@ -91,9 +91,22 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
     .catch(handleError);
 }
 
-export async function sliceMedia(videoPath: string, maxSize: string) {
-  const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
-  return await sliceMediaByChunks(videoPath, chunks);
+export async function sliceMediaBySize(mediaPath: string, maxSize: string) {
+  const chunks = Math.ceil(getFileSize(mediaPath) / parseSize(maxSize));
+  return await sliceMediaByChunks(mediaPath, chunks);
+}
+
+export async function sliceMediaByDuration(
+  mediaPath: string,
+  maxSeconds: number,
+) {
+  const duration = await getDuration(mediaPath);
+  if (!duration) {
+    return;
+  }
+  const chunks = Math.ceil(parseDuration(duration) / maxSeconds);
+
+  return await sliceMediaByChunks(mediaPath, chunks);
 }
 
 // https://trac.ffmpeg.org/wiki/Concatenate

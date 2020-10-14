@@ -2,7 +2,12 @@ import path from 'path';
 import { Page } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { clearCookies, ConcurrentTasks, setWebLifecycleState } from './utils';
+import {
+  clearCookies,
+  ConcurrentTasks,
+  handleError,
+  setWebLifecycleState,
+} from './utils';
 
 puppeteer.use(StealthPlugin());
 
@@ -17,6 +22,8 @@ interface Config {
   closeSelector: string;
   translateSelector: string;
   downloadSelector: string;
+
+  timeout: number;
 }
 
 export class Veed {
@@ -31,11 +38,20 @@ export class Veed {
     closeSelector: '[alt^="close"]',
     translateSelector: '.sc-pCPhY.cSMpki',
     downloadSelector: '.sc-fznWqX.bPVNyf',
+
+    timeout: 1000 * 60 * 10,
   };
 
+  private static async safeClick(page: Page, selector: string) {
+    const { timeout } = this.config;
+
+    await page.waitForSelector(selector, { timeout });
+    await page.click(selector);
+  }
+
   // 上传文件
-  private static async upload(page: Page, audio: string, timeout: number) {
-    const { inputFileSelector, durationSelector } = this.config;
+  private static async upload(page: Page, audio: string) {
+    const { inputFileSelector, durationSelector, timeout } = this.config;
 
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
@@ -55,13 +71,14 @@ export class Veed {
   }
 
   // 解析字幕
-  private static async _parseSubtitle(page: Page, timeout: number) {
+  private static async _parseSubtitle(page: Page) {
     const {
       subtitleSelector,
       autoSubtitleSelector,
       startSelector,
       subtitlesSelector,
       closeSelector,
+      timeout,
     } = this.config;
 
     await Promise.all([
@@ -69,11 +86,11 @@ export class Veed {
       page.waitForSelector(subtitleSelector),
     ]);
 
-    await page.click(closeSelector);
-    await page.click(subtitleSelector);
+    await this.safeClick(page, closeSelector);
+    await this.safeClick(page, subtitleSelector);
     await page.waitForSelector(autoSubtitleSelector, { timeout });
-    await page.click(autoSubtitleSelector);
-    await page.click(startSelector);
+    await this.safeClick(page, autoSubtitleSelector);
+    await this.safeClick(page, startSelector);
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
@@ -87,14 +104,16 @@ export class Veed {
     });
 
     const { translateSelector, downloadSelector } = this.config;
-    await page.click(translateSelector);
-    await page.click(downloadSelector);
+    await this.safeClick(page, translateSelector);
+    await page.waitForSelector(downloadSelector);
+    await page
+      .evaluate(selector => {
+        document.querySelector(selector).click();
+      }, downloadSelector)
+      .catch(handleError);
   }
 
-  public static async parseSubtitle(
-    audios: Array<string>,
-    timeout: number = 1000 * 60 * 10,
-  ) {
+  public static async parseSubtitle(audios: Array<string>) {
     const {
       config: { url },
     } = this;
@@ -114,8 +133,8 @@ export class Veed {
             await page.goto(url);
             await setWebLifecycleState(page);
 
-            await this.upload(page, audio, timeout);
-            await this._parseSubtitle(page, timeout);
+            await this.upload(page, audio);
+            await this._parseSubtitle(page);
             await this.download(page, audio);
 
             await page.close();
@@ -124,6 +143,7 @@ export class Veed {
         ).run(1);
 
         await browser.close();
-      });
+      })
+      .catch(handleError);
   }
 }
