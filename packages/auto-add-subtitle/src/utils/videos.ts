@@ -18,7 +18,7 @@ const sizeMap: Record<string, number> = {
 };
 
 const sizeReg = /^(\d*\.?\d+)([km]?)$/i;
-function parseSize(size: string = '') {
+function parseSize(size = '') {
   const match = size.match(sizeReg);
   if (!match) {
     return 0;
@@ -42,7 +42,7 @@ function getDuration(videoPath: string) {
 }
 
 const durationReg = /(\d{1,2}):(\d{1,2}):(\d{1,2})\.(\d{2})/;
-function parseDuration(duration: string = '') {
+function parseDuration(duration = '') {
   const match = duration.match(durationReg);
   if (!match) {
     return 0;
@@ -59,7 +59,7 @@ export async function sliceVideo(
   videoPath: string,
   maxSize: string,
   maxConcurrent?: number,
-): Promise<string[] | undefined> {
+) {
   const duration = await getDuration(videoPath);
   const chunks = Math.ceil(getFileSize(videoPath) / parseSize(maxSize));
 
@@ -71,7 +71,7 @@ export async function sliceVideo(
 
   const { ext, name, dir } = path.parse(videoPath);
 
-  return await new ConcurrentTasks(
+  return await new ConcurrentTasks<string>(
     Array(chunks)
       .fill(0)
       .map((_, i) => () => {
@@ -102,7 +102,7 @@ export async function sliceVideo(
 export async function concatVideos(videos: Array<string>, output: string) {
   const tmpFilePath = await prepareTmpFiles(videos);
 
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string>(resolve => {
     exec(
       `ffmpeg -y -f concat -safe 0 -i ${JSON.stringify(
         tmpFilePath,
@@ -133,29 +133,27 @@ export async function changeFormat(
     videoPath => parseFormat(videoPath) !== outputFormat,
   );
 
-  try {
-    await new ConcurrentTasks(
-      videoPaths.map(videoPath => () => {
-        const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
-          videoPath.replace(/\.\w+$/, `.${outputFormat}`),
-        )}`;
+  return await new ConcurrentTasks<string>(
+    videoPaths.map(videoPath => () => {
+      const outputFile = videoPath.replace(/\.\w+$/, `.${outputFormat}`);
+      const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
+        outputFile,
+      )}`;
 
-        return new Promise((resolve, reject) => {
-          exec(cmd, err => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(true);
-            }
-          });
+      return new Promise((resolve, reject) => {
+        exec(cmd, err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(outputFile);
+          }
         });
-      }),
-      'changing format',
-    ).run();
-    return true;
-  } catch (error) {
-    throw error;
-  }
+      });
+    }),
+    'changing format',
+  )
+    .run()
+    .catch(handleError);
 }
 
 async function prepareTmpFiles(videos: Array<string>) {
@@ -173,7 +171,7 @@ async function prepareTmpFiles(videos: Array<string>) {
       .map(
         video =>
           `file ${JSON.stringify(video)
-            .replace(/\"/g, "'")
+            .replace(/"/g, "'")
             .replace(/\\\\/g, '/')}`,
       )
       .join(os.EOL),

@@ -4,10 +4,10 @@ export function md5(data: string) {
   return crypto.createHash('md5').update(data).digest('hex');
 }
 
-export function callback2Promise<T>(fn: Function) {
+export function callback2Promise<T>(fn: (...params: Array<any>) => void) {
   return (...rest: Array<any>): Promise<T> => {
     return new Promise((resolve, reject) => {
-      fn(...rest, (err: NodeJS.ErrnoException, ...args: any) => {
+      fn(...rest, (err: NodeJS.ErrnoException, ...args: Array<any>) => {
         if (err) {
           reject(err);
         } else {

@@ -3,7 +3,7 @@ import { MultiProgressBar, withProgress } from './progress';
 
 type Task = () => Promise<any>;
 
-export class ConcurrentTasks {
+export class ConcurrentTasks<T> {
   private tasks: Array<Task>;
   private doneTasks: number;
   private ranTasks: number;
@@ -50,7 +50,7 @@ export class ConcurrentTasks {
     this._reject = null;
   }
 
-  private _resolve: ((value?: unknown) => void) | null;
+  private _resolve: ((value: Array<T>) => void) | null;
   private _reject: ((reason?: any) => void) | null;
   private _results: Array<any>;
 
@@ -59,7 +59,7 @@ export class ConcurrentTasks {
     task();
   }
 
-  public run(maxConcurrent: number = os.cpus().length): Promise<any> {
+  public run(maxConcurrent: number = os.cpus().length): Promise<Array<T>> {
     return new Promise((resolve, reject) => {
       this._resolve = resolve;
       this._reject = reject;

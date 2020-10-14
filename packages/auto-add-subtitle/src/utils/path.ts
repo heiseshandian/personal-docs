@@ -26,7 +26,7 @@ export function getClosestNodeModulesPath(
   return result;
 }
 
-function logError(moduleName: string = '', folder: Array<string>) {
+function logError(moduleName = '', folder: Array<string>) {
   console.error(
     `Could not find the node_modules folder ${
       moduleName ? 'which contains ' + moduleName : ''

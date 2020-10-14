@@ -18,10 +18,7 @@ export async function clearCookiesAndCache(page: Page) {
 
 // https://github.com/puppeteer/puppeteer/issues/3339
 // https://github.com/WICG/page-lifecycle
-export async function setWebLifecycleState(
-  page: Page,
-  state: string = 'active',
-) {
+export async function setWebLifecycleState(page: Page, state = 'active') {
   const session = await page.target().createCDPSession();
   await session.send('Page.enable');
   await session.send('Page.setWebLifecycleState', { state });

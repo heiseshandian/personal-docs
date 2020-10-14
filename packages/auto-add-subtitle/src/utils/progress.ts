@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import Progress from 'progress';
 
 const mockBar = {
@@ -27,9 +28,9 @@ type ComposedProgress = Progress & {
 class MultiProgress {
   private stream: NodeJS.WriteStream;
   private isTTY: boolean;
-  private cursor: number = 0;
+  private cursor = 0;
   private bars: Array<ComposedProgress> = [];
-  private terminates: number = 0;
+  private terminates = 0;
 
   constructor(stream: NodeJS.WriteStream) {
     this.stream = stream || process.stderr;
@@ -59,22 +60,21 @@ class MultiProgress {
     this.cursor += 1;
 
     // replace original
-    const self = this;
     bar.otick = bar.tick;
     bar.oterminate = bar.terminate;
     bar.oupdate = bar.update;
     // @ts-ignore
-    bar.tick = function (value: number, options: any) {
-      self.tick(index, value, options);
+    bar.tick = (value: number, options: any) => {
+      this.tick(index, value, options);
     };
-    bar.terminate = function () {
-      self.terminates += 1;
-      if (self.terminates === self.bars.length) {
-        self.terminate();
+    bar.terminate = () => {
+      this.terminates += 1;
+      if (this.terminates === this.bars.length) {
+        this.terminate();
       }
     };
-    bar.update = function (value, options) {
-      self.update(index, value, options);
+    bar.update = (value, options) => {
+      this.update(index, value, options);
     };
 
     return bar;
