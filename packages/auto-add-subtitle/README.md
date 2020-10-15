@@ -29,3 +29,5 @@
   数据单元
 - packets
   压缩后的数据单元，一个 packets 可以包含多个完整的 frames
+- srt files
+  ![](../../assets/2020-10-15-09-22-12.png)
