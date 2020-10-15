@@ -136,7 +136,10 @@ export class Veed {
             await this._parseSubtitle(page);
             await this.download(page, audio);
 
-            await page.close();
+            // 下载完再关闭页面
+            setTimeout(() => {
+              page.close();
+            }, 1000 * 10);
           }),
           'parsing subtitle',
         ).run(1);
