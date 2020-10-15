@@ -96,7 +96,19 @@ export class Veed {
 
     const { translateXpath, downloadXpath } = this.config;
     await this.safeClickXPath(page, translateXpath);
-    await this.safeClickXPath(page, downloadXpath);
+
+    // 某些版本的浏览器以此方式点击元素不会触发下载（换成下面的执行js脚本写法）~
+    // await this.safeClickXPath(page, downloadXpath);
+    await page.evaluate(xpath => {
+      const downloadBtn = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      ).singleNodeValue;
+      (downloadBtn as HTMLElement)?.click();
+    }, downloadXpath);
   }
 
   public static async parseSubtitle(audios: Array<string>) {
