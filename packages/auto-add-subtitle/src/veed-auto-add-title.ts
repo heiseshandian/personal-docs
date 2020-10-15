@@ -5,39 +5,27 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import {
   clearCookies,
   ConcurrentTasks,
+  delay,
   handleError,
   setWebLifecycleState,
 } from './utils';
 
 puppeteer.use(StealthPlugin());
 
-interface Config {
-  url: string;
-  inputFileSelector: string;
-  durationSelector: string;
-  subtitleSelector: string;
-  autoSubtitleSelector: string;
-  startSelector: string;
-  subtitlesSelector: string;
-  closeSelector: string;
-  translateSelector: string;
-  downloadSelector: string;
-
-  timeout: number;
-}
-
 export class Veed {
-  private static config: Config = {
+  private static config = {
     url: 'https://www.veed.io/',
+
     inputFileSelector: '[data-testid="file-input-dropzone"]',
-    durationSelector: '[data-testid="@editor/subtitle-row/styled-input-mask"]',
     subtitleSelector: '[href$="subtitles"]',
     autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
-    startSelector: '.sc-pIJJz',
+    startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
     subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
     closeSelector: '[alt^="close"]',
-    translateSelector: '.sc-pCPhY.cSMpki',
-    downloadSelector: '.sc-fznWqX.bPVNyf',
+    translateXpath:
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
+    downloadXpath:
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div[1]/div[2]/div/span',
 
     timeout: 1000 * 60 * 10,
   };
@@ -49,9 +37,17 @@ export class Veed {
     await page.click(selector);
   }
 
+  private static async safeClickXPath(page: Page, xpath: string) {
+    const { timeout } = this.config;
+
+    await page.waitForXPath(xpath, { timeout });
+    const elements = await page.$x(xpath);
+    await elements[0].click();
+  }
+
   // 上传文件
   private static async upload(page: Page, audio: string) {
-    const { inputFileSelector, durationSelector, timeout } = this.config;
+    const { inputFileSelector, timeout } = this.config;
 
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
@@ -63,11 +59,6 @@ export class Veed {
       timeout,
       waitUntil: 'networkidle0',
     });
-    await page.waitForSelector(durationSelector, { timeout });
-    // 等待项目加载完毕
-    await page.waitForFunction(
-      `document.querySelector('${durationSelector}').value!==""`,
-    );
   }
 
   // 解析字幕
@@ -75,7 +66,7 @@ export class Veed {
     const {
       subtitleSelector,
       autoSubtitleSelector,
-      startSelector,
+      startXPath,
       subtitlesSelector,
       closeSelector,
       timeout,
@@ -90,7 +81,7 @@ export class Veed {
     await this.safeClick(page, subtitleSelector);
     await page.waitForSelector(autoSubtitleSelector, { timeout });
     await this.safeClick(page, autoSubtitleSelector);
-    await this.safeClick(page, startSelector);
+    await this.safeClickXPath(page, startXPath);
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
@@ -103,14 +94,9 @@ export class Veed {
       downloadPath: path.resolve(dir, 'parsed'),
     });
 
-    const { translateSelector, downloadSelector } = this.config;
-    await this.safeClick(page, translateSelector);
-    await page.waitForSelector(downloadSelector);
-    await page
-      .evaluate(selector => {
-        document.querySelector(selector).click();
-      }, downloadSelector)
-      .catch(handleError);
+    const { translateXpath, downloadXpath } = this.config;
+    await this.safeClickXPath(page, translateXpath);
+    await this.safeClickXPath(page, downloadXpath);
   }
 
   public static async parseSubtitle(audios: Array<string>) {
@@ -128,9 +114,10 @@ export class Veed {
       .then(async browser => {
         await new ConcurrentTasks(
           audios.map(audio => async () => {
+            const { timeout } = this.config;
             const page = await browser.newPage();
             await clearCookies(page);
-            await page.goto(url);
+            await page.goto(url, { timeout });
             await setWebLifecycleState(page);
 
             await this.upload(page, audio);
@@ -142,6 +129,8 @@ export class Veed {
           'parsing subtitle',
         ).run(1);
 
+        // 等待文件下载完再关闭浏览器
+        await delay(1000 * 10);
         await browser.close();
       })
       .catch(handleError);

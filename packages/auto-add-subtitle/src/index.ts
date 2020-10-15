@@ -1,5 +1,7 @@
+import fs from 'fs';
 import path from 'path';
 import {
+  changeFormat,
   ConcurrentTasks,
   getClosestNodeModulesPath,
   makeMap,
@@ -7,35 +9,44 @@ import {
   sliceMediaByDuration,
 } from './utils';
 import { Veed } from './veed-auto-add-title';
-import fs from 'fs';
 
 const videoDir = path.resolve(
   getClosestNodeModulesPath() as string,
   '.cache/videos',
 );
 
-async function parseSubtitle() {
+async function prepareMp3Files() {
   const files = await readdir(videoDir);
+
+  await changeFormat(
+    files.map(file => path.resolve(videoDir, file)),
+    'mp3',
+  );
+}
+
+async function checkMp3Files() {
+  const files = await readdir(videoDir);
+
+  await new ConcurrentTasks(
+    files
+      .filter(file => file.endsWith('mp3'))
+      .map(file => async () => {
+        await sliceMediaByDuration(path.resolve(videoDir, file), 6 * 60);
+      }),
+  ).run();
+}
+
+async function parseSubtitle() {
   const parsedFiles = await readdir(
     path.resolve(videoDir, 'parsed'),
   ).catch(() => {});
-
   const hasParsed = makeMap(
     (parsedFiles || []).map(file =>
       path.parse(file).name.replace('default_Project Name_', ''),
     ),
   );
 
-  // await new ConcurrentTasks(
-  //   files
-  //     .map(file => path.resolve(videoDir, file))
-  //     .filter(file => file.endsWith('mp3'))
-  //     .map(file => async () => {
-  //       await sliceMediaByDuration(file, 6 * 60);
-  //     }),
-  //   'slicing',
-  // ).run();
-
+  const files = await readdir(videoDir);
   await Veed.parseSubtitle(
     files
       .filter(file => file.endsWith('mp3'))
@@ -49,21 +60,10 @@ async function parseSubtitle() {
   );
 }
 
-parseSubtitle();
+async function main() {
+  // await prepareMp3Files();
+  // await checkMp3Files();
+  await parseSubtitle();
+}
 
-// async function main() {
-//   const parsedFiles = await readdir(path.resolve(videoDir, 'parsed'));
-//   await new ConcurrentTasks(
-//     parsedFiles.map(file => async () => {
-//       await move(
-//         path.resolve(videoDir, 'parsed', file),
-//         path.resolve(
-//           videoDir,
-//           file.replace('default_Project Name_', '').replace('.mp3', ''),
-//         ),
-//       );
-//     }),
-//   ).run();
-// }
-
-// main();
+main();

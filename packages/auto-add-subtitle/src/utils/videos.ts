@@ -93,6 +93,9 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
 
 export async function sliceMediaBySize(mediaPath: string, maxSize: string) {
   const chunks = Math.ceil(getFileSize(mediaPath) / parseSize(maxSize));
+  if (chunks <= 1) {
+    return;
+  }
   return await sliceMediaByChunks(mediaPath, chunks);
 }
 
@@ -105,6 +108,9 @@ export async function sliceMediaByDuration(
     return;
   }
   const chunks = Math.ceil(parseDuration(duration) / maxSeconds);
+  if (chunks <= 1) {
+    return;
+  }
 
   return await sliceMediaByChunks(mediaPath, chunks);
 }
