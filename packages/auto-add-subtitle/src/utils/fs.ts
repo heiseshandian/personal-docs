@@ -1,15 +1,27 @@
-import fs from 'fs';
+import fs, { PathLike } from 'fs';
 import { callback2Promise } from './base';
 
-export const readFile = callback2Promise<Buffer>(fs.readFile);
+export const readFile: (path: PathLike) => Promise<Buffer> = callback2Promise(
+  fs.readFile,
+);
 
-export const writeFile = callback2Promise<boolean>(fs.writeFile);
+export const writeFile: (
+  path: PathLike,
+  content: string | Buffer,
+) => Promise<boolean> = callback2Promise(fs.writeFile);
 
-export const readdir = callback2Promise<string[]>(fs.readdir);
+export const readdir: (path: string) => Promise<string[]> = callback2Promise(
+  fs.readdir,
+);
 
-export const del = callback2Promise<boolean>(fs.unlink);
+export const del: (path: PathLike) => Promise<boolean> = callback2Promise(
+  fs.unlink,
+);
 
-export const move = callback2Promise<boolean>(fs.rename);
+export const move: (
+  oldPath: PathLike,
+  newPath: PathLike,
+) => Promise<boolean> = callback2Promise(fs.rename);
 
 export async function ensurePathExists(filePath: string) {
   if (!fs.existsSync(filePath)) {

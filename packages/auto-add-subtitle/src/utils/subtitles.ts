@@ -3,40 +3,60 @@ import { readFile } from './fs';
 
 const sequenceReg = /^([+-]?)(\d+)$/;
 const timelineReg = /^\d{2}:\d{2}:\d{2}[,.]\d{3} --> \d{2}:\d{2}:\d{2}[,.]\d{3}$/;
-export async function merge(primarySrt: string, secondSrt: string) {
-  const [primary, second] = await Promise.all(
-    [primarySrt, secondSrt].map(file =>
+function merge(primaryLines: string[], secondLines: string[]) {
+  const [maxTime, maxSequence] = [
+    parseMaxTime(primaryLines),
+    parseMaxSequence(primaryLines),
+  ];
+
+  return primaryLines.concat(
+    secondLines.map(line => {
+      if (sequenceReg.test(line)) {
+        return String(parseInt(line) + maxSequence);
+      }
+      if (timelineReg.test(line)) {
+        return line
+          .split(' --> ')
+          .map(time => formatTime(parseTime(time) + maxTime))
+          .join(' --> ');
+      }
+      return line;
+    }),
+  );
+}
+
+export async function mergeSrtFiles(srtFiles: string[]) {
+  const result = await Promise.all(
+    srtFiles.map(file =>
       readFile(file)
         .then(buf => buf.toString())
         .catch(handleError),
     ),
   );
 
-  if (!primary || !second) {
-    return;
-  }
-
-  const [maxTime, maxSequence] = [
-    parseMaxTime(primary.split(/\n/).slice(-4)),
-    parseMaxSequence(primary.split(/\n/).slice(-4)),
-  ];
-  const secondLines = second.split(/\n/);
+  return result
+    .filter(val => !!val)
+    .map(val => (val as string).split(/\n/))
+    .reduce((acc, cur) => merge(acc, cur))
+    .join('\n');
 }
 
 function parseMaxTime(list: string[]) {
-  for (const line of list.reverse()) {
+  for (const line of list.slice(-4).reverse()) {
     if (timelineReg.test(line)) {
       return parseTime(line.split('-->')[1]);
     }
   }
+  return 0;
 }
 
 function parseMaxSequence(list: string[]) {
-  for (const line of list.reverse()) {
+  for (const line of list.slice(-4).reverse()) {
     if (sequenceReg.test(line)) {
       return parseInt(line);
     }
   }
+  return 0;
 }
 
 const timeRegex = /^([+-]?)(\d{2}):(\d{2}):(\d{2})[,.](\d{3})$/;
@@ -48,29 +68,15 @@ function parseTime(value: string) {
   if (!match) {
     return 0;
   }
-  const [symbol, hours, minutes, seconds, milliseconds] = match;
 
+  const [, symbol, hours, minutes, seconds, milliseconds] = match;
   return (
     (symbol === '-' ? -1 : 1) *
-    (Number(hours) * 60 * 60 +
-      Number(minutes) * 60 +
-      Number(seconds) +
+    ([hours, minutes, seconds]
+      .map(val => Number(val))
+      .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0) +
       Number(milliseconds) / 1000)
   );
-}
-
-function pad2(value: number) {
-  return value < 10 ? '0' + String(value) : String(value);
-}
-
-function pad3(value: number) {
-  if (value < 10) {
-    return '00' + String(value);
-  } else if (value < 100) {
-    return '0' + String(value);
-  } else {
-    return String(value);
-  }
 }
 
 function formatTime(value: number) {
@@ -81,14 +87,11 @@ function formatTime(value: number) {
   const seconds = Math.floor(value);
   value -= seconds;
   const milliseconds = Math.round(value * 1000);
+
   return (
     (value < 0 ? '-' : '') +
-    pad2(hours) +
-    ':' +
-    pad2(minutes) +
-    ':' +
-    pad2(seconds) +
+    [hours, minutes, seconds].map(val => `${val}`.padStart(2, '0')).join(':') +
     ',' +
-    pad3(milliseconds)
+    `${milliseconds}`.padStart(3, '0')
   );
 }
