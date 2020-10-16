@@ -29,7 +29,7 @@ export class BilibiliParser {
     const { config, maxConcurrent } = this;
 
     return puppeteer.launch({ headless: true }).then(async browser => {
-      const result: Array<string> = await new ConcurrentTasks(
+      const result: Array<string> = await new ConcurrentTasks<string>(
         (blobs as Array<string>).map(
           url => async () => {
             const page = await browser.newPage();

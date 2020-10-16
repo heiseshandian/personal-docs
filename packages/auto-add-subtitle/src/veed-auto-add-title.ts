@@ -59,6 +59,16 @@ export class Veed {
       timeout,
       waitUntil: 'networkidle0',
     });
+
+    // 坐等上传完成
+    await page.waitForFunction(() => {
+      const match = location.pathname.match(/\w+\/(.*)/);
+      if (!match) {
+        return false;
+      }
+      const [, hash] = match;
+      return hash.replace(/-/g, '').length === 32;
+    });
   }
 
   // 解析字幕
@@ -119,9 +129,12 @@ export class Veed {
     // https://stackoverflow.com/questions/48013969/how-to-maximise-screen-use-in-pupeteer-non-headless
     return puppeteer
       .launch({
-        headless: false,
-        defaultViewport: null,
-        args: ['--start-maximized'],
+        headless: true,
+        defaultViewport: {
+          width: 1920,
+          height: 1024,
+        },
+        args: ['--start-maximized', '--start-fullscreen'],
       })
       .then(async browser => {
         await new ConcurrentTasks(

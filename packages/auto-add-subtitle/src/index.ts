@@ -8,7 +8,7 @@ import {
   makeMap,
   move,
   readdir,
-  sliceMediaByDuration,
+  sliceMediaBySeconds,
   writeFile,
 } from './utils';
 import { mergeSrtFiles } from './utils/subtitles';
@@ -23,6 +23,8 @@ function isFile(file: string) {
   return /\.\w+/.test(file);
 }
 
+export const uniq = (arr: Array<any>) => Array.from(new Set(arr));
+
 async function prepareMp3Files() {
   const files = await readdir(videoDir).catch(handleError);
   if (!files) {
@@ -35,11 +37,12 @@ async function prepareMp3Files() {
   );
 
   await new ConcurrentTasks(
-    files.filter(isFile).map(file => async () => {
-      await sliceMediaByDuration(
-        path.resolve(videoDir, file.replace(/\.\w$/, '.mp3')),
-        6 * 60,
-      );
+    uniq(
+      files
+        .filter(isFile)
+        .map(file => path.resolve(videoDir, file.replace(/\.\w+$/, '.mp3'))),
+    ).map(file => async () => {
+      await sliceMediaBySeconds(file, 6 * 60);
     }),
   ).run();
 }

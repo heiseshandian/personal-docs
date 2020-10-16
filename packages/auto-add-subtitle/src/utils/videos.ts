@@ -99,7 +99,7 @@ export async function sliceMediaBySize(mediaPath: string, maxSize: string) {
   return await sliceMediaByChunks(mediaPath, chunks);
 }
 
-export async function sliceMediaByDuration(
+export async function sliceMediaBySeconds(
   mediaPath: string,
   maxSeconds: number,
 ) {
