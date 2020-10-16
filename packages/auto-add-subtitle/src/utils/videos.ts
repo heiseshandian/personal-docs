@@ -85,34 +85,54 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
           });
         });
       }),
-    'slicing',
   )
     .run()
     .catch(handleError);
 }
 
-export async function sliceMediaBySize(mediaPath: string, maxSize: string) {
-  const chunks = Math.ceil(getFileSize(mediaPath) / parseSize(maxSize));
-  if (chunks <= 1) {
-    return;
+export async function sliceMediaBySize(
+  mediaPaths: string | string[],
+  maxSize: string,
+) {
+  if (typeof mediaPaths === 'string') {
+    mediaPaths = [mediaPaths];
   }
-  return await sliceMediaByChunks(mediaPath, chunks);
+
+  return await new ConcurrentTasks<string[]>(
+    mediaPaths.map(mediaPath => async () => {
+      const chunks = Math.ceil(getFileSize(mediaPath) / parseSize(maxSize));
+      if (chunks <= 1) {
+        return;
+      }
+      return await sliceMediaByChunks(mediaPath, chunks);
+    }),
+    'slicing',
+  ).run();
 }
 
 export async function sliceMediaBySeconds(
-  mediaPath: string,
+  mediaPaths: string | string[],
   maxSeconds: number,
 ) {
-  const duration = await getDuration(mediaPath);
-  if (!duration) {
-    return;
-  }
-  const chunks = Math.ceil(parseDuration(duration) / maxSeconds);
-  if (chunks <= 1) {
-    return;
+  if (typeof mediaPaths === 'string') {
+    mediaPaths = [mediaPaths];
   }
 
-  return await sliceMediaByChunks(mediaPath, chunks);
+  return await new ConcurrentTasks<string[]>(
+    mediaPaths.map(mediaPath => async () => {
+      const duration = await getDuration(mediaPath);
+      if (!duration) {
+        return;
+      }
+      const chunks = Math.ceil(parseDuration(duration) / maxSeconds);
+      if (chunks <= 1) {
+        return;
+      }
+
+      return await sliceMediaByChunks(mediaPath, chunks);
+    }),
+    'slicing',
+  ).run();
 }
 
 // https://trac.ffmpeg.org/wiki/Concatenate

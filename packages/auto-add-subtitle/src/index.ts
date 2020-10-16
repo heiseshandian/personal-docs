@@ -83,7 +83,9 @@ async function mergeSrtChunks() {
     .filter(file => /chunks_\d+/.test(file))
     .map(file => path.resolve(videoDir, `parsed/${file}`))
     .reduce((acc: Record<string, string[]>, cur) => {
-      const [, num] = cur.match(/_([\d.]+)_chunks/) || [cur, 0];
+      const [, num] = cur.match(
+        /default_Project Name_(.+)_chunks_\d+\.mp3\.srt/,
+      ) || [cur, 0];
       if (!acc[num]) {
         acc[num] = [cur];
       } else {
@@ -113,7 +115,8 @@ async function renameSrtFiles() {
 
   await Promise.all(
     files
-      .filter(file => /default_Project Name_(?:[\d.]+)\.mp3\.srt/.test(file))
+      .filter(file => !/chunks/.test(file))
+      .filter(file => /default_Project Name_(.+)\.mp3\.srt/.test(file))
       .map(file => path.resolve(videoDir, `parsed/${file}`))
       .map(file =>
         move(

@@ -122,6 +122,10 @@ export class Veed {
   }
 
   public static async parseSubtitle(audios: Array<string>) {
+    if (audios.length <= 0) {
+      return;
+    }
+
     const {
       config: { url },
     } = this;

@@ -25,7 +25,7 @@ test('slice video', async () => {
 
   await Promise.all(
     [result1, result2].map(result =>
-      result ? cleanup(result) : Promise.resolve(),
+      result ? cleanup(result[0]) : Promise.resolve(),
     ),
   );
 
