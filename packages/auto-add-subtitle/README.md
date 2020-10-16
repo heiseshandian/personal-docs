@@ -10,7 +10,6 @@
 
 - 对外提供 cli
 - 支持并行加字幕（上传操作串行，其他操作并行）
-- 自动加字幕优化（无头模式，并发，成功率）
 - 目标使用情况 videos -> videos + srts（其他所有中间文件都需要清理掉）
 - 使用 [api-extractor](https://api-extractor.com/) 管理接口变更
 
