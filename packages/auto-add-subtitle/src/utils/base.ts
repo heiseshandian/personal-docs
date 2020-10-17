@@ -6,11 +6,10 @@ export function md5(data: string) {
 
 export function callback2Promise<T>(fn: (...params: Array<any>) => void) {
   return (...rest: Array<any>): Promise<T> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       fn(...rest, (err: NodeJS.ErrnoException, ...args: Array<any>) => {
         if (err) {
-          // 此处直接handleError会导致程序退出（迷惑中）
-          reject(err);
+          handleError(err);
         } else {
           resolve(
             args.length === 0 ? true : args.length === 1 ? args[0] : args,

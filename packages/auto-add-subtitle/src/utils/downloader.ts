@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import filenamify from 'filenamify';
 import fs from 'fs';
+import { handleError } from './base';
 import { toValidFilePath } from './path';
 import { MultiProgressBar } from './progress';
 
@@ -19,12 +20,12 @@ export async function download(url: string, dest: string) {
   showProgressBar(response);
   writeStreamToFile(response.data, dest);
 
-  return await new Promise<boolean | AxiosError>((resolve, reject) => {
+  return await new Promise<boolean | AxiosError>(resolve => {
     response.data.on('end', () => {
       resolve(true);
     });
     response.data.on('error', (err: AxiosError) => {
-      reject(err);
+      handleError(err);
     });
   });
 }

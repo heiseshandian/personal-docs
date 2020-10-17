@@ -1,4 +1,5 @@
 import os from 'os';
+import { handleError } from './base';
 import { MultiProgressBar, withProgress } from './progress';
 
 type Task = () => Promise<any>;
@@ -21,7 +22,7 @@ export class ConcurrentTasks<T> {
 
   constructor(tasks: Array<Task>, msg?: string) {
     this.tasks = tasks.map((task, i) => async () => {
-      const result = await task().catch(err => this._reject?.call(this, err));
+      const result = await task().catch(handleError);
       this._results[i] = result;
       this.doneTasks += 1;
 
@@ -47,11 +48,9 @@ export class ConcurrentTasks<T> {
     this._results = new Array(tasks.length);
 
     this._resolve = null;
-    this._reject = null;
   }
 
   private _resolve: ((value: Array<T>) => void) | null;
-  private _reject: ((reason?: any) => void) | null;
   private _results: Array<any>;
 
   private runTask(task: Task) {
@@ -60,9 +59,8 @@ export class ConcurrentTasks<T> {
   }
 
   public run(maxConcurrent: number = os.cpus().length): Promise<Array<T>> {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       this._resolve = resolve;
-      this._reject = reject;
 
       this.tasks.slice(0, maxConcurrent).forEach(task => this.runTask(task));
     });
