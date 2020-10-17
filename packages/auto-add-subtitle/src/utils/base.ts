@@ -45,3 +45,5 @@ export function delay(timeout: number) {
     setTimeout(() => resolve(), timeout);
   });
 }
+
+export const uniq = (arr: Array<any>) => Array.from(new Set(arr));

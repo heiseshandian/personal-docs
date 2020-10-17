@@ -141,7 +141,7 @@ export class Veed {
           width: 1920,
           height: 1024,
         },
-        args: ['--start-maximized', '--start-fullscreen'],
+        args: ['--start-maximized'],
       })
       .then(async browser => {
         await new ConcurrentTasks(
