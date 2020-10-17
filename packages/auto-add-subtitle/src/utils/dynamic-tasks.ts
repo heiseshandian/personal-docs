@@ -28,7 +28,9 @@ export class DynamicTasks<T> {
 
   private checkShouldResolve() {
     if (this.isEnd && this.doneTasksCount === this.tasksCount) {
-      this.resolve?.call(this, this.results);
+      // 这里之所以使用 this.results.slice() 是因为数组是引用类型，
+      // resolve之后若通过add继续添加任务则会导致拿到的result发生变更
+      this.resolve?.call(this, this.results.slice());
     }
   }
 
