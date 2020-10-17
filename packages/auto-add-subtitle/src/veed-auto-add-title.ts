@@ -27,7 +27,7 @@ export class Veed {
     downloadXpath:
       '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div[1]/div[2]/div/span',
 
-    timeout: 1000 * 60 * 10,
+    timeout: 1000 * 60 * 15,
   };
 
   private static async safeClick(page: Page, selector: string) {
@@ -61,14 +61,17 @@ export class Veed {
     });
 
     // 坐等上传完成
-    await page.waitForFunction(() => {
-      const match = location.pathname.match(/\w+\/(.*)/);
-      if (!match) {
-        return false;
-      }
-      const [, hash] = match;
-      return hash.replace(/-/g, '').length === 32;
-    });
+    await page.waitForFunction(
+      () => {
+        const match = location.pathname.match(/\w+\/(.*)/);
+        if (!match) {
+          return false;
+        }
+        const [, hash] = match;
+        return hash.replace(/-/g, '').length === 32;
+      },
+      { timeout },
+    );
   }
 
   // 解析字幕
@@ -83,8 +86,8 @@ export class Veed {
     } = this.config;
 
     await Promise.all([
-      page.waitForSelector(closeSelector),
-      page.waitForSelector(subtitleSelector),
+      page.waitForSelector(closeSelector, { timeout }),
+      page.waitForSelector(subtitleSelector, { timeout }),
     ]);
 
     await this.safeClick(page, closeSelector);
@@ -159,7 +162,7 @@ export class Veed {
             }, 1000 * 10);
           }),
           'parsing subtitle',
-        ).run(1);
+        ).run();
 
         // 等待文件下载完再关闭浏览器
         await delay(1000 * 10);
