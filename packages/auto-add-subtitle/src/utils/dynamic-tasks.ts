@@ -15,6 +15,7 @@ export class DynamicTasks<T> {
     this.resolve = null;
     this.isEnd = false;
 
+    this.tasksCache = [];
     this.hasRan = false;
   }
 
@@ -45,12 +46,24 @@ export class DynamicTasks<T> {
       });
   }
 
+  private tasksCache: Task[];
+
+  private runCacheTasks() {
+    if (this.tasksCache.length > 0) {
+      this.tasksCache.forEach(task => this.runTask(task));
+      this.tasksCache.length = 0;
+    }
+  }
+
   add(task: Task) {
+    this.tasksCount++;
+
     if (!this.hasRan) {
-      throw new Error('call run before add task');
+      this.tasksCache.push(task);
+      return;
     }
 
-    this.tasksCount++;
+    this.runCacheTasks();
     this.runTask(task);
   }
 
@@ -68,6 +81,7 @@ export class DynamicTasks<T> {
 
     return new Promise(resolve => {
       this.resolve = resolve;
+      this.runCacheTasks();
     });
   }
 }
