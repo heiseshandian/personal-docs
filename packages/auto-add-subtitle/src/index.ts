@@ -1,18 +1,18 @@
-import fs from 'fs';
 import path from 'path';
 import {
   changeFormat,
-  ConcurrentTasks,
   getClosestNodeModulesPath,
   handleError,
   makeMap,
   move,
   readdir,
   sliceMediaBySeconds,
+  uniq,
   writeFile,
 } from './utils';
 import { mergeSrtFiles } from './utils/subtitles';
 import { Veed } from './veed-auto-add-title';
+import fs from 'fs';
 
 const videoDir = path.resolve(
   getClosestNodeModulesPath() as string,
@@ -22,8 +22,6 @@ const videoDir = path.resolve(
 function isFile(file: string) {
   return /\.\w+/.test(file);
 }
-
-export const uniq = (arr: Array<any>) => Array.from(new Set(arr));
 
 async function prepareMp3Files() {
   const files = await readdir(videoDir).catch(handleError);
@@ -36,15 +34,14 @@ async function prepareMp3Files() {
     'mp3',
   );
 
-  await new ConcurrentTasks(
+  await sliceMediaBySeconds(
     uniq(
       files
         .filter(isFile)
         .map(file => path.resolve(videoDir, file.replace(/\.\w+$/, '.mp3'))),
-    ).map(file => async () => {
-      await sliceMediaBySeconds(file, 6 * 60);
-    }),
-  ).run();
+    ),
+    6 * 60,
+  );
 }
 
 async function parseSubtitle() {
@@ -52,22 +49,25 @@ async function parseSubtitle() {
     handleError,
   );
   const hasParsed = makeMap(
-    (parsedFiles || []).map(file =>
-      path.parse(file).name.replace('default_Project Name_', ''),
-    ),
+    (parsedFiles || []).map(file => file.replace(/\.\w+$/, '.mp3')),
   );
 
-  const files = await readdir(videoDir);
+  const files = await readdir(path.resolve(videoDir));
+
   await Veed.parseSubtitle(
     files
       .filter(file => file.endsWith('mp3'))
+      .filter(
+        file =>
+          !fs.existsSync(
+            path.resolve(
+              videoDir,
+              file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2'),
+            ),
+          ),
+      )
       .filter(file => !hasParsed(file))
-      .map(file => path.resolve(videoDir, file))
-      .filter(file => {
-        const { dir, name, ext } = path.parse(file);
-        const chunkFile = `${name}_chunks_0${ext}`;
-        return !fs.existsSync(path.resolve(dir, chunkFile));
-      }),
+      .map(file => path.resolve(videoDir, file)),
   );
 }
 
