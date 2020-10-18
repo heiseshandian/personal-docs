@@ -1,4 +1,3 @@
-import { handleError } from './base';
 import { readFile } from './fs';
 
 const sequenceReg = /^([+-]?)(\d+)$/;
