@@ -2,7 +2,6 @@ import { delay, DynamicTasks } from '../src/utils';
 
 test('dynamic tasks,run add end', async () => {
   const dynamicTasks = new DynamicTasks<number>();
-  const promise = dynamicTasks.run();
 
   const [, result] = await Promise.all([
     (async () => {
@@ -14,7 +13,7 @@ test('dynamic tasks,run add end', async () => {
         }
       });
     })(),
-    promise,
+    dynamicTasks.run(),
   ]);
 
   expect(result).toEqual(new Array(11).fill(0).map((_, i) => i));

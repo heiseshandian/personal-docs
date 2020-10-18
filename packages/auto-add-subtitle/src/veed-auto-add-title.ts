@@ -6,6 +6,7 @@ import {
   clearCookies,
   ConcurrentTasks,
   delay,
+  DynamicTasks,
   handleError,
   setWebLifecycleState,
 } from './utils';
@@ -133,41 +134,55 @@ export class Veed {
       config: { url },
     } = this;
 
-    // https://stackoverflow.com/questions/48013969/how-to-maximise-screen-use-in-pupeteer-non-headless
-    return puppeteer
-      .launch({
-        headless: true,
-        defaultViewport: {
-          width: 1920,
-          height: 1024,
-        },
-        args: ['--start-maximized'],
-      })
-      .then(async browser => {
-        await new ConcurrentTasks(
-          audios.map(audio => async () => {
-            const { timeout } = this.config;
-            const page = await browser.newPage();
-            await clearCookies(page);
-            await page.goto(url, { timeout });
-            await setWebLifecycleState(page);
+    const dynamicTasks = new DynamicTasks();
 
-            await this.upload(page, audio);
-            await this._parseSubtitle(page);
-            await this.download(page, audio);
+    const [browser] = await Promise.all([
+      puppeteer
+        .launch({
+          headless: false,
+          defaultViewport: {
+            width: 1920,
+            height: 1024,
+          },
+          args: ['--start-maximized'],
+        })
+        .then(async browser => {
+          await new ConcurrentTasks(
+            audios.map((audio, i) => async () => {
+              const { timeout } = this.config;
+              const page = await browser.newPage();
+              await clearCookies(page);
+              await page.goto(url, { timeout });
+              await setWebLifecycleState(page);
+              await this.upload(page, audio);
 
-            // 下载完再关闭页面
-            setTimeout(() => {
-              page.close();
-            }, 1000 * 10);
-          }),
-          'parsing subtitle',
-        ).run();
+              dynamicTasks.add(
+                // 这里搞个闭包避免page引用错误
+                (page => async () => {
+                  await this._parseSubtitle(page);
+                  await this.download(page, audio);
+                  // 下载完再关闭页面
+                  await delay(1000 * 10);
+                  await page.close();
+                })(page),
+              );
 
-        // 等待文件下载完再关闭浏览器
-        await delay(1000 * 10);
-        await browser.close();
-      })
-      .catch(handleError);
+              if (i === audios.length - 1) {
+                dynamicTasks.end();
+              }
+            }),
+            'parsing subtitle',
+          ).run(1);
+
+          return browser;
+        })
+        .catch(handleError),
+      dynamicTasks.run(),
+    ]);
+
+    await delay(1000 * 10);
+    if (browser) {
+      await browser.close();
+    }
   }
 }
