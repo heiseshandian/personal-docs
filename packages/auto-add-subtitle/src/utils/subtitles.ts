@@ -27,11 +27,7 @@ function merge(primaryLines: string[], secondLines: string[]) {
 
 export async function mergeSrtFiles(srtFiles: string[]) {
   const result = await Promise.all(
-    srtFiles.map(file =>
-      readFile(file)
-        .then(buf => buf.toString())
-        .catch(handleError),
-    ),
+    srtFiles.map(file => readFile(file).then(buf => buf.toString())),
   );
 
   return result

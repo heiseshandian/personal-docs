@@ -33,6 +33,7 @@ function getDuration(videoPath: string) {
     exec(`ffprobe ${JSON.stringify(videoPath)}`, (err, _, stderr) => {
       if (err) {
         handleError(err);
+        resolve();
       } else {
         const match = (stderr || '').match(durationInfoReg);
         resolve(match && match[1]);
@@ -79,15 +80,14 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
           exec(cmd, err => {
             if (err) {
               handleError(err);
+              resolve();
             } else {
               resolve(outputPath);
             }
           });
         });
       }),
-  )
-    .run()
-    .catch(handleError);
+  ).run();
 }
 
 export async function sliceMediaBySize(
@@ -151,6 +151,7 @@ export async function concatMedias(medias: Array<string>, output: string) {
         fs.unlink(tmpFilePath, () => {
           if (err) {
             handleError(err);
+            resolve();
           } else {
             resolve(output);
           }
@@ -184,6 +185,7 @@ export async function changeFormat(
         exec(cmd, err => {
           if (err) {
             handleError(err);
+            resolve();
           } else {
             resolve(outputFile);
           }
@@ -191,9 +193,7 @@ export async function changeFormat(
       });
     }),
     'changing format',
-  )
-    .run()
-    .catch(handleError);
+  ).run();
 }
 
 async function prepareTmpFiles(videos: Array<string>) {
@@ -216,7 +216,7 @@ async function prepareTmpFiles(videos: Array<string>) {
             .replace(/\\\\/g, '/')}`,
       )
       .join(os.EOL),
-  ).catch(handleError);
+  );
 
   return tmpFilePath;
 }

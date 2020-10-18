@@ -42,3 +42,17 @@ test('dynamic tasks,add end run', async () => {
 
   expect(result).toEqual(new Array(10).fill(0).map((_, i) => i));
 });
+
+test('dynamic tasks,handle error', async () => {
+  const dynamicTasks = new DynamicTasks<number>();
+  new Array(10).fill(0).forEach(() =>
+    dynamicTasks.add(async () => {
+      throw new Error();
+    }),
+  );
+
+  dynamicTasks.end();
+  const result = await dynamicTasks.run();
+
+  expect(result).toEqual(new Array(10).fill(0).map(() => undefined));
+});

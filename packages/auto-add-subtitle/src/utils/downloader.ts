@@ -26,6 +26,7 @@ export async function download(url: string, dest: string) {
     });
     response.data.on('error', (err: AxiosError) => {
       handleError(err);
+      resolve(false);
     });
   });
 }

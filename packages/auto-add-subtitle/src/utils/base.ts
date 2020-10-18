@@ -10,6 +10,7 @@ export function callback2Promise<T>(fn: (...params: Array<any>) => void) {
       fn(...rest, (err: NodeJS.ErrnoException, ...args: Array<any>) => {
         if (err) {
           handleError(err);
+          resolve();
         } else {
           resolve(
             args.length === 0 ? true : args.length === 1 ? args[0] : args,
