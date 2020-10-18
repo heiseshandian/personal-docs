@@ -7,11 +7,12 @@ test('dynamic tasks,run add end', async () => {
   const [, result] = await Promise.all([
     (async () => {
       await delay(1000);
-      new Array(11).fill(0).forEach((_, i) => dynamicTasks.add(async () => i));
-      dynamicTasks.end();
-
-      await delay(10);
-      dynamicTasks.add(async () => 10);
+      new Array(11).fill(0).forEach((_, i) => {
+        dynamicTasks.add(async () => i);
+        if (i === 10) {
+          dynamicTasks.end();
+        }
+      });
     })(),
     promise,
   ]);
