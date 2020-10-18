@@ -2,7 +2,6 @@ import path from 'path';
 import {
   changeFormat,
   getClosestNodeModulesPath,
-  handleError,
   makeMap,
   move,
   readdir,
@@ -24,7 +23,7 @@ function isFile(file: string) {
 }
 
 async function prepareMp3Files() {
-  const files = await readdir(videoDir).catch(handleError);
+  const files = await readdir(videoDir);
   if (!files) {
     return;
   }
@@ -45,9 +44,7 @@ async function prepareMp3Files() {
 }
 
 async function parseSubtitle() {
-  const parsedFiles = await readdir(path.resolve(videoDir, 'parsed')).catch(
-    handleError,
-  );
+  const parsedFiles = await readdir(path.resolve(videoDir, 'parsed'));
   const hasParsed = makeMap(
     (parsedFiles || []).map(file =>
       file
@@ -77,9 +74,7 @@ async function parseSubtitle() {
 }
 
 async function mergeSrtChunks() {
-  const files = await readdir(path.resolve(videoDir, 'parsed')).catch(
-    handleError,
-  );
+  const files = await readdir(path.resolve(videoDir, 'parsed'));
   if (!files) {
     return;
   }
@@ -111,9 +106,7 @@ async function mergeSrtChunks() {
 }
 
 async function renameSrtFiles() {
-  const files = await readdir(path.resolve(videoDir, 'parsed')).catch(
-    handleError,
-  );
+  const files = await readdir(path.resolve(videoDir, 'parsed'));
   if (!files) {
     return;
   }
