@@ -49,7 +49,12 @@ async function parseSubtitle() {
     handleError,
   );
   const hasParsed = makeMap(
-    (parsedFiles || []).map(file => file.replace(/\.\w+$/, '.mp3')),
+    (parsedFiles || []).map(file =>
+      file
+        .replace('default_Project Name_', '')
+        .replace('.mp3', '')
+        .replace(/\.\w+$/, '.mp3'),
+    ),
   );
 
   const files = await readdir(path.resolve(videoDir));
