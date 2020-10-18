@@ -103,7 +103,7 @@ export class Veed {
     const { dir } = path.parse(audio);
     // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
     // @ts-ignore
-    await page._client.send('Page.setDownloadBehavior', {
+    await page._client.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
       downloadPath: path.resolve(dir, 'parsed'),
     });
@@ -134,7 +134,7 @@ export class Veed {
       config: { url },
     } = this;
 
-    const dynamicTasks = new DynamicTasks();
+    const dynamicTasks = new DynamicTasks('parsing subtitles');
 
     const [browser] = await Promise.all([
       puppeteer
@@ -156,22 +156,19 @@ export class Veed {
               await setWebLifecycleState(page);
               await this.upload(page, audio);
 
-              dynamicTasks.add(
-                // 这里搞个闭包避免page引用错误
-                (page => async () => {
-                  await this._parseSubtitle(page);
-                  await this.download(page, audio);
-                  // 下载完再关闭页面
-                  await delay(1000 * 10);
-                  await page.close();
-                })(page),
-              );
+              dynamicTasks.add(async () => {
+                await this._parseSubtitle(page);
+                await this.download(page, audio);
+                // 下载完再关闭页面
+                await delay(1000 * 10);
+                await page.close();
+              });
 
               if (i === audios.length - 1) {
                 dynamicTasks.end();
               }
             }),
-            'parsing subtitle',
+            'uploading files',
           ).run(1);
 
           return browser;

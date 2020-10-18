@@ -1,14 +1,15 @@
 import { handleError } from './base';
+import { MultiProgressBar } from './progress';
 
 type Task = () => Promise<any>;
 
 export class DynamicTasks<T> {
   private isEnd;
-  private tasksCount: number;
+  private tasks: Task[];
   private doneTasksCount: number;
 
-  constructor() {
-    this.tasksCount = 0;
+  constructor(progressMsg?: string) {
+    this.tasks = [];
     this.doneTasksCount = 0;
 
     this.results = [];
@@ -17,6 +18,9 @@ export class DynamicTasks<T> {
 
     this.tasksCache = [];
     this.hasRan = false;
+
+    this.progressMsg = progressMsg;
+    this.bar = null;
   }
 
   private results: any[];
@@ -25,10 +29,14 @@ export class DynamicTasks<T> {
     this.results.push(result);
     this.doneTasksCount++;
     this.checkShouldResolve();
+
+    if (this.bar) {
+      this.bar.tick();
+    }
   }
 
   private checkShouldResolve() {
-    if (this.isEnd && this.doneTasksCount === this.tasksCount) {
+    if (this.isEnd && this.doneTasksCount === this.tasks.length) {
       // 这里之所以使用 this.results.slice() 是因为数组是引用类型，
       // resolve之后若通过add继续添加任务则会导致拿到的result发生变更
       this.resolve?.call(this, this.results.slice());
@@ -56,7 +64,7 @@ export class DynamicTasks<T> {
   }
 
   add(task: Task) {
-    this.tasksCount++;
+    this.tasks.push(task);
 
     if (!this.hasRan) {
       this.tasksCache.push(task);
@@ -67,9 +75,27 @@ export class DynamicTasks<T> {
     this.runTask(task);
   }
 
+  private progressMsg;
+
+  private bar: ProgressBar | null = null;
+
+  private withProgress() {
+    if (!this.progressMsg) {
+      return;
+    }
+
+    if (!this.bar) {
+      this.bar = MultiProgressBar.getProgressBar(this.progressMsg, {
+        total: this.tasks.length,
+        curr: this.doneTasksCount,
+      });
+    }
+  }
+
   end() {
     this.isEnd = true;
     this.checkShouldResolve();
+    this.withProgress();
   }
 
   private resolve: ((value: Array<T>) => void) | null;
