@@ -23,12 +23,12 @@ export class ConcurrentTasks<T> {
   constructor(tasks: Array<Task>, msg?: string) {
     this.tasks = tasks.map((task, i) => async () => {
       const result = await task().catch(handleError);
-      this._results[i] = result;
+      this.results[i] = result;
       this.doneTasks += 1;
 
       // 所有任务已执行结束
       if (this.doneTasks >= tasks.length) {
-        this._resolve?.call(this, this._results);
+        this.resolve?.call(this, this.results);
       }
 
       // 还有任务没被执行
@@ -45,13 +45,13 @@ export class ConcurrentTasks<T> {
 
     this.ranTasks = 0;
     this.doneTasks = 0;
-    this._results = new Array(tasks.length);
+    this.results = new Array(tasks.length);
 
-    this._resolve = null;
+    this.resolve = null;
   }
 
-  private _resolve: ((value: Array<T>) => void) | null;
-  private _results: Array<any>;
+  private resolve: ((value: Array<T>) => void) | null;
+  private results: Array<any>;
 
   private runTask(task: Task) {
     this.ranTasks++;
@@ -60,7 +60,7 @@ export class ConcurrentTasks<T> {
 
   public run(maxConcurrent: number = os.cpus().length): Promise<Array<T>> {
     return new Promise(resolve => {
-      this._resolve = resolve;
+      this.resolve = resolve;
 
       this.tasks.slice(0, maxConcurrent).forEach(task => this.runTask(task));
     });
