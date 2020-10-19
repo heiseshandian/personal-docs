@@ -176,7 +176,10 @@ export async function changeFormat(
 
   return await new ConcurrentTasks<string>(
     videoPaths.map(videoPath => () => {
-      const outputFile = videoPath.replace(/\.\w+$/, `.${outputFormat}`);
+      const outputFile = videoPath.replace(
+        /\.\w+$/,
+        `.${outputFormat.replace(/^\./, '')}`,
+      );
       const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
         outputFile,
       )}`;

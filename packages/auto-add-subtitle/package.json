@@ -9,7 +9,6 @@
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
   "dependencies": {
-    "@types/progress": "^2.0.3",
     "axios": "^0.20.0",
     "filenamify": "^4.2.0",
     "progress": "^2.0.3",
@@ -18,5 +17,11 @@
     "puppeteer-extra-plugin-stealth": "^2.6.2",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/progress": "^2.0.3",
+    "@types/jest": "^26.0.14",
+    "@types/puppeteer": "^3.0.2",
+    "jest": "^26.4.2"
   }
 }
