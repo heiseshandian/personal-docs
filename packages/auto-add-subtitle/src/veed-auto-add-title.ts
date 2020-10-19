@@ -177,7 +177,6 @@ export class Veed {
       dynamicTasks.run(),
     ]);
 
-    await delay(1000 * 10);
     if (browser) {
       await browser.close();
     }

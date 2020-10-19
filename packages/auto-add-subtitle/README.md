@@ -8,7 +8,7 @@
 
 ### 待实现功能
 
-- 对外提供 cli
+- 搞个独立的包对外提供 cli
 - 目标使用情况 videos -> videos + srts（其他所有中间文件都需要清理掉）
 - 使用 [api-extractor](https://api-extractor.com/) 管理接口变更
 
