@@ -2,9 +2,9 @@
   "name": "auto-add-subtitle",
   "version": "1.0.0",
   "description": "自动为视频添加字幕",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "build": "tsc"
   },
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
@@ -23,5 +23,8 @@
     "@types/jest": "^26.0.14",
     "@types/puppeteer": "^3.0.2",
     "jest": "^26.4.2"
+  },
+  "bin": {
+    "auto-add-subtitle": "./bin/src/cli.js"
   }
 }
