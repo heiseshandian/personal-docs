@@ -9,7 +9,6 @@ import {
   move,
   readdir,
   sliceMediaBySeconds,
-  uniq,
   writeFile,
 } from './utils';
 import { mergeSrtFiles } from './utils/subtitles';
@@ -22,12 +21,18 @@ function isSrtFile(file: string) {
   return /\.srt$/.test(file);
 }
 
+function isMp3File(file: string) {
+  return /\.mp3$/.test(file);
+}
+
+function toAbsolutePath(dir: string, file: string) {
+  return path.resolve(dir, file);
+}
+
 export default class AutoAddSubtitle {
   private TEMP_DIR = 'parsed_auto_add_subtitle';
 
   private videoDir;
-
-  private chunkSeconds;
 
   constructor(videoDir: string, chunkSeconds: number = 6 * 60) {
     this.videoDir = videoDir;
@@ -44,30 +49,26 @@ export default class AutoAddSubtitle {
     await clean(path.resolve(videoDir, TEMP_DIR));
   }
 
+  private chunkSeconds;
+
   private async prepareMp3Files() {
     const { videoDir, TEMP_DIR, chunkSeconds } = this;
     const files = await readdir(videoDir);
-    if (!files) {
-      return;
-    }
-
     const tmpPath = path.resolve(videoDir, TEMP_DIR);
 
     await changeFormat(
-      files
-        .filter(isFile)
-        .filter(file => !/\.mp3$/.test(file))
-        .map(file => path.resolve(videoDir, file)),
+      (files || [])
+        .filter(file => isFile(file) && !isMp3File(file))
+        .map(file => toAbsolutePath(videoDir, file)),
       'mp3',
       tmpPath,
     );
 
-    const mp3Files = await readdir(tmpPath);
-    if (!mp3Files) {
-      return;
-    }
+    const tmpFiles = await readdir(tmpPath);
     await sliceMediaBySeconds(
-      uniq(mp3Files.filter(isFile).map(file => path.resolve(tmpPath, file))),
+      (tmpFiles || [])
+        .filter(isMp3File)
+        .map(file => toAbsolutePath(tmpPath, file)),
       chunkSeconds,
     );
   }
@@ -90,7 +91,7 @@ export default class AutoAddSubtitle {
 
     await Veed.parseSubtitle(
       files
-        .filter(file => file.endsWith('mp3'))
+        .filter(isMp3File)
         .filter(
           file =>
             !fs.existsSync(
@@ -116,13 +117,13 @@ export default class AutoAddSubtitle {
       .filter(file => /chunks_\d+/.test(file) && isSrtFile(file))
       .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
       .reduce((acc: Record<string, string[]>, cur) => {
-        const [, num] = cur.match(
+        const [, original] = cur.match(
           /default_Project Name_(.+)_chunks_\d+\.mp3\.srt/,
         ) || [cur, 0];
-        if (!acc[num]) {
-          acc[num] = [cur];
+        if (!acc[original]) {
+          acc[original] = [cur];
         } else {
-          acc[num].push(cur);
+          acc[original].push(cur);
         }
         return acc;
       }, {});
