@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/heiseshandian/personal-docs/compare/v1.5.0...v1.6.0) (2020-10-20)
+
+
+### Features
+
+* 更新子包的github相关信息 ([b6a591b](https://github.com/heiseshandian/personal-docs/commit/b6a591beb60dc0daf0023396ce8752553ce553b5))
+
+
+
+
+
 # 1.1.0 (2020-10-20)
 
 
