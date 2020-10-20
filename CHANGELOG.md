@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/heiseshandian/personal-docs/compare/v1.8.0...v1.9.0) (2020-10-20)
+
+
+### Bug Fixes
+
+* 字幕解析程序支持传入临时路径 ([389b20e](https://github.com/heiseshandian/personal-docs/commit/389b20e280d17a1f99f3c3c59f1ac673482287a6))
+
+
+### Features
+
+* 目录结构调整，修改格式化配置文件 ([d8b361a](https://github.com/heiseshandian/personal-docs/commit/d8b361a89c042dd58f8e975449cfd7ca3764f05f))
+
+
+
+
+
 # [1.8.0](https://github.com/heiseshandian/personal-docs/compare/v1.7.0...v1.8.0) (2020-10-20)
 
 
