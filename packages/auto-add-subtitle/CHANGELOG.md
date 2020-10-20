@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/heiseshandian/personal-docs/compare/v1.6.0...v1.7.0) (2020-10-20)
+
+
+### Features
+
+* 通过npmrc指定chromium下载源 ([dc7e058](https://github.com/heiseshandian/personal-docs/commit/dc7e0583c2a148464ce4d84897f784a8f5d71d52))
+
+
+
+
+
 # [1.6.0](https://github.com/heiseshandian/personal-docs/compare/v1.5.0...v1.6.0) (2020-10-20)
 
 
