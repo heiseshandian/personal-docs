@@ -4,14 +4,14 @@
   "description": "自动为视频添加字幕",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc",
-    "beforeinstall": "npm config set puppeteer_download_host https://npm.taobao.org/mirrors"
+    "build": "tsc"
   },
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.20.0",
     "filenamify": "^4.2.0",
+    "minimist": "^1.2.5",
     "progress": "^2.0.3",
     "puppeteer": "^5.3.1",
     "puppeteer-extra": "^3.1.15",
