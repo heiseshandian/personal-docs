@@ -9,7 +9,7 @@ import {
   DynamicTasks,
   handleError,
   setWebLifecycleState,
-} from './utils';
+} from '../utils';
 
 puppeteer.use(StealthPlugin());
 

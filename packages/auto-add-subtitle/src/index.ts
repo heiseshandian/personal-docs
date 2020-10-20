@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { Veed } from './parsers/veed-auto-add-title';
 import {
   changeFormat,
   makeMap,
@@ -10,7 +11,6 @@ import {
   writeFile,
 } from './utils';
 import { mergeSrtFiles } from './utils/subtitles';
-import { Veed } from './veed-auto-add-title';
 
 function isFile(file: string) {
   return /\.\w+/.test(file);

@@ -1,4 +1,4 @@
-import { BilibiliParser } from '../src/bilibili-parser';
+import { BilibiliParser } from '../src/parsers/bilibili-parser';
 
 beforeAll(() => {
   jest.setTimeout(1000 * 30);
