@@ -59,7 +59,7 @@
 
 当然，有人可能会觉得这样写起来有点麻烦，能不能只写一个默认的。借助 webpack-loader 以及一些命名约定我们可以轻松实现此需求。
 
-![](../assets/2020-09-16-14-23-06.png)
+![](assets/2020-09-16-14-23-06.png)
 
 ### webpack-loader 简介
 
@@ -69,29 +69,29 @@
 
 默认情况下 webpack 无法识别 vue，ts，css，图片等文件类型，这些类型都需要借助合适的 loader 转化为 js 模块才能被 webpack 正确处理。
 
-![](../assets/2020-09-16-08-52-16.png)
+![](assets/2020-09-16-08-52-16.png)
 
 ```js
 module.exports = function awesomeLoader(source) {
   // 对source做一些变换
-  return "变换后的source";
+  return '变换后的source';
 };
 ```
 
 #### 举个例子
 
-![](../assets/2020-09-16-09-32-01.png)
+![](assets/2020-09-16-09-32-01.png)
 
 简化版 file-loader
 
 ```js
-import loaderUtils from "loader-utils";
+import loaderUtils from 'loader-utils';
 
 export default function loader(content) {
   const options = loaderUtils.getOptions(this);
 
   const context = options.context || this.rootContext;
-  const name = options.name || "[contenthash].[ext]";
+  const name = options.name || '[contenthash].[ext]';
 
   const url = loaderUtils.interpolateName(this, name, {
     context,
@@ -106,7 +106,7 @@ export default function loader(content) {
 
 #### 目标
 
-![](../assets/2020-09-16-14-23-06.png)
+![](assets/2020-09-16-14-23-06.png)
 
 #### 大概思路
 
@@ -118,7 +118,7 @@ let styles = extractStyles(source);
 
 // 获取所有style标签
 const styleReg = /<\s*style\s*[^>]+>\s*<\/\s*style\s*>/g;
-function extractStyles(source = "") {
+function extractStyles(source = '') {
   return source.match(styleReg) || [];
 }
 ```
@@ -153,8 +153,8 @@ export function getFilesMap(dir: string) {
     if (stats.isDirectory()) {
       const subFiles = fs
         .readdirSync(subPath)
-        .filter((cur) => fs.lstatSync(path.resolve(subPath, cur)).isFile());
-      subFiles.forEach((file) => {
+        .filter(cur => fs.lstatSync(path.resolve(subPath, cur)).isFile());
+      subFiles.forEach(file => {
         if (!acc[file]) {
           acc[file] = [];
         }
@@ -169,24 +169,27 @@ export function getFilesMap(dir: string) {
 - 通过 webpack-loader 在构建时改变代码
   这一步其实就是把前面两步拿到的东西拼接成最终的 code
 
-  ![](../assets/2020-09-16-15-06-09.png)
+  ![](assets/2020-09-16-15-06-09.png)
 
 ```js
 module.exports = function awesomeLoader(source) {
   // 这里的styles和filesCache是第一步和第二步拿到的style数组以及文件map
   const code = styles
-    .map((style) => {
+    .map(style => {
       // extractStyleFileName的作用是从style标签中抽取文件名称
       // "<style src="@/css/home.less"></style>" => "home.less"
       return extractStyleFileName(style);
     })
-    .filter((file) => !!filesCache[file])
-    .map((file) =>
+    .filter(file => !!filesCache[file])
+    .map(file =>
       filesCache[file]
-        .map((themeFile) => `<style lang="less" scoped src="@/css/${themeFile}"></style>`)
-        .join("\n")
+        .map(
+          themeFile =>
+            `<style lang="less" scoped src="@/css/${themeFile}"></style>`,
+        )
+        .join('\n'),
     )
-    .join("\n");
+    .join('\n');
 
   return `${source}\n${code}`;
 };
@@ -205,7 +208,7 @@ module.exports = {
         use: [
           // vue-loader ...
           {
-            loader: "path of our awesome loader",
+            loader: 'path of our awesome loader',
             options: {
               // 参数
             },
@@ -220,9 +223,9 @@ module.exports = {
 #### 完整代码
 
 ```ts
-import { getOptions } from "loader-utils";
-import fs from "fs";
-import path from "path";
+import { getOptions } from 'loader-utils';
+import fs from 'fs';
+import path from 'path';
 
 let filesCache: Record<string, Array<string>>;
 /**
@@ -236,65 +239,67 @@ export default function (source: string) {
     filesCache = getFilesMap(srcPath);
   }
 
-  const styles = extractStyles(source).filter((style) => /src\s*=\s*/.test(style));
+  const styles = extractStyles(source).filter(style =>
+    /src\s*=\s*/.test(style),
+  );
   // 全部是内联样式则不需要处理，提前结束本loader
   if (styles.length === 0) {
     callback(null, source);
     return;
   }
 
-  const styleFilesMap: Record<string, { lang: string; scoped: boolean }> = styles.reduce(
-    (acc, cur) => {
-      const fileName = extractStyleFileName(cur);
-      if (!fileName) {
-        return acc;
-      }
-      const extension = extractExtension(fileName);
-      const hasScoped = /scoped/.test(cur);
-      acc[fileName] = {
-        lang: extension,
-        scoped: hasScoped,
-      };
+  const styleFilesMap: Record<
+    string,
+    { lang: string; scoped: boolean }
+  > = styles.reduce((acc, cur) => {
+    const fileName = extractStyleFileName(cur);
+    if (!fileName) {
       return acc;
-    },
-    {}
-  );
+    }
+    const extension = extractExtension(fileName);
+    const hasScoped = /scoped/.test(cur);
+    acc[fileName] = {
+      lang: extension,
+      scoped: hasScoped,
+    };
+    return acc;
+  }, {});
 
-  const prefix = skin ? `@/skin/${skin}/css` : "@/css";
+  const prefix = skin ? `@/skin/${skin}/css` : '@/css';
   const code = Object.keys(styleFilesMap)
-    .filter((file) => !!filesCache[file])
-    .map((file) => {
+    .filter(file => !!filesCache[file])
+    .map(file => {
       const { lang, scoped } = styleFilesMap[file];
       return filesCache[file]
         .map(
-          (filePath) =>
+          filePath =>
             `<style lang="${lang}" ${
-              scoped ? "scoped" : ""
-            } src="${prefix}/${filePath}"></style>`
+              scoped ? 'scoped' : ''
+            } src="${prefix}/${filePath}"></style>`,
         )
-        .join("\n");
+        .join('\n');
     })
-    .join("\n");
+    .join('\n');
 
   callback(null, `${source}\n${code}`);
 }
 
 // 获取所有style标签
 const styleReg = /<\s*style\s*[^>]+>\s*<\/\s*style\s*>/g;
-function extractStyles(source = "") {
+function extractStyles(source = '') {
   return source.match(styleReg) || [];
 }
 
 // 获取文件扩展名
 const extensionReg = /\.(\w+)$/;
-export function extractExtension(name = "") {
+export function extractExtension(name = '') {
   const match = name.match(extensionReg);
   return match && match[1];
 }
 
 // 获取style标签里的src属性值
 const reg = /@\/css\/([^/.]+\.\w+)/;
-export function extractStyleFileName(source = "") {
+export function extractStyleFileName(source = '') {
   const match = source.match(reg);
   return match && match[1];
 }
@@ -319,8 +324,8 @@ export function getFilesMap(dir: string) {
     if (stats.isDirectory()) {
       const subFiles = fs
         .readdirSync(subPath)
-        .filter((cur) => fs.lstatSync(path.resolve(subPath, cur)).isFile());
-      subFiles.forEach((file) => {
+        .filter(cur => fs.lstatSync(path.resolve(subPath, cur)).isFile());
+      subFiles.forEach(file => {
         if (!acc[file]) {
           acc[file] = [];
         }

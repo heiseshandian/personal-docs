@@ -1,5 +1,5 @@
 [toc]
-![](../assets/2020-07-22-00-39-46.png)
+![](assets/2020-07-22-00-39-46.png)
 
 ### 背景
 
@@ -11,20 +11,20 @@
 
 ```ts
 // 先引入Clipboard，如果是在ts中使用的话需要同时安装clipboard和@types/clipboard
-import Clipboard from "clipboard";
+import Clipboard from 'clipboard';
 
 // 用户点击页面时，往用户剪切板存放指定文本
-const clipboard = new Clipboard("body", {
+const clipboard = new Clipboard('body', {
   text() {
     // 指定文本需要替换为实际文本
-    return "指定文本";
+    return '指定文本';
   },
 });
 // 复制成功或失败后都注销clipboard对象
-clipboard.on("success", function () {
+clipboard.on('success', function () {
   clipboard.destroy();
 });
-clipboard.on("error", function () {
+clipboard.on('error', function () {
   clipboard.destroy();
 });
 ```
@@ -34,7 +34,7 @@ clipboard.on("error", function () {
 #### 问题重现
 
 - 从[CDN-Providers](https://github.com/zenorocha/clipboard.js/wiki/CDN-Providers)下载 clipboard.js 文件
-  ![](../assets/2020-07-22-00-06-01.png)
+  ![](assets/2020-07-22-00-06-01.png)
 
 - 将下载的 js 通过 script 引入页面
 
@@ -55,9 +55,9 @@ clipboard.on("error", function () {
   <body>
     <input type="text" />
     <script>
-      const clipboard = new ClipboardJS("body", {
+      const clipboard = new ClipboardJS('body', {
         text() {
-          return "指定文本";
+          return '指定文本';
         },
       });
     </script>
@@ -66,16 +66,16 @@ clipboard.on("error", function () {
 ```
 
 - 在页面上点击 input，可以看到 input 确实没法获取焦点
-  ![](../assets/clipboard1.gif)
+  ![](assets/clipboard1.gif)
 
 #### 排查原因
 
 - 在上面的 clipboard 文件中找到以下代码并注释掉
-  ![](../assets/2020-07-22-00-17-10.png)
+  ![](assets/2020-07-22-00-17-10.png)
 
 - 打开页面再次点击 input
   可以看到我们点击 input 后右边出现一个 textarea，里面的内容正是我们设置的内容，可以猜测 clipboard 应该是在点击的时候创建了个隐藏的 textarea，textarea 里面的内容就是我们要复制的内容，然后调用 `document.execCommand('copy')`复制 textarea 里面的内容。具体实现逻辑可翻一下源代码查看，这里就不再赘述了
-  ![](../assets/2020-07-22-00-20-42.png)
+  ![](assets/2020-07-22-00-20-42.png)
 
 #### 解决方案
 
@@ -85,19 +85,19 @@ clipboard.on("error", function () {
 
 - 通过阅读源码找到 clipboard 里面是怎么绑定 click 事件的
   ClipboardAction 里面处理了创建隐藏 textarea 并执行复制的逻辑
-  ![](../assets/2020-07-22-00-28-36.png)
+  ![](assets/2020-07-22-00-28-36.png)
 
 - 然后我们在项目里重写下 Clipboard 构造函数下的 onClick 方法
   其实就是把原来的方法存起来，然后判断当前 click 事件的触发元素，如果是 input 就不初始化 ClipboardAction 类（核心逻辑是 rewriteClipboard 方法）
 
 ```ts
-import Clipboard from "clipboard";
+import Clipboard from 'clipboard';
 
 // 用户点击页面时，往用户剪切板存放指定文本
-const clipboard = new Clipboard("body", {
+const clipboard = new Clipboard('body', {
   text() {
     // 指定文本需要替换为实际文本
-    return "指定文本";
+    return '指定文本';
   },
 });
 rewriteClipboard(clipboard);

@@ -5,17 +5,17 @@
 酷音 H5 这边主要做的是彩铃业务，我们的 H5 页面会投放到合作方的 app 里面，然后因为是放在 app 里面所以页面风格、配色这些东西就需要和 app 原来的页面保持一致，这就需要 H5 这边开发很多功能类似，但是页面结构和配色不同的页面，当合作方众多的时候同时维护如此多的页面对于我们来说算是个不小的工作量，目前我们的 h5 页面已经有上千个渠道接入~
 
 - dom 结构相差很大的页面
-  ![](../assets/2020-07-20-09-17-53.png)
+  ![](assets/2020-07-20-09-17-53.png)
 
 - 仅页面配色，元素间距，图标等不一样的页面
-  ![](../assets/2020-07-20-09-18-13.png)
+  ![](assets/2020-07-20-09-18-13.png)
 
 - 大部分 dom 结构类似，仅局部不同的页面
-  ![](../assets/2020-07-20-09-19-13.png)
+  ![](assets/2020-07-20-09-19-13.png)
 
 ### 目标
 
-![](../assets/2020-07-20-09-47-05.png)
+![](assets/2020-07-20-09-47-05.png)
 
 ### 解决思路
 
@@ -30,7 +30,7 @@ Webpack 采用的模块解析包是 enhanced-resolve，两者的核心功能都�
 enhanced-resolve 是 webpack 为了实现高可配的模块解析而专门开发的一个库，依赖于 tapable，支持通过插件的形式改变其行为
 
 以下是通过阅读源码绘制的简化版模块解析流程图
-![](../assets/webpack分享课流程图整理.svg)
+![](assets/webpack分享课流程图整理.svg)
 
 ### 实现思路
 
@@ -42,14 +42,14 @@ enhanced-resolve 是 webpack 为了实现高可配的模块解析而专门开发
 ### 使用方式
 
 ```js
-chainWebpack: (config) => {
+chainWebpack: config => {
   if (skin) {
-    config.resolve.plugin("skin-resolve-plugin").use(
+    config.resolve.plugin('skin-resolve-plugin').use(
       new SkinResolvePlugin({
         pattern: /~?@.*\.(less|css|scss|sass|png|jpg|gif|jpeg|vue)/,
         skinPath: path.resolve(__dirname, `src/skin/${skin}`),
         alias: config.resolve.alias.entries(),
-      })
+      }),
     );
   }
 };
@@ -58,8 +58,8 @@ chainWebpack: (config) => {
 ### 插件源码
 
 ```js
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
 // https://github.com/webpack/enhanced-resolve
 module.exports = class SkinResolvePlugin {
@@ -87,8 +87,8 @@ module.exports = class SkinResolvePlugin {
     }
 
     resolver
-      .getHook("described-resolve")
-      .tapAsync("SkinResolvePlugin", (request, resolveContext, callback) => {
+      .getHook('described-resolve')
+      .tapAsync('SkinResolvePlugin', (request, resolveContext, callback) => {
         /**
          * @type {string}
          */
@@ -106,8 +106,13 @@ module.exports = class SkinResolvePlugin {
           const key = keys[i];
 
           if (innerRequest.startsWith(key)) {
-            const innerRequestWithoutAlias = innerRequest.substr(key.length + 1);
-            const newRequestStr = path.resolve(skinPath, innerRequestWithoutAlias);
+            const innerRequestWithoutAlias = innerRequest.substr(
+              key.length + 1,
+            );
+            const newRequestStr = path.resolve(
+              skinPath,
+              innerRequestWithoutAlias,
+            );
 
             // 替换路径不存在提前结束
             if (!fs.existsSync(newRequestStr)) {
@@ -120,7 +125,7 @@ module.exports = class SkinResolvePlugin {
             });
 
             return resolver.doResolve(
-              "resolve",
+              'resolve',
               obj,
               `SkinResolvePlugin ${newRequestStr}`,
               resolveContext,
@@ -129,7 +134,7 @@ module.exports = class SkinResolvePlugin {
                 // Don't allow other aliasing or raw request
                 if (result === undefined) return callback(null, null);
                 return callback(null, result);
-              }
+              },
             );
           }
         }

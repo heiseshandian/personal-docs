@@ -13,7 +13,7 @@
 1、 初始化一个全局的 Video 对象，此对象全程唯一，不重复创建。
 
 ```js
-videoElem = document.createElement("video");
+videoElem = document.createElement('video');
 ```
 
 2、 预览页上放置个视频插槽，用户点击播放的时候获取插槽上的视频地址，然后用这个地址去初始化第一步的全局 video 对象，再把这个 video 对象动态插入到插槽中
@@ -90,25 +90,25 @@ play(url: string, slot: HTMLElement) {
 #### 同层播放
 
 ```js
-this.videoElem.setAttribute("playsinline", "true");
-this.videoElem.setAttribute("webkit-playsinline", "true");
+this.videoElem.setAttribute('playsinline', 'true');
+this.videoElem.setAttribute('webkit-playsinline', 'true');
 // https://x5.tencent.com/tbs/guide/video.html
-this.videoElem.setAttribute("x5-video-player-type", "h5-page");
+this.videoElem.setAttribute('x5-video-player-type', 'h5-page');
 ```
 
 #### 客户端默认 poster 问题
 
-![](../assets/2020-07-16-20-10-01.png)
+![](assets/2020-07-16-20-10-01.png)
 
 > 等视频开始播放的时候再展示 video 原始
 
 ```js
-this.videoElem.addEventListener("timeupdate", () => {
-  this.mitt.emit("timeupdate");
+this.videoElem.addEventListener('timeupdate', () => {
+  this.mitt.emit('timeupdate');
   // 这里等视频开始播放之后再展示视频，避免某些手机上展示视频组件默认poster图片，
   // 这里之所以写10**-6是因为在部分老机子上写大于0还是会展示默认poster图案
   if (this.videoElem.currentTime > 10 ** -6) {
-    this.videoElem.style.display = "block";
+    this.videoElem.style.display = 'block';
   }
 });
 ```
