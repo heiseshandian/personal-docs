@@ -1,6 +1,6 @@
 {
   "name": "auto-add-subtitle",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "自动为视频添加字幕",
   "main": "index.ts",
   "scripts": {
@@ -19,8 +19,8 @@
     "typescript": "^4.0.3"
   },
   "devDependencies": {
-    "@types/progress": "^2.0.3",
     "@types/jest": "^26.0.14",
+    "@types/progress": "^2.0.3",
     "@types/puppeteer": "^3.0.2",
     "jest": "^26.4.2"
   },
