@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/heiseshandian/personal-docs/compare/v1.4.0...v1.5.0) (2020-10-20)
+
+
+### Features
+
+* 通过scripts指定chromium安装源 ([7ccfe8e](https://github.com/heiseshandian/personal-docs/commit/7ccfe8e39738f5ee9274435165be5982cbcbf06e))
+
+
+
+
+
 # [1.4.0](https://github.com/heiseshandian/personal-docs/compare/v1.3.0...v1.4.0) (2020-10-20)
 
 
