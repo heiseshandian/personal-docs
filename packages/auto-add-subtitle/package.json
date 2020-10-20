@@ -28,6 +28,15 @@
   "bin": {
     "auto-add-subtitle": "./bin/cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/auto-add-subtitle"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/auto-add-subtitle/README.md",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   }
