@@ -25,6 +25,6 @@
     "jest": "^26.4.2"
   },
   "bin": {
-    "auto-add-subtitle": "./bin/src/cli.js"
+    "auto-add-subtitle": "./bin/cli.js"
   }
 }
