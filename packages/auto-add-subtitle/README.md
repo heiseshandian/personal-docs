@@ -14,7 +14,7 @@
 
 ### 视频基本概念
 
-![](assets/2020-10-20-09-24-00.png)
+![](../../assets/2020-10-12-17-13-28.png)
 
 - container format
   avi,mp4 这种属于容器类型
@@ -27,4 +27,4 @@
 - packets
   压缩后的数据单元，一个 packets 可以包含多个完整的 frames
 - srt files
-  ![](assets/2020-10-20-09-24-24.png)
+  ![](../../assets/2020-10-15-09-22-12.png)
