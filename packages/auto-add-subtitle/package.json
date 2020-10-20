@@ -4,7 +4,8 @@
   "description": "自动为视频添加字幕",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "preinstall": "npm config set puppeteer_download_host https://npm.taobao.org/mirrors"
   },
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
