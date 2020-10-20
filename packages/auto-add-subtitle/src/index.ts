@@ -3,6 +3,8 @@ import path from 'path';
 import { Veed } from './parsers/veed-auto-add-title';
 import {
   changeFormat,
+  clean,
+  ensurePathExists,
   makeMap,
   move,
   readdir,
@@ -17,7 +19,7 @@ function isFile(file: string) {
 }
 
 export default class AutoAddSubtitle {
-  private TEMP_PATH = 'parsed_auto_add_subtitle';
+  private TEMP_DIR = 'parsed_auto_add_subtitle';
 
   private videoDir;
 
@@ -25,12 +27,24 @@ export default class AutoAddSubtitle {
     this.videoDir = videoDir;
   }
 
+  private async prepareTmpDir() {
+    const { videoDir, TEMP_DIR } = this;
+    return ensurePathExists(path.resolve(videoDir, TEMP_DIR));
+  }
+
+  private async rmTmpDir() {
+    const { videoDir, TEMP_DIR } = this;
+    await clean(path.resolve(videoDir, TEMP_DIR));
+  }
+
   private async prepareMp3Files() {
-    const { videoDir } = this;
+    const { videoDir, TEMP_DIR } = this;
     const files = await readdir(videoDir);
     if (!files) {
       return;
     }
+
+    const tmpPath = path.resolve(videoDir, TEMP_DIR);
 
     await changeFormat(
       files
@@ -38,24 +52,25 @@ export default class AutoAddSubtitle {
         .filter(file => !/\.mp3$/.test(file))
         .map(file => path.resolve(videoDir, file)),
       'mp3',
+      tmpPath,
     );
 
+    const mp3Files = await readdir(tmpPath);
+    if (!mp3Files) {
+      return;
+    }
     await sliceMediaBySeconds(
-      uniq(
-        files
-          .filter(isFile)
-          .map(file => path.resolve(videoDir, file.replace(/\.\w+$/, '.mp3'))),
-      ),
+      uniq(mp3Files.filter(isFile).map(file => path.resolve(tmpPath, file))),
       6 * 60,
     );
   }
 
   private async parseSubtitle() {
-    const { videoDir, TEMP_PATH } = this;
+    const { videoDir, TEMP_DIR } = this;
 
-    const parsedFiles = await readdir(path.resolve(videoDir, TEMP_PATH));
+    const parsedFiles = await readdir(path.resolve(videoDir, TEMP_DIR));
     const hasParsed = makeMap(
-      (parsedFiles || []).map(file =>
+      (parsedFiles || []).filter(isFile).map(file =>
         file
           .replace('default_Project Name_', '')
           .replace('.mp3', '')
@@ -63,35 +78,36 @@ export default class AutoAddSubtitle {
       ),
     );
 
-    const files = await readdir(path.resolve(videoDir));
+    const tmpPath = path.resolve(videoDir, TEMP_DIR);
+    const files = await readdir(tmpPath);
 
-    await new Veed(TEMP_PATH).parseSubtitle(
+    await Veed.parseSubtitle(
       files
         .filter(file => file.endsWith('mp3'))
         .filter(
           file =>
             !fs.existsSync(
               path.resolve(
-                videoDir,
+                tmpPath,
                 file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2'),
               ),
             ),
         )
         .filter(file => !hasParsed(file))
-        .map(file => path.resolve(videoDir, file)),
+        .map(file => path.resolve(tmpPath, file)),
     );
   }
 
   private async mergeSrtChunks() {
-    const { videoDir, TEMP_PATH } = this;
-    const files = await readdir(path.resolve(videoDir, TEMP_PATH));
+    const { videoDir, TEMP_DIR } = this;
+    const files = await readdir(path.resolve(videoDir, TEMP_DIR));
     if (!files) {
       return;
     }
 
     const groupedFiles = files
       .filter(file => /chunks_\d+/.test(file))
-      .map(file => path.resolve(videoDir, `${TEMP_PATH}/${file}`))
+      .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
       .reduce((acc: Record<string, string[]>, cur) => {
         const [, num] = cur.match(
           /default_Project Name_(.+)_chunks_\d+\.mp3\.srt/,
@@ -110,15 +126,15 @@ export default class AutoAddSubtitle {
 
     await Promise.all(
       Object.keys(groupedFiles).map((key, i) =>
-        writeFile(path.resolve(videoDir, `${TEMP_PATH}/${key}.srt`), result[i]),
+        writeFile(path.resolve(videoDir, `${TEMP_DIR}/${key}.srt`), result[i]),
       ),
     );
   }
 
   private async renameSrtFiles() {
-    const { videoDir, TEMP_PATH } = this;
+    const { videoDir, TEMP_DIR } = this;
 
-    const files = await readdir(path.resolve(videoDir, TEMP_PATH));
+    const files = await readdir(path.resolve(videoDir, TEMP_DIR));
     if (!files) {
       return;
     }
@@ -127,7 +143,7 @@ export default class AutoAddSubtitle {
       files
         .filter(file => !/chunks/.test(file))
         .filter(file => /default_Project Name_(.+)\.mp3\.srt/.test(file))
-        .map(file => path.resolve(videoDir, `${TEMP_PATH}/${file}`))
+        .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
         .map(file =>
           move(
             file,
@@ -138,25 +154,27 @@ export default class AutoAddSubtitle {
   }
 
   private async moveSrtFiles() {
-    const { videoDir, TEMP_PATH } = this;
+    const { videoDir, TEMP_DIR } = this;
+    const tmpPath = path.resolve(videoDir, TEMP_DIR);
 
-    const files = await readdir(videoDir);
+    const files = await readdir(tmpPath);
     await Promise.all(
       files
-        .filter(file => !/chunks/.test(file))
-        .map(file => path.resolve(videoDir, `${TEMP_PATH}/${file}`))
+        .filter(file => !/chunks/.test(file) && /\.srt/.test(file))
+        .map(file => path.resolve(tmpPath, file))
         .map(file => move(file, path.resolve(videoDir, path.parse(file).base))),
     );
   }
 
   public async generateSrtFiles() {
+    await this.prepareTmpDir();
     await this.prepareMp3Files();
 
     await this.parseSubtitle();
-
     await this.mergeSrtChunks();
     await this.renameSrtFiles();
-
     await this.moveSrtFiles();
+
+    await this.rmTmpDir();
   }
 }

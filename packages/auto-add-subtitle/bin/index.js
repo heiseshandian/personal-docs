@@ -49,33 +49,62 @@ function isFile(file) {
 }
 var AutoAddSubtitle = /** @class */ (function () {
     function AutoAddSubtitle(videoDir) {
-        this.TEMP_PATH = 'parsed_auto_add_subtitle';
+        this.TEMP_DIR = 'parsed_auto_add_subtitle';
         this.videoDir = videoDir;
     }
+    AutoAddSubtitle.prototype.prepareTmpDir = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, videoDir, TEMP_DIR;
+            return __generator(this, function (_b) {
+                _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                return [2 /*return*/, utils_1.ensurePathExists(path_1.default.resolve(videoDir, TEMP_DIR))];
+            });
+        });
+    };
+    AutoAddSubtitle.prototype.rmTmpDir = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, videoDir, TEMP_DIR;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                        return [4 /*yield*/, utils_1.clean(path_1.default.resolve(videoDir, TEMP_DIR))];
+                    case 1:
+                        _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     AutoAddSubtitle.prototype.prepareMp3Files = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var videoDir, files;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _a, videoDir, TEMP_DIR, files, tmpPath, mp3Files;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        videoDir = this.videoDir;
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
                         return [4 /*yield*/, utils_1.readdir(videoDir)];
                     case 1:
-                        files = _a.sent();
+                        files = _b.sent();
                         if (!files) {
                             return [2 /*return*/];
                         }
+                        tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
                         return [4 /*yield*/, utils_1.changeFormat(files
                                 .filter(isFile)
                                 .filter(function (file) { return !/\.mp3$/.test(file); })
-                                .map(function (file) { return path_1.default.resolve(videoDir, file); }), 'mp3')];
+                                .map(function (file) { return path_1.default.resolve(videoDir, file); }), 'mp3', tmpPath)];
                     case 2:
-                        _a.sent();
-                        return [4 /*yield*/, utils_1.sliceMediaBySeconds(utils_1.uniq(files
-                                .filter(isFile)
-                                .map(function (file) { return path_1.default.resolve(videoDir, file.replace(/\.\w+$/, '.mp3')); })), 6 * 60)];
+                        _b.sent();
+                        return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 3:
-                        _a.sent();
+                        mp3Files = _b.sent();
+                        if (!mp3Files) {
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, utils_1.sliceMediaBySeconds(utils_1.uniq(mp3Files.filter(isFile).map(function (file) { return path_1.default.resolve(tmpPath, file); })), 6 * 60)];
+                    case 4:
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });
@@ -83,30 +112,31 @@ var AutoAddSubtitle = /** @class */ (function () {
     };
     AutoAddSubtitle.prototype.parseSubtitle = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, videoDir, TEMP_PATH, parsedFiles, hasParsed, files;
+            var _a, videoDir, TEMP_DIR, parsedFiles, hasParsed, tmpPath, files;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = this, videoDir = _a.videoDir, TEMP_PATH = _a.TEMP_PATH;
-                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_PATH))];
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_DIR))];
                     case 1:
                         parsedFiles = _b.sent();
-                        hasParsed = utils_1.makeMap((parsedFiles || []).map(function (file) {
+                        hasParsed = utils_1.makeMap((parsedFiles || []).filter(isFile).map(function (file) {
                             return file
                                 .replace('default_Project Name_', '')
                                 .replace('.mp3', '')
                                 .replace(/\.\w+$/, '.mp3');
                         }));
-                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir))];
+                        tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
+                        return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 2:
                         files = _b.sent();
-                        return [4 /*yield*/, new veed_auto_add_title_1.Veed(TEMP_PATH).parseSubtitle(files
+                        return [4 /*yield*/, veed_auto_add_title_1.Veed.parseSubtitle(files
                                 .filter(function (file) { return file.endsWith('mp3'); })
                                 .filter(function (file) {
-                                return !fs_1.default.existsSync(path_1.default.resolve(videoDir, file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2')));
+                                return !fs_1.default.existsSync(path_1.default.resolve(tmpPath, file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2')));
                             })
                                 .filter(function (file) { return !hasParsed(file); })
-                                .map(function (file) { return path_1.default.resolve(videoDir, file); }))];
+                                .map(function (file) { return path_1.default.resolve(tmpPath, file); }))];
                     case 3:
                         _b.sent();
                         return [2 /*return*/];
@@ -116,12 +146,12 @@ var AutoAddSubtitle = /** @class */ (function () {
     };
     AutoAddSubtitle.prototype.mergeSrtChunks = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, videoDir, TEMP_PATH, files, groupedFiles, result;
+            var _a, videoDir, TEMP_DIR, files, groupedFiles, result;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = this, videoDir = _a.videoDir, TEMP_PATH = _a.TEMP_PATH;
-                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_PATH))];
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_DIR))];
                     case 1:
                         files = _b.sent();
                         if (!files) {
@@ -129,7 +159,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                         }
                         groupedFiles = files
                             .filter(function (file) { return /chunks_\d+/.test(file); })
-                            .map(function (file) { return path_1.default.resolve(videoDir, TEMP_PATH + "/" + file); })
+                            .map(function (file) { return path_1.default.resolve(videoDir, TEMP_DIR + "/" + file); })
                             .reduce(function (acc, cur) {
                             var _a = cur.match(/default_Project Name_(.+)_chunks_\d+\.mp3\.srt/) || [cur, 0], num = _a[1];
                             if (!acc[num]) {
@@ -144,7 +174,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 2:
                         result = _b.sent();
                         return [4 /*yield*/, Promise.all(Object.keys(groupedFiles).map(function (key, i) {
-                                return utils_1.writeFile(path_1.default.resolve(videoDir, TEMP_PATH + "/" + key + ".srt"), result[i]);
+                                return utils_1.writeFile(path_1.default.resolve(videoDir, TEMP_DIR + "/" + key + ".srt"), result[i]);
                             }))];
                     case 3:
                         _b.sent();
@@ -155,12 +185,12 @@ var AutoAddSubtitle = /** @class */ (function () {
     };
     AutoAddSubtitle.prototype.renameSrtFiles = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, videoDir, TEMP_PATH, files;
+            var _a, videoDir, TEMP_DIR, files;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = this, videoDir = _a.videoDir, TEMP_PATH = _a.TEMP_PATH;
-                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_PATH))];
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                        return [4 /*yield*/, utils_1.readdir(path_1.default.resolve(videoDir, TEMP_DIR))];
                     case 1:
                         files = _b.sent();
                         if (!files) {
@@ -169,7 +199,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                         return [4 /*yield*/, Promise.all(files
                                 .filter(function (file) { return !/chunks/.test(file); })
                                 .filter(function (file) { return /default_Project Name_(.+)\.mp3\.srt/.test(file); })
-                                .map(function (file) { return path_1.default.resolve(videoDir, TEMP_PATH + "/" + file); })
+                                .map(function (file) { return path_1.default.resolve(videoDir, TEMP_DIR + "/" + file); })
                                 .map(function (file) {
                                 return utils_1.move(file, file.replace('default_Project Name_', '').replace('.mp3', ''));
                             }))];
@@ -182,17 +212,18 @@ var AutoAddSubtitle = /** @class */ (function () {
     };
     AutoAddSubtitle.prototype.moveSrtFiles = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, videoDir, TEMP_PATH, files;
+            var _a, videoDir, TEMP_DIR, tmpPath, files;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = this, videoDir = _a.videoDir, TEMP_PATH = _a.TEMP_PATH;
-                        return [4 /*yield*/, utils_1.readdir(videoDir)];
+                        _a = this, videoDir = _a.videoDir, TEMP_DIR = _a.TEMP_DIR;
+                        tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
+                        return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 1:
                         files = _b.sent();
                         return [4 /*yield*/, Promise.all(files
-                                .filter(function (file) { return !/chunks/.test(file); })
-                                .map(function (file) { return path_1.default.resolve(videoDir, TEMP_PATH + "/" + file); })
+                                .filter(function (file) { return !/chunks/.test(file) && /\.srt/.test(file); })
+                                .map(function (file) { return path_1.default.resolve(tmpPath, file); })
                                 .map(function (file) { return utils_1.move(file, path_1.default.resolve(videoDir, path_1.default.parse(file).base)); }))];
                     case 2:
                         _b.sent();
@@ -205,20 +236,26 @@ var AutoAddSubtitle = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.prepareMp3Files()];
+                    case 0: return [4 /*yield*/, this.prepareTmpDir()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.parseSubtitle()];
+                        return [4 /*yield*/, this.prepareMp3Files()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, this.mergeSrtChunks()];
+                        return [4 /*yield*/, this.parseSubtitle()];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, this.renameSrtFiles()];
+                        return [4 /*yield*/, this.mergeSrtChunks()];
                     case 4:
                         _a.sent();
-                        return [4 /*yield*/, this.moveSrtFiles()];
+                        return [4 /*yield*/, this.renameSrtFiles()];
                     case 5:
+                        _a.sent();
+                        return [4 /*yield*/, this.moveSrtFiles()];
+                    case 6:
+                        _a.sent();
+                        return [4 /*yield*/, this.rmTmpDir()];
+                    case 7:
                         _a.sent();
                         return [2 /*return*/];
                 }

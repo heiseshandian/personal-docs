@@ -46,22 +46,9 @@ var puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-
 var utils_1 = require("../utils");
 puppeteer_extra_1.default.use(puppeteer_extra_plugin_stealth_1.default());
 var Veed = /** @class */ (function () {
-    function Veed(tmpPath) {
-        this.config = {
-            url: 'https://www.veed.io/',
-            inputFileSelector: '[data-testid="file-input-dropzone"]',
-            subtitleSelector: '[href$="subtitles"]',
-            autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
-            startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
-            subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
-            closeSelector: '[alt^="close"]',
-            translateXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
-            downloadXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div[1]/div[2]/div/span',
-            timeout: 1000 * 60 * 15,
-        };
-        this.tmpPath = tmpPath;
+    function Veed() {
     }
-    Veed.prototype.safeClick = function (page, selector) {
+    Veed.safeClick = function (page, selector) {
         return __awaiter(this, void 0, void 0, function () {
             var timeout;
             return __generator(this, function (_a) {
@@ -79,7 +66,7 @@ var Veed = /** @class */ (function () {
             });
         });
     };
-    Veed.prototype.safeClickXPath = function (page, xpath) {
+    Veed.safeClickXPath = function (page, xpath) {
         return __awaiter(this, void 0, void 0, function () {
             var timeout, elements;
             return __generator(this, function (_a) {
@@ -101,7 +88,7 @@ var Veed = /** @class */ (function () {
         });
     };
     // 上传文件
-    Veed.prototype.upload = function (page, audio) {
+    Veed.upload = function (page, audio) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, inputFileSelector, timeout, uploadBtn;
             return __generator(this, function (_b) {
@@ -142,7 +129,7 @@ var Veed = /** @class */ (function () {
         });
     };
     // 解析字幕
-    Veed.prototype._parseSubtitle = function (page) {
+    Veed._parseSubtitle = function (page) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, subtitleSelector, autoSubtitleSelector, startXPath, subtitlesSelector, closeSelector, timeout;
             return __generator(this, function (_b) {
@@ -178,19 +165,18 @@ var Veed = /** @class */ (function () {
             });
         });
     };
-    Veed.prototype.download = function (page, audio) {
+    Veed.download = function (page, audio) {
         return __awaiter(this, void 0, void 0, function () {
-            var tmpPath, dir, _a, translateXpath, downloadXpath;
+            var dir, _a, translateXpath, downloadXpath;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        tmpPath = this.tmpPath;
                         dir = path_1.default.parse(audio).dir;
                         // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
                         // @ts-ignore
                         return [4 /*yield*/, page._client.send('Browser.setDownloadBehavior', {
                                 behavior: 'allow',
-                                downloadPath: path_1.default.resolve(dir, tmpPath),
+                                downloadPath: path_1.default.resolve(dir),
                             })];
                     case 1:
                         // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
@@ -216,7 +202,7 @@ var Veed = /** @class */ (function () {
             });
         });
     };
-    Veed.prototype.parseSubtitle = function (audios) {
+    Veed.parseSubtitle = function (audios) {
         return __awaiter(this, void 0, void 0, function () {
             var url, dynamicTasks, browser;
             var _this = this;
@@ -312,6 +298,18 @@ var Veed = /** @class */ (function () {
                 }
             });
         });
+    };
+    Veed.config = {
+        url: 'https://www.veed.io/',
+        inputFileSelector: '[data-testid="file-input-dropzone"]',
+        subtitleSelector: '[href$="subtitles"]',
+        autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
+        startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
+        subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
+        closeSelector: '[alt^="close"]',
+        translateXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
+        downloadXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+        timeout: 1000 * 60 * 15,
     };
     return Veed;
 }());

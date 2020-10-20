@@ -1,5 +1,6 @@
 import fs, { PathLike } from 'fs';
 import { callback2Promise } from './base';
+import { execAsync } from './shell';
 
 export const readFile: (path: PathLike) => Promise<Buffer> = callback2Promise(
   fs.readFile,
@@ -17,6 +18,8 @@ export const readdir: (path: string) => Promise<string[]> = callback2Promise(
 export const del: (path: PathLike) => Promise<boolean> = callback2Promise(
   fs.unlink,
 );
+
+export const clean = (path: string) => execAsync(`npx rimraf ${path}`);
 
 export const move: (
   oldPath: PathLike,

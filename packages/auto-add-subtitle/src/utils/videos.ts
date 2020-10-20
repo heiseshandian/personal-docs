@@ -166,6 +166,7 @@ const parseFormat = (filePath: string) => path.parse(filePath).ext.slice(1);
 export async function changeFormat(
   videoPaths: string | Array<string>,
   outputFormat: string,
+  outputDir?: string,
 ) {
   if (typeof videoPaths === 'string') {
     videoPaths = [videoPaths];
@@ -176,9 +177,10 @@ export async function changeFormat(
 
   return await new ConcurrentTasks<string>(
     videoPaths.map(videoPath => () => {
-      const outputFile = videoPath.replace(
-        /\.\w+$/,
-        `.${outputFormat.replace(/^\./, '')}`,
+      const { dir, name } = path.parse(videoPath);
+      const outputFile = path.resolve(
+        outputDir || dir,
+        `${name}.${outputFormat.replace(/^\./, '')}`,
       );
       const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
         outputFile,

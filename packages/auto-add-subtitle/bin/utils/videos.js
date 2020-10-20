@@ -223,7 +223,7 @@ function concatMedias(medias, output) {
 }
 exports.concatMedias = concatMedias;
 var parseFormat = function (filePath) { return path_1.default.parse(filePath).ext.slice(1); };
-function changeFormat(videoPaths, outputFormat) {
+function changeFormat(videoPaths, outputFormat, outputDir) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -233,7 +233,8 @@ function changeFormat(videoPaths, outputFormat) {
                     }
                     videoPaths = videoPaths.filter(function (videoPath) { return parseFormat(videoPath) !== outputFormat; });
                     return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(videoPaths.map(function (videoPath) { return function () {
-                            var outputFile = videoPath.replace(/\.\w+$/, "." + outputFormat.replace(/^\./, ''));
+                            var _a = path_1.default.parse(videoPath), dir = _a.dir, name = _a.name;
+                            var outputFile = path_1.default.resolve(outputDir || dir, name + "." + outputFormat.replace(/^\./, ''));
                             var cmd = "ffmpeg -y -i " + JSON.stringify(videoPath) + " " + JSON.stringify(outputFile);
                             return new Promise(function (resolve) {
                                 child_process_1.exec(cmd, function (err) {

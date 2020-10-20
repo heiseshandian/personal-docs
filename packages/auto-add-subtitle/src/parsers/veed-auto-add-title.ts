@@ -14,7 +14,7 @@ import {
 puppeteer.use(StealthPlugin());
 
 export class Veed {
-  private config = {
+  private static config = {
     url: 'https://www.veed.io/',
 
     inputFileSelector: '[data-testid="file-input-dropzone"]',
@@ -26,25 +26,19 @@ export class Veed {
     translateXpath:
       '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
     downloadXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div[1]/div[2]/div/span',
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div/div[2]/button[1]',
 
     timeout: 1000 * 60 * 15,
   };
 
-  private tmpPath;
-
-  constructor(tmpPath: string) {
-    this.tmpPath = tmpPath;
-  }
-
-  private async safeClick(page: Page, selector: string) {
+  private static async safeClick(page: Page, selector: string) {
     const { timeout } = this.config;
 
     await page.waitForSelector(selector, { timeout });
     await page.click(selector);
   }
 
-  private async safeClickXPath(page: Page, xpath: string) {
+  private static async safeClickXPath(page: Page, xpath: string) {
     const { timeout } = this.config;
 
     await page.waitForXPath(xpath, { timeout });
@@ -53,7 +47,7 @@ export class Veed {
   }
 
   // 上传文件
-  private async upload(page: Page, audio: string) {
+  private static async upload(page: Page, audio: string) {
     const { inputFileSelector, timeout } = this.config;
 
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
@@ -82,7 +76,7 @@ export class Veed {
   }
 
   // 解析字幕
-  private async _parseSubtitle(page: Page) {
+  private static async _parseSubtitle(page: Page) {
     const {
       subtitleSelector,
       autoSubtitleSelector,
@@ -105,14 +99,13 @@ export class Veed {
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
-  private async download(page: Page, audio: string) {
-    const { tmpPath } = this;
+  private static async download(page: Page, audio: string) {
     const { dir } = path.parse(audio);
     // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
     // @ts-ignore
     await page._client.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
-      downloadPath: path.resolve(dir, tmpPath),
+      downloadPath: path.resolve(dir),
     });
 
     const { translateXpath, downloadXpath } = this.config;
@@ -132,7 +125,7 @@ export class Veed {
     }, downloadXpath);
   }
 
-  public async parseSubtitle(audios: Array<string>) {
+  public static async parseSubtitle(audios: Array<string>) {
     if (audios.length <= 0) {
       return;
     }

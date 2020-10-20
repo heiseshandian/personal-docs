@@ -39,13 +39,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ensurePathExists = exports.move = exports.del = exports.readdir = exports.writeFile = exports.readFile = void 0;
+exports.ensurePathExists = exports.move = exports.clean = exports.del = exports.readdir = exports.writeFile = exports.readFile = void 0;
 var fs_1 = __importDefault(require("fs"));
 var base_1 = require("./base");
+var shell_1 = require("./shell");
 exports.readFile = base_1.callback2Promise(fs_1.default.readFile);
 exports.writeFile = base_1.callback2Promise(fs_1.default.writeFile);
 exports.readdir = base_1.callback2Promise(fs_1.default.readdir);
 exports.del = base_1.callback2Promise(fs_1.default.unlink);
+exports.clean = function (path) { return shell_1.execAsync("npx rimraf " + path); };
 exports.move = base_1.callback2Promise(fs_1.default.rename);
 function ensurePathExists(filePath) {
     return __awaiter(this, void 0, void 0, function () {
