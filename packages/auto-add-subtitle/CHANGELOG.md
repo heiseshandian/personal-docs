@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.1](https://github.com/heiseshandian/personal-docs/compare/v1.10.0...v1.10.1) (2020-10-20)
+
+
+### Bug Fixes
+
+* 解析字幕bug修复 ([b91c04c](https://github.com/heiseshandian/personal-docs/commit/b91c04c4a62934a47223ee0d1320da937ee18df9))
+
+
+
+
+
 # [1.10.0](https://github.com/heiseshandian/personal-docs/compare/v1.9.0...v1.10.0) (2020-10-20)
 
 
