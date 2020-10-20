@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/heiseshandian/personal-docs/compare/v1.9.0...v1.10.0) (2020-10-20)
+
+
+### Features
+
+* 字幕解析bug修复 ([e81c0d4](https://github.com/heiseshandian/personal-docs/commit/e81c0d464d46bb4922a2b425c0b3ab3409b41e25))
+* 构建前清理上一次的构建产物 ([2c063df](https://github.com/heiseshandian/personal-docs/commit/2c063df81a2135b356896bf4c3c881d5f2375116))
+
+
+
+
+
 # [1.9.0](https://github.com/heiseshandian/personal-docs/compare/v1.8.0...v1.9.0) (2020-10-20)
 
 
