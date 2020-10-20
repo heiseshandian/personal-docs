@@ -26,10 +26,8 @@ auto-add-subtitle [-vp={需要添加字幕的视频所在目录,默认是当前�
 
 ### 待实现功能
 
-- 补充测试用例，一切可能出错的代码都需要经过测试
-- 搞个独立的包对外提供 cli
-- 目标使用情况 videos -> videos + srts（其他所有中间文件都需要清理掉）
 - 使用 [api-extractor](https://api-extractor.com/) 管理接口变更
+- 换方案识别页面按钮
 
 ### 视频基本概念
 
