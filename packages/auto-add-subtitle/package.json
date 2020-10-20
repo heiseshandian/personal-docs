@@ -26,5 +26,8 @@
   },
   "bin": {
     "auto-add-subtitle": "./bin/cli.js"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
