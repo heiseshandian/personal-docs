@@ -18,13 +18,20 @@ function isFile(file: string) {
   return /\.\w+/.test(file);
 }
 
+function isSrtFile(file: string) {
+  return /\.srt$/.test(file);
+}
+
 export default class AutoAddSubtitle {
   private TEMP_DIR = 'parsed_auto_add_subtitle';
 
   private videoDir;
 
-  constructor(videoDir: string) {
+  private chunkSeconds;
+
+  constructor(videoDir: string, chunkSeconds: number = 6 * 60) {
     this.videoDir = videoDir;
+    this.chunkSeconds = chunkSeconds;
   }
 
   private async prepareTmpDir() {
@@ -38,7 +45,7 @@ export default class AutoAddSubtitle {
   }
 
   private async prepareMp3Files() {
-    const { videoDir, TEMP_DIR } = this;
+    const { videoDir, TEMP_DIR, chunkSeconds } = this;
     const files = await readdir(videoDir);
     if (!files) {
       return;
@@ -61,7 +68,7 @@ export default class AutoAddSubtitle {
     }
     await sliceMediaBySeconds(
       uniq(mp3Files.filter(isFile).map(file => path.resolve(tmpPath, file))),
-      6 * 60,
+      chunkSeconds,
     );
   }
 
@@ -106,7 +113,7 @@ export default class AutoAddSubtitle {
     }
 
     const groupedFiles = files
-      .filter(file => /chunks_\d+/.test(file))
+      .filter(file => /chunks_\d+/.test(file) && isSrtFile(file))
       .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
       .reduce((acc: Record<string, string[]>, cur) => {
         const [, num] = cur.match(
@@ -141,7 +148,7 @@ export default class AutoAddSubtitle {
 
     await Promise.all(
       files
-        .filter(file => !/chunks/.test(file))
+        .filter(file => !/chunks/.test(file) && isSrtFile(file))
         .filter(file => /default_Project Name_(.+)\.mp3\.srt/.test(file))
         .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
         .map(file =>
@@ -160,7 +167,7 @@ export default class AutoAddSubtitle {
     const files = await readdir(tmpPath);
     await Promise.all(
       files
-        .filter(file => !/chunks/.test(file) && /\.srt/.test(file))
+        .filter(file => !/chunks/.test(file) && isSrtFile(file))
         .map(file => path.resolve(tmpPath, file))
         .map(file => move(file, path.resolve(videoDir, path.parse(file).base))),
     );

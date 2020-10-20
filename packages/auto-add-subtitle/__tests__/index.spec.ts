@@ -11,7 +11,7 @@ function isSrtFile(srt: string) {
 test('generate srt files', async () => {
   const videoDir = path.resolve(__dirname, './videos/');
 
-  await new AutoAddSubtitle(videoDir).generateSrtFiles();
+  await new AutoAddSubtitle(videoDir, 10).generateSrtFiles();
 
   const files = await readdir(videoDir);
   expect(files.filter(isSrtFile).length).toBe(2);
