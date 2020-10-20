@@ -65,7 +65,7 @@ export default class AutoAddSubtitle {
 
     const files = await readdir(path.resolve(videoDir));
 
-    await Veed.parseSubtitle(
+    await new Veed(TEMP_PATH).parseSubtitle(
       files
         .filter(file => file.endsWith('mp3'))
         .filter(
