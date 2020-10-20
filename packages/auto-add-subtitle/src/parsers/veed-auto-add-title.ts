@@ -139,7 +139,7 @@ export class Veed {
     const [browser] = await Promise.all([
       puppeteer
         .launch({
-          headless: false,
+          headless: true,
           defaultViewport: {
             width: 1920,
             height: 1024,
