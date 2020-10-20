@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/heiseshandian/personal-docs/compare/v1.7.0...v1.8.0) (2020-10-20)
+
+
+### Features
+
+* 通过preinstall指定安装源 ([eb7cb21](https://github.com/heiseshandian/personal-docs/commit/eb7cb21270a9c439394adabe098ffcfff9804321))
+
+
+
+
+
 # [1.7.0](https://github.com/heiseshandian/personal-docs/compare/v1.6.0...v1.7.0) (2020-10-20)
 
 
