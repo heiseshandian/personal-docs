@@ -24,9 +24,9 @@ export class Veed {
     subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
     closeSelector: '[alt^="close"]',
     translateXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/nav/div[2]',
     downloadXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
 
     timeout: 1000 * 60 * 15,
   };
@@ -139,7 +139,7 @@ export class Veed {
     const [browser] = await Promise.all([
       puppeteer
         .launch({
-          headless: true,
+          headless: false,
           defaultViewport: {
             width: 1920,
             height: 1024,
