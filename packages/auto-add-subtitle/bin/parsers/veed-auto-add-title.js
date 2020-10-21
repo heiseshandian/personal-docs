@@ -307,8 +307,8 @@ var Veed = /** @class */ (function () {
         startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
         subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
         closeSelector: '[alt^="close"]',
-        translateXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/nav/div[2]',
-        downloadXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+        translateXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/nav/div[2]',
+        downloadXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
         timeout: 1000 * 60 * 15,
     };
     return Veed;

@@ -50,6 +50,12 @@ function isFile(file) {
 function isSrtFile(file) {
     return /\.srt$/.test(file);
 }
+function isMp3File(file) {
+    return /\.mp3$/.test(file);
+}
+function toAbsolutePath(dir, file) {
+    return path_1.default.resolve(dir, file);
+}
 var AutoAddSubtitle = /** @class */ (function () {
     function AutoAddSubtitle(videoDir, chunkSeconds) {
         if (chunkSeconds === void 0) { chunkSeconds = 6 * 60; }
@@ -83,7 +89,7 @@ var AutoAddSubtitle = /** @class */ (function () {
     };
     AutoAddSubtitle.prototype.prepareMp3Files = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, videoDir, TEMP_DIR, chunkSeconds, files, tmpPath, mp3Files;
+            var _a, videoDir, TEMP_DIR, chunkSeconds, files, tmpPath, tmpFiles;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -91,23 +97,18 @@ var AutoAddSubtitle = /** @class */ (function () {
                         return [4 /*yield*/, utils_1.readdir(videoDir)];
                     case 1:
                         files = _b.sent();
-                        if (!files) {
-                            return [2 /*return*/];
-                        }
                         tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
-                        return [4 /*yield*/, utils_1.changeFormat(files
-                                .filter(isFile)
-                                .filter(function (file) { return !/\.mp3$/.test(file); })
-                                .map(function (file) { return path_1.default.resolve(videoDir, file); }), 'mp3', tmpPath)];
+                        return [4 /*yield*/, utils_1.changeFormat((files || [])
+                                .filter(function (file) { return isFile(file) && !isMp3File(file); })
+                                .map(function (file) { return toAbsolutePath(videoDir, file); }), 'mp3', tmpPath)];
                     case 2:
                         _b.sent();
                         return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 3:
-                        mp3Files = _b.sent();
-                        if (!mp3Files) {
-                            return [2 /*return*/];
-                        }
-                        return [4 /*yield*/, utils_1.sliceMediaBySeconds(utils_1.uniq(mp3Files.filter(isFile).map(function (file) { return path_1.default.resolve(tmpPath, file); })), chunkSeconds)];
+                        tmpFiles = _b.sent();
+                        return [4 /*yield*/, utils_1.sliceMediaBySeconds((tmpFiles || [])
+                                .filter(isMp3File)
+                                .map(function (file) { return toAbsolutePath(tmpPath, file); }), chunkSeconds)];
                     case 4:
                         _b.sent();
                         return [2 /*return*/];
@@ -136,7 +137,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 2:
                         files = _b.sent();
                         return [4 /*yield*/, veed_auto_add_title_1.Veed.parseSubtitle(files
-                                .filter(function (file) { return file.endsWith('mp3'); })
+                                .filter(isMp3File)
                                 .filter(function (file) {
                                 return !fs_1.default.existsSync(path_1.default.resolve(tmpPath, file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2')));
                             })
@@ -166,12 +167,12 @@ var AutoAddSubtitle = /** @class */ (function () {
                             .filter(function (file) { return /chunks_\d+/.test(file) && isSrtFile(file); })
                             .map(function (file) { return path_1.default.resolve(videoDir, TEMP_DIR + "/" + file); })
                             .reduce(function (acc, cur) {
-                            var _a = cur.match(/default_Project Name_(.+)_chunks_\d+\.mp3\.srt/) || [cur, 0], num = _a[1];
-                            if (!acc[num]) {
-                                acc[num] = [cur];
+                            var _a = cur.match(/default_Project Name_(.+)_chunks_\d+\.mp3\.srt/) || [cur, 0], original = _a[1];
+                            if (!acc[original]) {
+                                acc[original] = [cur];
                             }
                             else {
-                                acc[num].push(cur);
+                                acc[original].push(cur);
                             }
                             return acc;
                         }, {});
