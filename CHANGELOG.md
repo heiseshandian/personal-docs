@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/heiseshandian/personal-docs/compare/v1.10.1...v1.11.0) (2020-10-21)
+
+
+### Bug Fixes
+
+* 调整xpath ([31e55e2](https://github.com/heiseshandian/personal-docs/commit/31e55e2a2d36c7161e5e641aac96223adcb26f5e))
+
+
+### Features
+
+* build before publish ([0bae219](https://github.com/heiseshandian/personal-docs/commit/0bae219d61e1692b06a6cb8e606f5896681db8a1))
+* 支持发布前自动构建 ([937e21f](https://github.com/heiseshandian/personal-docs/commit/937e21f85719a12cfbbfb583aa9469b97c056b2d))
+* 改回无头模式 ([27bd15d](https://github.com/heiseshandian/personal-docs/commit/27bd15df88dfa2f3822a236f4bfbed12afb75e99))
+* 更新readme文档 ([7720224](https://github.com/heiseshandian/personal-docs/commit/7720224c443c64e00438de667ea8e78c0f137751))
+
+
+
+
+
 ## [1.10.1](https://github.com/heiseshandian/personal-docs/compare/v1.10.0...v1.10.1) (2020-10-20)
 
 
