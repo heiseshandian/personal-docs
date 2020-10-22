@@ -90,16 +90,21 @@ var Veed = /** @class */ (function () {
     // 上传文件
     Veed.upload = function (page, audio) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, inputFileSelector, timeout, uploadBtn;
+            var _a, uploadBtnXpath, inputFileSelector, timeout, uploadBtn;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = this.config, inputFileSelector = _a.inputFileSelector, timeout = _a.timeout;
-                        return [4 /*yield*/, page.$(inputFileSelector)];
+                        _a = this.config, uploadBtnXpath = _a.uploadBtnXpath, inputFileSelector = _a.inputFileSelector, timeout = _a.timeout;
+                        // https://github.com/puppeteer/puppeteer/issues/2946
+                        return [4 /*yield*/, this.safeClickXPath(page, uploadBtnXpath)];
                     case 1:
+                        // https://github.com/puppeteer/puppeteer/issues/2946
+                        _b.sent();
+                        return [4 /*yield*/, page.$(inputFileSelector)];
+                    case 2:
                         uploadBtn = _b.sent();
                         return [4 /*yield*/, (uploadBtn === null || uploadBtn === void 0 ? void 0 : uploadBtn.uploadFile(audio))];
-                    case 2:
+                    case 3:
                         _b.sent();
                         // 跳转编辑页面
                         // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
@@ -107,7 +112,7 @@ var Veed = /** @class */ (function () {
                                 timeout: timeout,
                                 waitUntil: 'networkidle0',
                             })];
-                    case 3:
+                    case 4:
                         // 跳转编辑页面
                         // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
                         _b.sent();
@@ -120,7 +125,7 @@ var Veed = /** @class */ (function () {
                                 var hash = match[1];
                                 return hash.replace(/-/g, '').length === 32;
                             }, { timeout: timeout })];
-                    case 4:
+                    case 5:
                         // 坐等上传完成
                         _b.sent();
                         return [2 /*return*/];
@@ -301,14 +306,15 @@ var Veed = /** @class */ (function () {
     };
     Veed.config = {
         url: 'https://www.veed.io/',
+        uploadBtnXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div[2]/div/div[1]/div/div/div/div/button',
         inputFileSelector: '[data-testid="file-input-dropzone"]',
         subtitleSelector: '[href$="subtitles"]',
         autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
-        startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
-        subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
         closeSelector: '[alt^="close"]',
-        translateXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/nav/div[2]',
-        downloadXpath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+        startXPath: '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/button',
+        subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
+        translateXpath: '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
+        downloadXpath: '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
         timeout: 1000 * 60 * 15,
     };
     return Veed;
