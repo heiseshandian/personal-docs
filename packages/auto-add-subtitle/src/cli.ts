@@ -1,42 +1,29 @@
 #!/usr/bin/env node
-import minimist from 'minimist';
+import yargs, { Options } from 'yargs';
 import AutoAddSubtitle from './index';
 import path from 'path';
 
-function parseArgs() {
-  return minimist(process.argv.slice(2), {
-    string: ['vp', 'h'],
-    alias: {
-      vp: 'video-path',
-      h: 'help',
-    },
-    default: {
-      vp: './',
-    },
-  });
-}
+const options: Record<string, Options> = {};
 
-function shouldPrintHelp() {
-  const { h } = parseArgs();
-  return h !== undefined;
-}
+const argv = yargs
+  .usage(`Usage: auto-add-subtitle [options] {video-path}`)
+  .example('auto-add-subtitle', '为当前目录下的所有文件生成字幕文件')
+  .help('help')
+  .alias('help', 'h')
+  .options(options).argv;
 
-function printHelp() {
-  console.log(
-    `auto-add-subtitle [-vp={your video path,default is current working directory}]`,
-  );
+interface Arguments {
+  [x: string]: unknown;
+  _: string[];
+  $0: string;
 }
 
 // 搞个自执行函数方便使用return提前结束流程
 (async () => {
-  if (shouldPrintHelp()) {
-    printHelp();
-    return;
-  }
-
-  const { vp: videoPath } = parseArgs();
-
-  await new AutoAddSubtitle(
-    path.resolve(process.cwd(), videoPath),
-  ).generateSrtFiles();
+  const { _: videoPaths } = argv as Arguments;
+  await Promise.all(
+    videoPaths
+      .map(videoPath => path.resolve(process.cwd(), videoPath))
+      .map(videoPath => new AutoAddSubtitle(videoPath).generateSrtFiles()),
+  );
 })();
