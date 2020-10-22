@@ -40,40 +40,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var minimist_1 = __importDefault(require("minimist"));
+var yargs_1 = __importDefault(require("yargs"));
 var index_1 = __importDefault(require("./index"));
 var path_1 = __importDefault(require("path"));
-function parseArgs() {
-    return minimist_1.default(process.argv.slice(2), {
-        string: ['vp', 'h'],
-        alias: {
-            vp: 'video-path',
-            h: 'help',
-        },
-        default: {
-            vp: './',
-        },
-    });
-}
-function shouldPrintHelp() {
-    var h = parseArgs().h;
-    return h !== undefined;
-}
-function printHelp() {
-    console.log("auto-add-subtitle [-vp={your video path,default is current working directory}]");
-}
+var options = {};
+var argv = yargs_1.default
+    .usage("Usage: auto-add-subtitle [options] {video-path}")
+    .example('auto-add-subtitle', '为当前目录下的所有文件生成字幕文件')
+    .help('help')
+    .alias('help', 'h')
+    .options(options).argv;
 // 搞个自执行函数方便使用return提前结束流程
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var videoPath;
+    var videoPaths;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (shouldPrintHelp()) {
-                    printHelp();
-                    return [2 /*return*/];
-                }
-                videoPath = parseArgs().vp;
-                return [4 /*yield*/, new index_1.default(path_1.default.resolve(process.cwd(), videoPath)).generateSrtFiles()];
+                videoPaths = argv._;
+                return [4 /*yield*/, Promise.all(videoPaths
+                        .map(function (videoPath) { return path_1.default.resolve(process.cwd(), videoPath); })
+                        .map(function (videoPath) { return new index_1.default(videoPath).generateSrtFiles(); }))];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
