@@ -22,6 +22,6 @@ interface Arguments {
 (async () => {
   const { _: videoPath } = argv as Arguments;
   await new AutoAddSubtitle(
-    path.resolve(process.cwd(), videoPath[0]),
+    path.resolve(process.cwd(), videoPath[0] || ''),
   ).generateSrtFiles();
 })();

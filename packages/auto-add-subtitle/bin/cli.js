@@ -57,7 +57,7 @@ var argv = yargs_1.default
         switch (_a.label) {
             case 0:
                 videoPath = argv._;
-                return [4 /*yield*/, new index_1.default(path_1.default.resolve(process.cwd(), videoPath[0])).generateSrtFiles()];
+                return [4 /*yield*/, new index_1.default(path_1.default.resolve(process.cwd(), videoPath[0] || '')).generateSrtFiles()];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
