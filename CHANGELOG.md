@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/heiseshandian/personal-docs/compare/v1.15.0...v1.16.0) (2020-10-22)
+
+
+### Bug Fixes
+
+* 修复字幕解析bug ([1a9e98f](https://github.com/heiseshandian/personal-docs/commit/1a9e98f0b56d3d5da0211189908ac37601519fbe))
+
+
+### Features
+
+* build before publish ([bc078c8](https://github.com/heiseshandian/personal-docs/commit/bc078c8413c648a4882d8a85cb023a493af79710))
+
+
+
+
+
 # [1.15.0](https://github.com/heiseshandian/personal-docs/compare/v1.14.0...v1.15.0) (2020-10-22)
 
 
