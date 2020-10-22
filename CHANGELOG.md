@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/heiseshandian/personal-docs/compare/v1.17.0...v1.18.0) (2020-10-22)
+
+
+### Features
+
+* build before publish ([415f050](https://github.com/heiseshandian/personal-docs/commit/415f05012b1f23f061d9732d8bf45c7d9641b3c1))
+
+
+
+
+
 # [1.17.0](https://github.com/heiseshandian/personal-docs/compare/v1.16.0...v1.17.0) (2020-10-22)
 
 
