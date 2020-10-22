@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/heiseshandian/personal-docs/compare/v1.12.0...v1.13.0) (2020-10-22)
+
+
+### Features
+
+* build before publish ([b1cf4e2](https://github.com/heiseshandian/personal-docs/commit/b1cf4e243cfdf493cf2ffe96dc1a8489cfed9c17))
+* 为cli添加测试 ([551ae5d](https://github.com/heiseshandian/personal-docs/commit/551ae5d946039698c1dde090d158ae6868483e0f))
+
+
+
+
+
 # [1.12.0](https://github.com/heiseshandian/personal-docs/compare/v1.11.0...v1.12.0) (2020-10-22)
 
 
