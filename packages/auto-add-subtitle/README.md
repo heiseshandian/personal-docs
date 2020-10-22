@@ -27,7 +27,7 @@ auto-add-subtitle [-vp={需要添加字幕的视频所在目录,默认是当前�
 ### 待实现功能
 
 - 使用 [api-extractor](https://api-extractor.com/) 管理接口变更
-- 换方案识别页面按钮
+- 支持使用其他网站并发解析字幕
 
 ### 视频基本概念
 
