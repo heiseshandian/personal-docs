@@ -1,6 +1,6 @@
 {
   "name": "auto-add-subtitle",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "自动为视频添加字幕",
   "main": "index.ts",
   "scripts": {
