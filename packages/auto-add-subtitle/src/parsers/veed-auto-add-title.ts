@@ -17,16 +17,19 @@ export class Veed {
   private static config = {
     url: 'https://www.veed.io/',
 
+    uploadBtnXpath:
+      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div[2]/div/div[1]/div/div/div/div/button',
     inputFileSelector: '[data-testid="file-input-dropzone"]',
     subtitleSelector: '[href$="subtitles"]',
     autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
-    startXPath: '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/button',
-    subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
     closeSelector: '[alt^="close"]',
+    startXPath:
+      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/button',
+    subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
     translateXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/nav/div[2]',
+      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
     downloadXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
 
     timeout: 1000 * 60 * 15,
   };
@@ -48,8 +51,10 @@ export class Veed {
 
   // 上传文件
   private static async upload(page: Page, audio: string) {
-    const { inputFileSelector, timeout } = this.config;
+    const { uploadBtnXpath, inputFileSelector, timeout } = this.config;
 
+    // https://github.com/puppeteer/puppeteer/issues/2946
+    await this.safeClickXPath(page, uploadBtnXpath);
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
     await uploadBtn?.uploadFile(audio);
