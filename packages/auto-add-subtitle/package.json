@@ -41,5 +41,6 @@
   "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/auto-add-subtitle/README.md",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "gitHead": "56cc4af46c977fef86321d3965d6a3454db69403"
 }
