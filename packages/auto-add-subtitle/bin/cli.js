@@ -52,14 +52,12 @@ var argv = yargs_1.default
     .options(options).argv;
 // 搞个自执行函数方便使用return提前结束流程
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var videoPaths;
+    var videoPath;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                videoPaths = argv._;
-                return [4 /*yield*/, Promise.all(videoPaths
-                        .map(function (videoPath) { return path_1.default.resolve(process.cwd(), videoPath); })
-                        .map(function (videoPath) { return new index_1.default(videoPath).generateSrtFiles(); }))];
+                videoPath = argv._;
+                return [4 /*yield*/, new index_1.default(path_1.default.resolve(process.cwd(), videoPath[0])).generateSrtFiles()];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
