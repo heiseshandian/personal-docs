@@ -1,17 +1,14 @@
+import { del, execAsync, readdir } from '../src/utils';
 import path from 'path';
-import AutoAddSubtitle from '../src';
-import { del, readdir } from '../src/utils';
+import { isSrtFile } from './helpers';
 
 jest.setTimeout(1000 * 60 * 10);
 
-function isSrtFile(srt: string) {
-  return /\.srt$/.test(srt);
-}
-
-test('generate srt files', async () => {
+test('cli', async () => {
   const videoDir = path.resolve(__dirname, './videos/');
-
-  await new AutoAddSubtitle(videoDir, 10).generateSrtFiles();
+  await execAsync(
+    `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${videoDir}`,
+  );
 
   const files = await readdir(videoDir);
   expect(files.filter(isSrtFile).length).toBe(2);
