@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/heiseshandian/personal-docs/compare/v1.11.0...v1.12.0) (2020-10-22)
+
+
+### Features
+
+* build before publish ([51aa7a7](https://github.com/heiseshandian/personal-docs/commit/51aa7a7660b61ebf458b5ef7709863ddba2a0d51))
+* 将minimist替换为更为强大的yargs ([c60b2e5](https://github.com/heiseshandian/personal-docs/commit/c60b2e58ddf6e7f8ec73dc0d4469c85b69ffa554))
+
+
+
+
+
 # [1.11.0](https://github.com/heiseshandian/personal-docs/compare/v1.10.1...v1.11.0) (2020-10-21)
 
 
