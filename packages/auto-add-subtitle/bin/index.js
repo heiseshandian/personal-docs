@@ -95,13 +95,15 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 1:
                         files = _b.sent();
                         tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
-                        return [4 /*yield*/, utils_1.extractAudio((files || []).map(function (file) { return toAbsolutePath(videoDir, file); }), tmpPath)];
+                        return [4 /*yield*/, utils_1.extractAudio((files || []).filter(isFile).map(function (file) { return toAbsolutePath(videoDir, file); }), tmpPath)];
                     case 2:
                         _b.sent();
                         return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 3:
                         tmpFiles = _b.sent();
-                        return [4 /*yield*/, utils_1.sliceMediaBySeconds((tmpFiles || []).map(function (file) { return toAbsolutePath(tmpPath, file); }), chunkSeconds)];
+                        return [4 /*yield*/, utils_1.sliceMediaBySeconds((tmpFiles || [])
+                                .filter(isFile)
+                                .map(function (file) { return toAbsolutePath(tmpPath, file); }), chunkSeconds)];
                     case 4:
                         _b.sent();
                         return [2 /*return*/];
