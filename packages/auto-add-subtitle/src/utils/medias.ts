@@ -70,12 +70,13 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
     Array(chunks)
       .fill(0)
       .map((_, i) => () => {
-        const outputPath = `${name}_chunks_${i}${ext}`;
-        const cmd = `ffmpeg -y -i ${JSON.stringify(mediaPath)} -ss ${
+        const outputFile = path.resolve(dir, `${name}_chunks_${i}${ext}`);
+        if (fs.existsSync(outputFile)) {
+          return Promise.resolve(outputFile);
+        }
+        const cmd = `ffmpeg -i ${JSON.stringify(mediaPath)} -ss ${
           i * chunkDuration
-        } -t ${chunkDuration} -codec copy ${JSON.stringify(
-          path.resolve(dir, outputPath),
-        )}`;
+        } -t ${chunkDuration} -codec copy ${JSON.stringify(outputFile)}`;
 
         return new Promise(resolve => {
           exec(cmd, err => {
@@ -83,7 +84,7 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
               handleError(err);
               resolve();
             } else {
-              resolve(outputPath);
+              resolve(outputFile);
             }
           });
         });
@@ -183,7 +184,10 @@ export async function changeFormat(
         outputDir || dir,
         `${name}.${outputFormat.replace(/^\./, '')}`,
       );
-      const cmd = `ffmpeg -y -i ${JSON.stringify(mediaPath)} ${JSON.stringify(
+      if (fs.existsSync(outputFile)) {
+        return Promise.resolve(outputFile);
+      }
+      const cmd = `ffmpeg -i ${JSON.stringify(mediaPath)} ${JSON.stringify(
         outputFile,
       )}`;
 
@@ -271,10 +275,13 @@ export async function extractAudio(
         outputDir || dir,
         `${name}.${await getAudioExt(mediaPath)}`,
       );
+      if (fs.existsSync(outputFile)) {
+        return outputFile;
+      }
 
       // https://gist.github.com/protrolium/e0dbd4bb0f1a396fcb55
       const result = await execAsync(
-        `ffmpeg -y -i ${JSON.stringify(
+        `ffmpeg -i ${JSON.stringify(
           mediaPath,
         )} -vn -acodec copy ${JSON.stringify(outputFile)}`,
       );
