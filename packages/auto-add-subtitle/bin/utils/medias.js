@@ -110,8 +110,11 @@ function sliceMediaByChunks(mediaPath, chunks) {
                     return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(Array(chunks)
                             .fill(0)
                             .map(function (_, i) { return function () {
-                            var outputPath = name + "_chunks_" + i + ext;
-                            var cmd = "ffmpeg -y -i " + JSON.stringify(mediaPath) + " -ss " + i * chunkDuration + " -t " + chunkDuration + " -codec copy " + JSON.stringify(path_1.default.resolve(dir, outputPath));
+                            var outputFile = path_1.default.resolve(dir, name + "_chunks_" + i + ext);
+                            if (fs_1.default.existsSync(outputFile)) {
+                                return Promise.resolve(outputFile);
+                            }
+                            var cmd = "ffmpeg -i " + JSON.stringify(mediaPath) + " -ss " + i * chunkDuration + " -t " + chunkDuration + " -codec copy " + JSON.stringify(outputFile);
                             return new Promise(function (resolve) {
                                 child_process_1.exec(cmd, function (err) {
                                     if (err) {
@@ -119,7 +122,7 @@ function sliceMediaByChunks(mediaPath, chunks) {
                                         resolve();
                                     }
                                     else {
-                                        resolve(outputPath);
+                                        resolve(outputFile);
                                     }
                                 });
                             });
@@ -236,7 +239,10 @@ function changeFormat(mediaPaths, outputFormat, outputDir) {
                     return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(mediaPaths.map(function (mediaPath) { return function () {
                             var _a = path_1.default.parse(mediaPath), dir = _a.dir, name = _a.name;
                             var outputFile = path_1.default.resolve(outputDir || dir, name + "." + outputFormat.replace(/^\./, ''));
-                            var cmd = "ffmpeg -y -i " + JSON.stringify(mediaPath) + " " + JSON.stringify(outputFile);
+                            if (fs_1.default.existsSync(outputFile)) {
+                                return Promise.resolve(outputFile);
+                            }
+                            var cmd = "ffmpeg -i " + JSON.stringify(mediaPath) + " " + JSON.stringify(outputFile);
                             return new Promise(function (resolve) {
                                 child_process_1.exec(cmd, function (err) {
                                     if (err) {
@@ -333,7 +339,10 @@ function extractAudio(mediaPaths, outputDir) {
                                         return [4 /*yield*/, getAudioExt(mediaPath)];
                                     case 1:
                                         outputFile = _c.apply(_b, _d.concat([_e + (_f.sent())]));
-                                        return [4 /*yield*/, shell_1.execAsync("ffmpeg -y -i " + JSON.stringify(mediaPath) + " -vn -acodec copy " + JSON.stringify(outputFile))];
+                                        if (fs_1.default.existsSync(outputFile)) {
+                                            return [2 /*return*/, outputFile];
+                                        }
+                                        return [4 /*yield*/, shell_1.execAsync("ffmpeg -i " + JSON.stringify(mediaPath) + " -vn -acodec copy " + JSON.stringify(outputFile))];
                                     case 2:
                                         result = _f.sent();
                                         return [2 /*return*/, result !== undefined ? outputFile : result];
