@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.1](https://github.com/heiseshandian/personal-docs/compare/v1.18.0...v1.18.1) (2020-10-23)
+
+
+### Bug Fixes
+
+* cli bug修复 ([567f16a](https://github.com/heiseshandian/personal-docs/commit/567f16a86bfe3dff29080c622cc2c692e552577d))
+
+
+
+
+
 # [1.18.0](https://github.com/heiseshandian/personal-docs/compare/v1.17.0...v1.18.0) (2020-10-22)
 
 
