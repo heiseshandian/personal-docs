@@ -54,13 +54,15 @@ export default class AutoAddSubtitle {
     const tmpPath = path.resolve(videoDir, TEMP_DIR);
 
     await extractAudio(
-      (files || []).map(file => toAbsolutePath(videoDir, file)),
+      (files || []).filter(isFile).map(file => toAbsolutePath(videoDir, file)),
       tmpPath,
     );
 
     const tmpFiles = await readdir(tmpPath);
     await sliceMediaBySeconds(
-      (tmpFiles || []).map(file => toAbsolutePath(tmpPath, file)),
+      (tmpFiles || [])
+        .filter(isFile)
+        .map(file => toAbsolutePath(tmpPath, file)),
       chunkSeconds,
     );
   }
