@@ -230,11 +230,13 @@ async function prepareTmpFiles(medias: Array<string>) {
 interface Codec2Ext {
   [key: string]: string;
   vorbis: string;
+  opus: string;
   default: string;
 }
 
 const codec2Ext: Codec2Ext = {
   vorbis: 'ogg',
+  opus: 'opus',
   default: 'aac',
 };
 
