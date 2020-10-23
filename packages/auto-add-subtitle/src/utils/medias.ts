@@ -5,6 +5,7 @@ import path from 'path';
 import { handleError } from './base';
 import { ConcurrentTasks } from './concurrent-tasks';
 import { writeFile } from './fs';
+import { execAsync } from './shell';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
@@ -224,4 +225,59 @@ async function prepareTmpFiles(medias: Array<string>) {
   );
 
   return tmpFilePath;
+}
+
+interface Codec2Ext {
+  [key: string]: string;
+  vorbis: string;
+  default: string;
+}
+
+const codec2Ext: Codec2Ext = {
+  vorbis: 'ogg',
+  default: 'aac',
+};
+
+const audioReg = new RegExp(`(?:${Object.values(codec2Ext).join('|')})$`, 'i');
+export function isSupportedAudio(file: string) {
+  return audioReg.test(file);
+}
+
+const audioExtReg = /Audio: (\w+),/;
+async function getAudioExt(mediaPath: string) {
+  const [, stderr] = await execAsync(`ffprobe ${JSON.stringify(mediaPath)}`);
+  if (!stderr) {
+    return codec2Ext.default;
+  }
+  const match = stderr.match(audioExtReg);
+  const [, codec] = match || ['', 'default'];
+  return codec2Ext[codec] || codec2Ext.default;
+}
+
+export async function extractAudio(
+  mediaPaths: string | Array<string>,
+  outputDir?: string,
+) {
+  if (typeof mediaPaths === 'string') {
+    mediaPaths = [mediaPaths];
+  }
+
+  return await new ConcurrentTasks<string>(
+    mediaPaths.map(mediaPath => async () => {
+      const { dir, name } = path.parse(mediaPath);
+      const outputFile = path.resolve(
+        outputDir || dir,
+        `${name}.${await getAudioExt(mediaPath)}`,
+      );
+
+      // https://gist.github.com/protrolium/e0dbd4bb0f1a396fcb55
+      const result = await execAsync(
+        `ffmpeg -y -i ${JSON.stringify(
+          mediaPath,
+        )} -vn -acodec copy ${JSON.stringify(outputFile)}`,
+      );
+      return result !== undefined ? outputFile : result;
+    }),
+    'extracting audio',
+  ).run();
 }

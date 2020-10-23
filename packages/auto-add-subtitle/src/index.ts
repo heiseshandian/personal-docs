@@ -2,9 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { Veed } from './parsers/veed-auto-add-title';
 import {
-  changeFormat,
   clean,
   ensurePathExists,
+  extractAudio,
+  isSupportedAudio,
   makeMap,
   move,
   readdir,
@@ -19,10 +20,6 @@ function isFile(file: string) {
 
 function isSrtFile(file: string) {
   return /\.srt$/.test(file);
-}
-
-function isMp3File(file: string) {
-  return /\.mp3$/.test(file);
 }
 
 function toAbsolutePath(dir: string, file: string) {
@@ -51,24 +48,19 @@ export default class AutoAddSubtitle {
 
   private chunkSeconds;
 
-  private async prepareMp3Files() {
+  private async extractAudioFiles() {
     const { videoDir, TEMP_DIR, chunkSeconds } = this;
     const files = await readdir(videoDir);
     const tmpPath = path.resolve(videoDir, TEMP_DIR);
 
-    await changeFormat(
-      (files || [])
-        .filter(file => isFile(file) && !isMp3File(file))
-        .map(file => toAbsolutePath(videoDir, file)),
-      'mp3',
+    await extractAudio(
+      (files || []).map(file => toAbsolutePath(videoDir, file)),
       tmpPath,
     );
 
     const tmpFiles = await readdir(tmpPath);
     await sliceMediaBySeconds(
-      (tmpFiles || [])
-        .filter(isMp3File)
-        .map(file => toAbsolutePath(tmpPath, file)),
+      (tmpFiles || []).map(file => toAbsolutePath(tmpPath, file)),
       chunkSeconds,
     );
   }
@@ -91,7 +83,7 @@ export default class AutoAddSubtitle {
 
     await Veed.parseSubtitle(
       files
-        .filter(isMp3File)
+        .filter(isSupportedAudio)
         .filter(
           file =>
             !fs.existsSync(
@@ -176,7 +168,7 @@ export default class AutoAddSubtitle {
 
   public async generateSrtFiles() {
     await this.prepareTmpDir();
-    await this.prepareMp3Files();
+    await this.extractAudioFiles();
 
     await this.parseSubtitle();
     await this.mergeSrtChunks();

@@ -1,5 +1,12 @@
 import path from 'path';
-import { concatMedias, del, handleError, sliceMediaBySize } from '../src/utils';
+import {
+  concatMedias,
+  del,
+  extractAudio,
+  handleError,
+  isSupportedAudio,
+  sliceMediaBySize,
+} from '../src/utils';
 
 async function cleanup(files: string[]) {
   await Promise.all([
@@ -44,4 +51,18 @@ test('concat videos', async () => {
   }
 
   expect(result !== undefined).toBe(true);
+});
+
+test('extract audio', async () => {
+  const result = await extractAudio(
+    ['video1.webm', 'video with space.webm'].map(getVideoPath),
+  );
+
+  expect(result.length === 2).toBe(true);
+  await cleanup(result);
+});
+
+test('is audio', () => {
+  expect(isSupportedAudio('f://c//file.ogg')).toBe(true);
+  expect(isSupportedAudio('test.test')).toBe(false);
 });
