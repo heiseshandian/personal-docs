@@ -126,6 +126,6 @@ __exportStar(require("./downloader"), exports);
 __exportStar(require("./fs"), exports);
 __exportStar(require("./path"), exports);
 __exportStar(require("./progress"), exports);
-__exportStar(require("./videos"), exports);
+__exportStar(require("./medias"), exports);
 __exportStar(require("./shell"), exports);
 __exportStar(require("./dynamic-tasks"), exports);

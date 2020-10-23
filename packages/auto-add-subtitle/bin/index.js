@@ -50,9 +50,6 @@ function isFile(file) {
 function isSrtFile(file) {
     return /\.srt$/.test(file);
 }
-function isMp3File(file) {
-    return /\.mp3$/.test(file);
-}
 function toAbsolutePath(dir, file) {
     return path_1.default.resolve(dir, file);
 }
@@ -87,7 +84,7 @@ var AutoAddSubtitle = /** @class */ (function () {
             });
         });
     };
-    AutoAddSubtitle.prototype.prepareMp3Files = function () {
+    AutoAddSubtitle.prototype.extractAudioFiles = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, videoDir, TEMP_DIR, chunkSeconds, files, tmpPath, tmpFiles;
             return __generator(this, function (_b) {
@@ -98,17 +95,13 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 1:
                         files = _b.sent();
                         tmpPath = path_1.default.resolve(videoDir, TEMP_DIR);
-                        return [4 /*yield*/, utils_1.changeFormat((files || [])
-                                .filter(function (file) { return isFile(file) && !isMp3File(file); })
-                                .map(function (file) { return toAbsolutePath(videoDir, file); }), 'mp3', tmpPath)];
+                        return [4 /*yield*/, utils_1.extractAudio((files || []).map(function (file) { return toAbsolutePath(videoDir, file); }), tmpPath)];
                     case 2:
                         _b.sent();
                         return [4 /*yield*/, utils_1.readdir(tmpPath)];
                     case 3:
                         tmpFiles = _b.sent();
-                        return [4 /*yield*/, utils_1.sliceMediaBySeconds((tmpFiles || [])
-                                .filter(isMp3File)
-                                .map(function (file) { return toAbsolutePath(tmpPath, file); }), chunkSeconds)];
+                        return [4 /*yield*/, utils_1.sliceMediaBySeconds((tmpFiles || []).map(function (file) { return toAbsolutePath(tmpPath, file); }), chunkSeconds)];
                     case 4:
                         _b.sent();
                         return [2 /*return*/];
@@ -137,7 +130,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 2:
                         files = _b.sent();
                         return [4 /*yield*/, veed_auto_add_title_1.Veed.parseSubtitle(files
-                                .filter(isMp3File)
+                                .filter(utils_1.isSupportedAudio)
                                 .filter(function (file) {
                                 return !fs_1.default.existsSync(path_1.default.resolve(tmpPath, file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2')));
                             })
@@ -245,7 +238,7 @@ var AutoAddSubtitle = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.prepareTmpDir()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.prepareMp3Files()];
+                        return [4 /*yield*/, this.extractAudioFiles()];
                     case 2:
                         _a.sent();
                         return [4 /*yield*/, this.parseSubtitle()];

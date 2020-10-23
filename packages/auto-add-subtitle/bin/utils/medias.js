@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changeFormat = exports.concatMedias = exports.sliceMediaBySeconds = exports.sliceMediaBySize = void 0;
+exports.extractAudio = exports.isSupportedAudio = exports.changeFormat = exports.concatMedias = exports.sliceMediaBySeconds = exports.sliceMediaBySize = void 0;
 var child_process_1 = require("child_process");
 var fs_1 = __importDefault(require("fs"));
 var os_1 = __importDefault(require("os"));
@@ -47,6 +47,7 @@ var path_1 = __importDefault(require("path"));
 var base_1 = require("./base");
 var concurrent_tasks_1 = require("./concurrent-tasks");
 var fs_2 = require("./fs");
+var shell_1 = require("./shell");
 function getFileSize(filePath) {
     var stats = fs_1.default.statSync(path_1.default.resolve(filePath));
     return stats.size;
@@ -67,9 +68,9 @@ function parseSize(size) {
     return parseFloat(num) * (sizeMap[unit] || sizeMap.default);
 }
 var durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
-function getDuration(videoPath) {
+function getDuration(mediaPath) {
     return new Promise(function (resolve) {
-        child_process_1.exec("ffprobe " + JSON.stringify(videoPath), function (err, _, stderr) {
+        child_process_1.exec("ffprobe " + JSON.stringify(mediaPath), function (err, _, stderr) {
             if (err) {
                 base_1.handleError(err);
                 resolve();
@@ -223,19 +224,19 @@ function concatMedias(medias, output) {
 }
 exports.concatMedias = concatMedias;
 var parseFormat = function (filePath) { return path_1.default.parse(filePath).ext.slice(1); };
-function changeFormat(videoPaths, outputFormat, outputDir) {
+function changeFormat(mediaPaths, outputFormat, outputDir) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (typeof videoPaths === 'string') {
-                        videoPaths = [videoPaths];
+                    if (typeof mediaPaths === 'string') {
+                        mediaPaths = [mediaPaths];
                     }
-                    videoPaths = videoPaths.filter(function (videoPath) { return parseFormat(videoPath) !== outputFormat; });
-                    return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(videoPaths.map(function (videoPath) { return function () {
-                            var _a = path_1.default.parse(videoPath), dir = _a.dir, name = _a.name;
+                    mediaPaths = mediaPaths.filter(function (mediaPath) { return parseFormat(mediaPath) !== outputFormat; });
+                    return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(mediaPaths.map(function (mediaPath) { return function () {
+                            var _a = path_1.default.parse(mediaPath), dir = _a.dir, name = _a.name;
                             var outputFile = path_1.default.resolve(outputDir || dir, name + "." + outputFormat.replace(/^\./, ''));
-                            var cmd = "ffmpeg -y -i " + JSON.stringify(videoPath) + " " + JSON.stringify(outputFile);
+                            var cmd = "ffmpeg -y -i " + JSON.stringify(mediaPath) + " " + JSON.stringify(outputFile);
                             return new Promise(function (resolve) {
                                 child_process_1.exec(cmd, function (err) {
                                     if (err) {
@@ -254,22 +255,22 @@ function changeFormat(videoPaths, outputFormat, outputDir) {
     });
 }
 exports.changeFormat = changeFormat;
-function prepareTmpFiles(videos) {
+function prepareTmpFiles(medias) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, dir, name, tmpFilePath;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (videos.length <= 0) {
-                        base_1.handleError(new Error('videos is empty'));
+                    if (medias.length <= 0) {
+                        base_1.handleError(new Error('medias is empty'));
                         return [2 /*return*/];
                     }
-                    _a = path_1.default.parse(videos[0]), dir = _a.dir, name = _a.name;
+                    _a = path_1.default.parse(medias[0]), dir = _a.dir, name = _a.name;
                     tmpFilePath = path_1.default.resolve(dir, name + ".txt");
                     // https://superuser.com/questions/718027/ffmpeg-concat-doesnt-work-with-absolute-path
-                    return [4 /*yield*/, fs_2.writeFile(tmpFilePath, videos
-                            .map(function (video) {
-                            return "file " + JSON.stringify(video)
+                    return [4 /*yield*/, fs_2.writeFile(tmpFilePath, medias
+                            .map(function (media) {
+                            return "file " + JSON.stringify(media)
                                 .replace(/"/g, "'")
                                 .replace(/\\\\/g, '/');
                         })
@@ -282,3 +283,65 @@ function prepareTmpFiles(videos) {
         });
     });
 }
+var codec2Ext = {
+    vorbis: 'ogg',
+    default: 'aac',
+};
+var audioReg = new RegExp("(?:" + Object.values(codec2Ext).join('|') + ")$", 'i');
+function isSupportedAudio(file) {
+    return audioReg.test(file);
+}
+exports.isSupportedAudio = isSupportedAudio;
+var audioExtReg = /Audio: (\w+),/;
+function getAudioExt(mediaPath) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, stderr, match, _b, codec;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, shell_1.execAsync("ffprobe " + JSON.stringify(mediaPath))];
+                case 1:
+                    _a = _c.sent(), stderr = _a[1];
+                    if (!stderr) {
+                        return [2 /*return*/, codec2Ext.default];
+                    }
+                    match = stderr.match(audioExtReg);
+                    _b = match || ['', 'default'], codec = _b[1];
+                    return [2 /*return*/, codec2Ext[codec] || codec2Ext.default];
+            }
+        });
+    });
+}
+function extractAudio(mediaPaths, outputDir) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (typeof mediaPaths === 'string') {
+                        mediaPaths = [mediaPaths];
+                    }
+                    return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(mediaPaths.map(function (mediaPath) { return function () { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, dir, name, outputFile, _b, _c, _d, _e, result;
+                            return __generator(this, function (_f) {
+                                switch (_f.label) {
+                                    case 0:
+                                        _a = path_1.default.parse(mediaPath), dir = _a.dir, name = _a.name;
+                                        _c = (_b = path_1.default).resolve;
+                                        _d = [outputDir || dir];
+                                        _e = name + ".";
+                                        return [4 /*yield*/, getAudioExt(mediaPath)];
+                                    case 1:
+                                        outputFile = _c.apply(_b, _d.concat([_e + (_f.sent())]));
+                                        return [4 /*yield*/, shell_1.execAsync("ffmpeg -y -i " + JSON.stringify(mediaPath) + " -vn -acodec copy " + JSON.stringify(outputFile))];
+                                    case 2:
+                                        result = _f.sent();
+                                        return [2 /*return*/, result !== undefined ? outputFile : result];
+                                }
+                            });
+                        }); }; }), 'extracting audio').run()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.extractAudio = extractAudio;
