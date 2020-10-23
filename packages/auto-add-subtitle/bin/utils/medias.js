@@ -285,6 +285,7 @@ function prepareTmpFiles(medias) {
 }
 var codec2Ext = {
     vorbis: 'ogg',
+    opus: 'opus',
     default: 'aac',
 };
 var audioReg = new RegExp("(?:" + Object.values(codec2Ext).join('|') + ")$", 'i');
