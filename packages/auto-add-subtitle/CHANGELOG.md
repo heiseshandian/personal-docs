@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/heiseshandian/personal-docs/compare/v1.19.0...v1.20.0) (2020-10-23)
+
+
+### Features
+
+* build before publish ([d581729](https://github.com/heiseshandian/personal-docs/commit/d5817293b550f0aad13b5cf69b77e41ed496e220))
+* build before publish ([b8dda0d](https://github.com/heiseshandian/personal-docs/commit/b8dda0d42a3fda02917b7aae7022248bb20ac246))
+* 添加音频类型 ([191c73c](https://github.com/heiseshandian/personal-docs/commit/191c73c8e5b4317d20a335b3d6400af227318c60))
+
+
+
+
+
 # [1.19.0](https://github.com/heiseshandian/personal-docs/compare/v1.18.1...v1.19.0) (2020-10-23)
 
 
