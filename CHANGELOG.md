@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/heiseshandian/personal-docs/compare/v1.18.1...v1.19.0) (2020-10-23)
+
+
+### Features
+
+* build before publish ([3406b3f](https://github.com/heiseshandian/personal-docs/commit/3406b3f347534728bd788ff4bd4e946b439e4e89))
+* 音频抽取优化 ([e04d137](https://github.com/heiseshandian/personal-docs/commit/e04d137036651264c0e12414f34ee1af24b32651))
+
+
+
+
+
 ## [1.18.1](https://github.com/heiseshandian/personal-docs/compare/v1.18.0...v1.18.1) (2020-10-23)
 
 
