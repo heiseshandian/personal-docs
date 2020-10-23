@@ -28,9 +28,9 @@ function parseSize(size = '') {
 }
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
-function getDuration(videoPath: string) {
+function getDuration(mediaPath: string) {
   return new Promise<string | null | undefined>(resolve => {
-    exec(`ffprobe ${JSON.stringify(videoPath)}`, (err, _, stderr) => {
+    exec(`ffprobe ${JSON.stringify(mediaPath)}`, (err, _, stderr) => {
       if (err) {
         handleError(err);
         resolve();
@@ -164,25 +164,25 @@ export async function concatMedias(medias: Array<string>, output: string) {
 const parseFormat = (filePath: string) => path.parse(filePath).ext.slice(1);
 
 export async function changeFormat(
-  videoPaths: string | Array<string>,
+  mediaPaths: string | Array<string>,
   outputFormat: string,
   outputDir?: string,
 ) {
-  if (typeof videoPaths === 'string') {
-    videoPaths = [videoPaths];
+  if (typeof mediaPaths === 'string') {
+    mediaPaths = [mediaPaths];
   }
-  videoPaths = videoPaths.filter(
-    videoPath => parseFormat(videoPath) !== outputFormat,
+  mediaPaths = mediaPaths.filter(
+    mediaPath => parseFormat(mediaPath) !== outputFormat,
   );
 
   return await new ConcurrentTasks<string>(
-    videoPaths.map(videoPath => () => {
-      const { dir, name } = path.parse(videoPath);
+    mediaPaths.map(mediaPath => () => {
+      const { dir, name } = path.parse(mediaPath);
       const outputFile = path.resolve(
         outputDir || dir,
         `${name}.${outputFormat.replace(/^\./, '')}`,
       );
-      const cmd = `ffmpeg -y -i ${JSON.stringify(videoPath)} ${JSON.stringify(
+      const cmd = `ffmpeg -y -i ${JSON.stringify(mediaPath)} ${JSON.stringify(
         outputFile,
       )}`;
 
@@ -201,22 +201,22 @@ export async function changeFormat(
   ).run();
 }
 
-async function prepareTmpFiles(videos: Array<string>) {
-  if (videos.length <= 0) {
-    handleError(new Error('videos is empty'));
+async function prepareTmpFiles(medias: Array<string>) {
+  if (medias.length <= 0) {
+    handleError(new Error('medias is empty'));
     return;
   }
 
-  const { dir, name } = path.parse(videos[0]);
+  const { dir, name } = path.parse(medias[0]);
   const tmpFilePath = path.resolve(dir, `${name}.txt`);
 
   // https://superuser.com/questions/718027/ffmpeg-concat-doesnt-work-with-absolute-path
   await writeFile(
     tmpFilePath,
-    videos
+    medias
       .map(
-        video =>
-          `file ${JSON.stringify(video)
+        media =>
+          `file ${JSON.stringify(media)
             .replace(/"/g, "'")
             .replace(/\\\\/g, '/')}`,
       )

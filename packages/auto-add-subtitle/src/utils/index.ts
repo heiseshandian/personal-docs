@@ -31,6 +31,6 @@ export * from './downloader';
 export * from './fs';
 export * from './path';
 export * from './progress';
-export * from './videos';
+export * from './medias';
 export * from './shell';
 export * from './dynamic-tasks';

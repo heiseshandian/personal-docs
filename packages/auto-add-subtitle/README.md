@@ -23,6 +23,7 @@ auto-add-subtitle [-vp={需要添加字幕的视频所在目录,默认是当前�
 ### 参考资料
 
 - [axios-download-progress-in-node-js](https://futurestud.io/tutorials/axios-download-progress-in-node-js)
+- [ffmpeg guide](https://gist.github.com/protrolium/e0dbd4bb0f1a396fcb55)
 
 ### 待实现功能
 
