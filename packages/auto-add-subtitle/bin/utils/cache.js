@@ -45,11 +45,11 @@ var path_1 = __importDefault(require("path"));
 var base_1 = require("./base");
 var fs_2 = require("./fs");
 var path_2 = require("./path");
-var CACHE_FOLDER = '.cache';
+var cache_folder = '.cache';
 var prefix = ("" + path_2.getClosestNodeModulesPath())
     .split(path_1.default.sep)
     .filter(function (item) { return !!item; })
-    .concat(CACHE_FOLDER)
+    .concat(cache_folder)
     .join(path_1.default.sep) + path_1.default.sep;
 ensureCacheDirExists(prefix);
 function withCache(fn) {

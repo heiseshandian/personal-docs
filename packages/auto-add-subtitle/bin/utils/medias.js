@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractAudio = exports.isSupportedAudio = exports.changeFormat = exports.concatMedias = exports.sliceMediaBySeconds = exports.sliceMediaBySize = void 0;
+exports.extractAudio = exports.isSupportedAudio = exports.changeFormat = exports.concatMedias = exports.sliceMediaBySeconds = exports.sliceMediaBySize = exports.isChunkFile = exports.chunk_file_suffix = void 0;
 var child_process_1 = require("child_process");
 var fs_1 = __importDefault(require("fs"));
 var os_1 = __importDefault(require("os"));
@@ -94,6 +94,12 @@ function parseDuration(duration) {
         .map(function (val) { return parseInt(val, 10); })
         .reduce(function (acc, cur, i) { return acc + cur * Math.pow(60, (2 - i)); }, 0);
 }
+exports.chunk_file_suffix = '_chunks_';
+var chunkFileReg = new RegExp("" + exports.chunk_file_suffix);
+function isChunkFile(file) {
+    return chunkFileReg.test(file);
+}
+exports.isChunkFile = isChunkFile;
 function sliceMediaByChunks(mediaPath, chunks) {
     return __awaiter(this, void 0, void 0, function () {
         var duration, chunkDuration, _a, ext, name, dir;
@@ -110,7 +116,7 @@ function sliceMediaByChunks(mediaPath, chunks) {
                     return [4 /*yield*/, new concurrent_tasks_1.ConcurrentTasks(Array(chunks)
                             .fill(0)
                             .map(function (_, i) { return function () {
-                            var outputFile = path_1.default.resolve(dir, name + "_chunks_" + i + ext);
+                            var outputFile = path_1.default.resolve(dir, "" + name + exports.chunk_file_suffix + i + ext);
                             if (fs_1.default.existsSync(outputFile)) {
                                 return Promise.resolve(outputFile);
                             }

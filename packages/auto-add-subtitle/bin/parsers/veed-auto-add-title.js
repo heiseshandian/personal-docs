@@ -317,6 +317,8 @@ var Veed = /** @class */ (function () {
         downloadXpath: '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
         timeout: 1000 * 60 * 15,
     };
+    Veed.subtitlePrefix = 'default_Project Name_';
+    Veed.subtitleExt = '.srt';
     return Veed;
 }());
 exports.Veed = Veed;
