@@ -41,7 +41,7 @@ export default class AutoAddSubtitle {
     return ensurePathExists(path.resolve(videoDir, TEMP_DIR));
   }
 
-  private async rmTmpDir() {
+  private async removeTmpDir() {
     const { videoDir, TEMP_DIR } = this;
     await clean(path.resolve(videoDir, TEMP_DIR));
   }
@@ -70,31 +70,23 @@ export default class AutoAddSubtitle {
   private async parseSubtitle() {
     const { videoDir, TEMP_DIR } = this;
 
-    const parsedFiles = await readdir(path.resolve(videoDir, TEMP_DIR));
-    const hasParsed = makeMap(
-      (parsedFiles || []).filter(isFile).map(file =>
-        file
-          .replace('default_Project Name_', '')
-          .replace('.mp3', '')
-          .replace(/\.\w+$/, '.mp3'),
-      ),
-    );
-
     const tmpPath = path.resolve(videoDir, TEMP_DIR);
     const files = await readdir(tmpPath);
+
+    const hasParsed = makeMap(
+      files.map(file =>
+        file.replace('default_Project Name_', '').replace(/\.\w+$/, ''),
+      ),
+    );
+    const withoutChunks = (file: string) =>
+      !fs.existsSync(
+        path.resolve(tmpPath, file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2')),
+      );
 
     await Veed.parseSubtitle(
       files
         .filter(isSupportedAudio)
-        .filter(
-          file =>
-            !fs.existsSync(
-              path.resolve(
-                tmpPath,
-                file.replace(/^(.+)\.(\w+)$/, '$1_chunks_0.$2'),
-              ),
-            ),
-        )
+        .filter(withoutChunks)
         .filter(file => !hasParsed(file))
         .map(file => path.resolve(tmpPath, file)),
     );
@@ -112,7 +104,7 @@ export default class AutoAddSubtitle {
       .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
       .reduce((acc: Record<string, string[]>, cur) => {
         const [, original] = cur.match(
-          /default_Project Name_(.+)_chunks_\d+\.mp3\.srt/,
+          /default_Project Name_(.+)_chunks_\d+\.\w+\.srt/,
         ) || [cur, 0];
         if (!acc[original]) {
           acc[original] = [cur];
@@ -144,12 +136,12 @@ export default class AutoAddSubtitle {
     await Promise.all(
       files
         .filter(file => !/chunks/.test(file) && isSrtFile(file))
-        .filter(file => /default_Project Name_(.+)\.mp3\.srt/.test(file))
+        .filter(file => /default_Project Name_(.+)\.\w+\.srt$/.test(file))
         .map(file => path.resolve(videoDir, `${TEMP_DIR}/${file}`))
         .map(file =>
           move(
             file,
-            file.replace('default_Project Name_', '').replace('.mp3', ''),
+            file.replace('default_Project Name_', '').replace(/\.\w+/, ''),
           ),
         ),
     );
@@ -177,6 +169,6 @@ export default class AutoAddSubtitle {
     await this.renameSrtFiles();
     await this.moveSrtFiles();
 
-    await this.rmTmpDir();
+    await this.removeTmpDir();
   }
 }
