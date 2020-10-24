@@ -4,13 +4,13 @@ import { md5 } from './base';
 import { readFile, writeFile } from './fs';
 import { getClosestNodeModulesPath } from './path';
 
-const CACHE_FOLDER = '.cache';
+const cache_folder = '.cache';
 
 const prefix =
   `${getClosestNodeModulesPath()}`
     .split(path.sep)
     .filter(item => !!item)
-    .concat(CACHE_FOLDER)
+    .concat(cache_folder)
     .join(path.sep) + path.sep;
 
 ensureCacheDirExists(prefix);

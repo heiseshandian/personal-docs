@@ -186,4 +186,8 @@ export class Veed {
       await browser.close();
     }
   }
+
+  public static readonly subtitlePrefix = 'default_Project Name_';
+
+  public static readonly subtitleExt = '.srt';
 }

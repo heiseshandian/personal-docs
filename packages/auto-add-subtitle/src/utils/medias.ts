@@ -57,6 +57,13 @@ function parseDuration(duration = '') {
     .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
 }
 
+export const chunk_file_suffix = '_chunks_';
+
+const chunkFileReg = new RegExp(`${chunk_file_suffix}`);
+export function isChunkFile(file: string) {
+  return chunkFileReg.test(file);
+}
+
 async function sliceMediaByChunks(mediaPath: string, chunks: number) {
   const duration = await getDuration(mediaPath);
   if (!duration) {
@@ -70,7 +77,10 @@ async function sliceMediaByChunks(mediaPath: string, chunks: number) {
     Array(chunks)
       .fill(0)
       .map((_, i) => () => {
-        const outputFile = path.resolve(dir, `${name}_chunks_${i}${ext}`);
+        const outputFile = path.resolve(
+          dir,
+          `${name}${chunk_file_suffix}${i}${ext}`,
+        );
         if (fs.existsSync(outputFile)) {
           return Promise.resolve(outputFile);
         }
