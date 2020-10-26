@@ -15,7 +15,7 @@ npm i -g auto-add-subtitle
 - 使用
 
 ```sh
-auto-add-subtitle [-vp={需要添加字幕的视频所在目录,默认是当前目录}]
+auto-add-subtitle {视频所在目录（默认是当前目录）}
 ```
 
 ![](../../assets/2020-10-20-11-39-51.png)
