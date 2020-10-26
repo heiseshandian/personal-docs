@@ -17,15 +17,7 @@
     "puppeteer": "^5.3.1",
     "puppeteer-extra": "^3.1.15",
     "puppeteer-extra-plugin-stealth": "^2.6.2",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.3",
     "yargs": "^16.1.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^26.0.14",
-    "@types/progress": "^2.0.3",
-    "@types/puppeteer": "^3.0.2",
-    "jest": "^26.4.2"
   },
   "bin": {
     "auto-add-subtitle": "./bin/cli.js"
