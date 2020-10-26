@@ -1,6 +1,6 @@
 {
   "name": "zgq-shared",
-  "version": "1.23.1",
+  "version": "1.25.1",
   "description": "将电子书转为pdf文件",
   "main": "./dist/index.js",
   "module": "src/index.ts",

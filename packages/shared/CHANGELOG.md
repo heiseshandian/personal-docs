@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.25.1](https://github.com/heiseshandian/personal-docs/compare/v1.25.0...v1.25.1) (2020-10-26)
+
+**Note:** Version bump only for package zgq-shared
+
+
+
+
+
 ## [1.23.1](https://github.com/heiseshandian/personal-docs/compare/v1.23.0...v1.23.1) (2020-10-26)
 
 **Note:** Version bump only for package zgq-shared
