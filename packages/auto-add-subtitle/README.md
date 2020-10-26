@@ -27,7 +27,6 @@ auto-add-subtitle {视频所在目录（默认是当前目录）}
 
 ### 待实现功能
 
-- 使用 [api-extractor](https://api-extractor.com/) 管理接口变更
 - 支持使用其他网站并发解析字幕
 - 过一个月再来看看代码，遇到不好理解的地方就着手进行重构
 
