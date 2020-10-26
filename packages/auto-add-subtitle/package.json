@@ -1,6 +1,6 @@
 {
   "name": "auto-add-subtitle",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "自动为视频添加字幕",
   "main": "index.ts",
   "scripts": {
@@ -18,7 +18,7 @@
     "puppeteer-extra": "^3.1.15",
     "puppeteer-extra-plugin-stealth": "^2.6.2",
     "yargs": "^16.1.0",
-    "zgq-shared": "^1.0.0"
+    "zgq-shared": "^1.23.0"
   },
   "bin": {
     "auto-add-subtitle": "./bin/cli.js"
