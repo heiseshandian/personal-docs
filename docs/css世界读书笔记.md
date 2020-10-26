@@ -73,3 +73,41 @@ CSS 中的 width 属性不与影响宽度的 padding/border（有时候包括 ma
   border: 1px solid;
 }
 ```
+
+#### height:100%
+
+- 正常流布局
+
+```css
+.box {
+  height: 160px;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #beceeb;
+}
+.child {
+  height: 100%;
+  background-color: #cd0000;
+}
+```
+
+- 绝对定位
+
+```css
+.box {
+  height: 160px;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #beceeb;
+  position: relative;
+}
+.child {
+  height: 100%;
+  width: 100%;
+  background-color: #cd0000;
+  position: absolute;
+}
+```
+
+正常流的高度百分比是相对于 content-box 的，绝对定位相对于 padding-box
+![](../assets/2020-10-26-21-38-56.png)
