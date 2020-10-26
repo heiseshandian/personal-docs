@@ -1,20 +1,22 @@
 import fs from 'fs';
 import path from 'path';
-import { Veed } from './parsers/veed-auto-add-title';
 import {
   clean,
   ensurePathExists,
-  extractAudio,
-  isChunkFile,
-  isSupportedAudio,
   makeMap,
   move,
   readdir,
-  sliceMediaBySeconds,
   writeFile,
-  chunk_file_suffix,
-  mergeSrtFiles,
 } from 'zgq-shared';
+import { Veed } from './parsers/veed-auto-add-title';
+import {
+  chunk_file_suffix,
+  extractAudio,
+  isChunkFile,
+  isSupportedAudio,
+  mergeSrtFiles,
+  sliceMediaBySeconds,
+} from './utils';
 
 function isFile(file: string) {
   return /\.\w+/.test(file);

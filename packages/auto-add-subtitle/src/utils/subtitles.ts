@@ -1,4 +1,4 @@
-import { readFile } from './fs';
+import { readFile } from 'zgq-shared';
 
 const sequenceReg = /^([+-]?)(\d+)$/;
 const timelineReg = /^\d{2}:\d{2}:\d{2}[,.]\d{3} --> \d{2}:\d{2}:\d{2}[,.]\d{3}$/;

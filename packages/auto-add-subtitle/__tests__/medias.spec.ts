@@ -1,12 +1,11 @@
 import path from 'path';
+import { del, handleError } from 'zgq-shared';
 import {
-  concatMedias,
-  del,
-  extractAudio,
-  handleError,
-  isSupportedAudio,
   sliceMediaBySize,
-} from '../src';
+  concatMedias,
+  extractAudio,
+  isSupportedAudio,
+} from '../src/utils';
 
 async function cleanup(files: string[]) {
   await Promise.all([
