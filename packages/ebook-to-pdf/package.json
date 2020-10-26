@@ -28,6 +28,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
+    "yargs": "^16.1.0",
     "zgq-shared": "^1.23.1"
   }
 }
