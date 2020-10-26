@@ -34,3 +34,4 @@ export * from './progress';
 export * from './medias';
 export * from './shell';
 export * from './dynamic-tasks';
+export * from './subtitles';

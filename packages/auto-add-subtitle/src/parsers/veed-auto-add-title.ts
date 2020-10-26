@@ -9,7 +9,7 @@ import {
   DynamicTasks,
   handleError,
   setWebLifecycleState,
-} from '../utils';
+} from 'zgq-shared';
 
 puppeteer.use(StealthPlugin());
 

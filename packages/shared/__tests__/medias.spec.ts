@@ -6,7 +6,7 @@ import {
   handleError,
   isSupportedAudio,
   sliceMediaBySize,
-} from '../src/utils';
+} from '../src';
 
 async function cleanup(files: string[]) {
   await Promise.all([

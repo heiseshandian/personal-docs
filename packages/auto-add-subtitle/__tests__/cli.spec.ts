@@ -1,4 +1,4 @@
-import { del, execAsync, readdir } from '../src/utils';
+import { del, execAsync, readdir } from 'zgq-shared';
 import path from 'path';
 import { isSrtFile } from './helpers';
 

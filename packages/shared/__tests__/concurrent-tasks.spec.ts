@@ -1,4 +1,4 @@
-import { ConcurrentTasks } from '../src/utils';
+import { ConcurrentTasks } from '../src';
 
 test('concurrent-tasks', async () => {
   const [result1, result2, result3] = await Promise.all(

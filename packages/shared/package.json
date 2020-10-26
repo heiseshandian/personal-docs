@@ -1,0 +1,32 @@
+{
+  "name": "zgq-shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc",
+    "preinstall": "npm config set puppeteer_download_host https://npm.taobao.org/mirrors"
+  },
+  "keywords": [],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "filenamify": "^4.2.0",
+    "progress": "^2.0.3",
+    "puppeteer": "^5.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/shared"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/shared/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}

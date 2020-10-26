@@ -1,4 +1,4 @@
-import { delay, DynamicTasks } from '../src/utils';
+import { delay, DynamicTasks } from '../src';
 
 test('dynamic tasks,run add end', async () => {
   const dynamicTasks = new DynamicTasks<number>();

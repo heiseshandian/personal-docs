@@ -13,8 +13,8 @@ import {
   sliceMediaBySeconds,
   writeFile,
   chunk_file_suffix,
-} from './utils';
-import { mergeSrtFiles } from './utils/subtitles';
+  mergeSrtFiles,
+} from 'zgq-shared';
 
 function isFile(file: string) {
   return /\.\w+/.test(file);

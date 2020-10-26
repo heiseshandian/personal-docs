@@ -1,9 +1,4 @@
-import { getClosestNodeModulesPath, makeMap } from '../src/utils';
-
-test('getClosestNodeModulesPath', () => {
-  const nodeModulesPath = getClosestNodeModulesPath();
-  expect(nodeModulesPath?.endsWith('node_modules')).toBe(true);
-});
+import { makeMap } from '../src';
 
 test('makeMap', () => {
   const isInStr = makeMap('1,2,3');
