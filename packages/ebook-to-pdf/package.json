@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "prebuild": "npx rimraf bin",
-    "build": "tsc"
+    "build": "tsc",
+    "preinstall": "npm config set puppeteer_skip_chromium_download true",
+    "postinstall": "npm config delete puppeteer_skip_chromium_download"
   },
   "keywords": [],
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
