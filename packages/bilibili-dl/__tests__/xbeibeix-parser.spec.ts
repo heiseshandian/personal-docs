@@ -1,11 +1,11 @@
-import { BilibiliParser } from '../src/parsers/bilibili-parser';
+import { XbeibeixParser } from '../src/parsers';
 
 beforeAll(() => {
   jest.setTimeout(1000 * 30);
 });
 
-test('BilibiliParser', async () => {
-  const [url] = await BilibiliParser.parse(
+test('XbeibeixParser', async () => {
+  const [url] = await XbeibeixParser.parse(
     'https://www.bilibili.com/video/BV1Mh411Z7LC?p=1',
   );
   expect(/\.mp4/i.test(url)).toBe(true);

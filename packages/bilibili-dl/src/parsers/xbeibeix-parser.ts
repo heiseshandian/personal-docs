@@ -4,16 +4,9 @@ import { clearCookies, ConcurrentTasks, withCache } from 'zgq-shared';
 
 puppeteer.use(StealthPlugin());
 
-interface Config {
-  url: string;
-  inputSelector: string;
-  submitBtnSelector: string;
-  mp4UrlSelector: string;
-}
-
 // 负责将bilibili网站的blob格式视频转为普通mp4格式
-export class BilibiliParser {
-  private static config: Config = {
+export class XbeibeixParser {
+  private static config = {
     url: 'https://xbeibeix.com/api/bilibili/',
     inputSelector: '[aria-describedby]',
     submitBtnSelector: '#button-1',
