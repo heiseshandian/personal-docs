@@ -2,6 +2,10 @@
 
 you're not done when it works, you're done when it's right.
 
+### what is clean code
+
+The only way to go fast is to go well.
+
 ### the rules of functions
 
 - They should be small
