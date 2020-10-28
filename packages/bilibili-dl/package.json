@@ -1,7 +1,7 @@
 {
   "name": "bilibili-dl",
   "version": "1.26.0",
-  "description": "",
+  "description": "自动下载bilibili上的视频",
   "main": "src/index.ts",
   "scripts": {
     "prebuild": "npx rimraf bin",

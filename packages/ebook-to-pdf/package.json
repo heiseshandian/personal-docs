@@ -1,7 +1,7 @@
 {
   "name": "ebook-to-pdf",
   "version": "1.26.0",
-  "description": "",
+  "description": "电子书转pdf",
   "main": "index.js",
   "scripts": {
     "prebuild": "npx rimraf bin",
@@ -9,7 +9,11 @@
     "preinstall": "npm config set puppeteer_skip_chromium_download true",
     "postinstall": "npm config delete puppeteer_skip_chromium_download"
   },
-  "keywords": [],
+  "keywords": [
+    "calibre-ebook",
+    "ebook",
+    "pdf"
+  ],
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "bin": {

@@ -1,10 +1,14 @@
 {
   "name": "zgq-shared",
   "version": "1.26.0",
-  "description": "将电子书转为pdf文件",
+  "description": "大白的个人工具库",
   "main": "./dist/index.js",
   "module": "src/index.ts",
-  "keywords": [],
+  "keywords": [
+    "utils",
+    "concurrent task",
+    "dynamic task"
+  ],
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "scripts": {

@@ -2,6 +2,10 @@
   "name": "auto-add-subtitle",
   "version": "1.26.0",
   "description": "自动为视频添加字幕",
+  "keywords": [
+    "video",
+    "subtitle"
+  ],
   "main": "index.ts",
   "scripts": {
     "prebuild": "npx rimraf bin",
