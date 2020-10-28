@@ -2,10 +2,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { handleError } from 'zgq-shared/src/base';
-import { ConcurrentTasks } from 'zgq-shared/src/concurrent-tasks';
-import { writeFile } from 'zgq-shared/src/fs';
-import { execAsync } from 'zgq-shared/src/shell';
+import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
