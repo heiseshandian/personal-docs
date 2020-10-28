@@ -1,4 +1,3 @@
 test
-tools-private
+*-private
 bin
-*.js
