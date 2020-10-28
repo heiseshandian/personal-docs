@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.1](https://github.com/heiseshandian/personal-docs/compare/v1.26.0...v1.26.1) (2020-10-28)
+
+
+### Features
+
+* 提交完自动push到远程仓库（省的老忘记） ([8a54232](https://github.com/heiseshandian/personal-docs/commit/8a54232ad2dc9c0e8e4f91fc9cb023545bbf461e))
+
+
+
+
+
 # [1.26.0](https://github.com/heiseshandian/personal-docs/compare/v1.25.1...v1.26.0) (2020-10-28)
 
 
