@@ -8,7 +8,11 @@
     "build": "tsc",
     "preinstall": "npm config set puppeteer_download_host https://npm.taobao.org/mirrors"
   },
-  "keywords": [],
+  "keywords": [
+    "bilibili",
+    "哔哩哔哩",
+    "视频下载"
+  ],
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "dependencies": {
