@@ -1,6 +1,6 @@
 {
   "name": "ebook-to-pdf",
-  "version": "1.25.1",
+  "version": "1.26.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "yargs": "^16.1.0",
-    "zgq-shared": "^1.25.1"
+    "zgq-shared": "^1.26.0"
   }
 }
