@@ -8,6 +8,7 @@
   },
   "scripts": {
     "commit": "cz",
+    "postcommit": "git push",
     "test:o": "jest -o",
     "test": "jest",
     "prepublish": "lerna run build",
