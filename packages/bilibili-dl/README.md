@@ -19,3 +19,7 @@ npm i -g bilibili-dl
 ```sh
 bilibili-dl {url}
 ```
+
+### 待实现功能
+
+- 检测，过滤用户输入，提前终止解析并提示用户
