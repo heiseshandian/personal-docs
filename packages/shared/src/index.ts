@@ -33,3 +33,4 @@ export * from './path';
 export * from './progress';
 export * from './shell';
 export * from './dynamic-tasks';
+export * from './logger';

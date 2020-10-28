@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { clearCookies } from 'zgq-shared';
+import { clearCookies, log, logWrapper } from 'zgq-shared';
 
 puppeteer.use(StealthPlugin());
 
@@ -10,6 +10,7 @@ export class BilibiliParser {
     timeout: 1000 * 60 * 5,
   };
 
+  @logWrapper(log('parsing series'))
   public static async parseSeries(url: string) {
     if (!url) {
       return;
@@ -38,6 +39,7 @@ export class BilibiliParser {
     });
   }
 
+  @logWrapper(log('parsing page title'))
   public static async parsePageTitle(url: string) {
     if (!url) {
       return;

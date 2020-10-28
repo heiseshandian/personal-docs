@@ -1,3 +1,4 @@
 test
 tools-private
 bin
+*.js
