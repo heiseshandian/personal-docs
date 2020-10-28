@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.2](https://github.com/heiseshandian/personal-docs/compare/v1.26.1...v1.26.2) (2020-10-28)
+
+
+### Bug Fixes
+
+* bug修复 ([85bbcb9](https://github.com/heiseshandian/personal-docs/commit/85bbcb98e4d2010c09be3938ec3303622246899e))
+
+
+
+
+
 ## [1.26.1](https://github.com/heiseshandian/personal-docs/compare/v1.26.0...v1.26.1) (2020-10-28)
 
 **Note:** Version bump only for package auto-add-subtitle
