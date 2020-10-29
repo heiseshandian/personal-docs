@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.28.0](https://github.com/heiseshandian/personal-docs/compare/v1.27.0...v1.28.0) (2020-10-29)
+
+
+### Features
+
+* 给缓存加个过期时间 ([cedf133](https://github.com/heiseshandian/personal-docs/commit/cedf1338c18f79756c86a4727b264e336c4f2235))
+
+
+
+
+
 ## [1.26.1](https://github.com/heiseshandian/personal-docs/compare/v1.26.0...v1.26.1) (2020-10-28)
 
 **Note:** Version bump only for package bilibili-dl
