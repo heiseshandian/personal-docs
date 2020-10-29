@@ -62,6 +62,6 @@ export class XbeibeixParser {
   public static async parse(
     blobs: string | Array<string>,
   ): Promise<Array<string>> {
-    return withCache(this._parse.bind(this))(blobs);
+    return withCache(this._parse.bind(this), 1000 * 60 * 30)(blobs);
   }
 }

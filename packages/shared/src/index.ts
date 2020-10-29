@@ -6,14 +6,14 @@ export async function clearCookies(page: Page) {
   await page._client.send('Network.clearBrowserCookies');
 }
 
-export async function clearCache(page: Page) {
+export async function clearBrowserCache(page: Page) {
   // @ts-ignore
   await page._client.send('Network.clearBrowserCache');
 }
 
 export async function clearCookiesAndCache(page: Page) {
   await clearCookies(page);
-  await clearCache(page);
+  await clearBrowserCache(page);
 }
 
 // https://github.com/puppeteer/puppeteer/issues/3339

@@ -1,9 +1,7 @@
+import { isPromise } from './base';
+
 export function log(...args: any) {
   return () => console.log(...args);
-}
-
-function isPromise(p: any) {
-  return p && typeof p.then === 'function' && typeof p.catch === 'function';
 }
 
 export function logWrapper(

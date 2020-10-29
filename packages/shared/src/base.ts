@@ -48,3 +48,15 @@ export function delay(timeout: number) {
 }
 
 export const uniq = (arr: Array<any>) => Array.from(new Set(arr));
+
+export function parseJson(obj: any) {
+  try {
+    return JSON.parse(obj);
+  } catch (e) {
+    handleError(e);
+  }
+}
+
+export function isPromise(p: any) {
+  return p && typeof p.then === 'function' && typeof p.catch === 'function';
+}

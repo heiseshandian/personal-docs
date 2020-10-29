@@ -1,37 +1,81 @@
 import fs from 'fs';
 import path from 'path';
-import { md5 } from './base';
-import { ensurePathExists, readFile, writeFile } from './fs';
+import { isPromise, md5, parseJson } from './base';
+import { del, ensurePathExists, readFile, writeFile } from './fs';
 import { getClosestNodeModulesPath } from './path';
 
-const cache_folder = '.cache';
+const CACHE_FOLDER = '.cache';
+const NEVER_EXPIRES = -1;
 
-const prefix =
+const cachePath =
   `${getClosestNodeModulesPath()}`
     .split(path.sep)
     .filter(item => !!item)
-    .concat(cache_folder)
+    .concat(CACHE_FOLDER)
     .join(path.sep) + path.sep;
 
-ensurePathExists(prefix);
+ensurePathExists(cachePath);
 
-export function withCache(
-  fn: (params: string | Array<string>) => Promise<any>,
-) {
-  return async (params: string | Array<string>) => {
-    const filePath = `${prefix}${md5(
-      Array.isArray(params) ? params.join() : params,
-    )}.json`;
+interface CacheData {
+  expires: number;
+  result: any;
+}
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function withCache(fn: Function, maxAge?: number) {
+  return async (params: any) => {
+    const cache = await getCache(params);
     // hit cache
-    if (fs.existsSync(filePath)) {
-      return readFile(filePath).then(data => {
-        return JSON.parse(data as any);
+    if (cache) {
+      return cache;
+    }
+
+    const result = fn(params);
+    if (isPromise(result)) {
+      return result.then(async (data: any) => {
+        await updateCache(params, {
+          expires: maxAge === undefined ? NEVER_EXPIRES : Date.now() + maxAge,
+          result: data,
+        });
+
+        return data;
       });
     }
 
-    const result = await fn(params);
-    await writeFile(filePath, JSON.stringify(result));
+    await updateCache(params, {
+      expires: maxAge === undefined ? NEVER_EXPIRES : Date.now() + maxAge,
+      result,
+    });
     return result;
   };
+}
+
+async function getCache(params: any) {
+  const key = getCacheKey(params);
+
+  if (!fs.existsSync(key)) {
+    return;
+  }
+
+  const data = await readFile(key);
+  const { expires, result } = (parseJson(data) || {}) as CacheData;
+  if (expires === NEVER_EXPIRES || expires > Date.now()) {
+    return result;
+  }
+}
+
+async function updateCache(params: any, data: CacheData) {
+  const key = getCacheKey(params);
+  await writeFile(key, JSON.stringify(data));
+}
+
+export async function clearCache(params: any) {
+  const key = getCacheKey(params);
+  if (fs.existsSync(key)) {
+    await del(key);
+  }
+}
+
+function getCacheKey(params: any) {
+  return `${cachePath}${md5(`${params}`)}.json`;
 }
