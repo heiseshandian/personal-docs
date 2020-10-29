@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { md5 } from './base';
-import { readFile, writeFile } from './fs';
+import { ensurePathExists, readFile, writeFile } from './fs';
 import { getClosestNodeModulesPath } from './path';
 
 const cache_folder = '.cache';
@@ -13,7 +13,7 @@ const prefix =
     .concat(cache_folder)
     .join(path.sep) + path.sep;
 
-ensureCacheDirExists(prefix);
+ensurePathExists(prefix);
 
 export function withCache(
   fn: (params: string | Array<string>) => Promise<any>,
@@ -34,10 +34,4 @@ export function withCache(
     await writeFile(filePath, JSON.stringify(result));
     return result;
   };
-}
-
-function ensureCacheDirExists(cachePath: string) {
-  if (!fs.existsSync(cachePath)) {
-    fs.mkdirSync(cachePath, { recursive: true });
-  }
 }
