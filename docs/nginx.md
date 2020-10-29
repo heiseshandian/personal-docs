@@ -4,7 +4,7 @@
 
 - 下载 nginx
   复制 nginx 下载路径
-  ![](../assets/2020-07-30-08-50-48.png)
+  ![](assets/2020-07-30-08-50-48.png)
 
 ```sh
 wget http://nginx.org/download/nginx-1.18.0.tar.gz
@@ -73,7 +73,7 @@ firewall-cmd --reload
 
 CreateCertGUI
 
-![](../assets/2020-07-30-09-37-46.png)
+![](assets/2020-07-30-09-37-46.png)
 
 #### 配置 nginx
 

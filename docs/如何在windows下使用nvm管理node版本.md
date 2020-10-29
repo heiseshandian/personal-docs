@@ -7,7 +7,7 @@
 ### 安装
 
 - 在 github 上下载 [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)，这里我们下载当前最新版本的 nvm-noinstall.zip
-  ![](../assets/2020-07-20-21-05-40.png)
+  ![](assets/2020-07-20-21-05-40.png)
 
 - 下载完成后解压到某个地方（比如说 D:\ProgramFiles\nvm）
 
@@ -48,11 +48,11 @@ node_mirror: http://npm.taobao.org/mirrors/node/
 npm_mirror: https://npm.taobao.org/mirrors/npm/
 ```
 
-![](../assets/2020-07-21-08-28-42.png)
+![](assets/2020-07-21-08-28-42.png)
 
 - 重新打开一个 cmd 窗口运行 `nvm`
   出现如下提示则安装成功
-  ![](../assets/2020-07-21-08-29-43.png)
+  ![](assets/2020-07-21-08-29-43.png)
 
 ### 使用
 
@@ -62,7 +62,7 @@ npm_mirror: https://npm.taobao.org/mirrors/npm/
 nvm list available
 ```
 
-![](../assets/2020-07-21-08-31-04.png)
+![](assets/2020-07-21-08-31-04.png)
 
 - 安装某个版本
   此命令会从我们之前指定的 node 镜像和 npm 镜像上下载 node 和 npm 安装包然后安装起来
@@ -71,7 +71,7 @@ nvm list available
 nvm install 14.5.0
 ```
 
-![](../assets/2020-07-21-08-33-39.png)
+![](assets/2020-07-21-08-33-39.png)
 
 - 使用某个版本
 
@@ -81,4 +81,4 @@ nvm use 14.5.0
 
 可以看到执行完 `nvm use {version}` 之后当前 node 版本就变了
 
-![](../assets/2020-07-21-08-34-47.png)
+![](assets/2020-07-21-08-34-47.png)

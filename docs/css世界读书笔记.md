@@ -36,7 +36,7 @@
 
 - 对于 display:block 的元素不需要设置 width:100%，width:100%会破坏盒子的流体特性
 - 包裹性
-  ![](../assets/2020-10-23-10-46-36.png)
+  ![](assets/2020-10-23-10-46-36.png)
 
 ```css
 .box {
@@ -110,7 +110,7 @@ CSS 中的 width 属性不与影响宽度的 padding/border（有时候包括 ma
 ```
 
 正常流的高度百分比是相对于 content-box 的，绝对定位相对于 padding-box
-![](../assets/2020-10-26-21-38-56.png)
+![](assets/2020-10-26-21-38-56.png)
 
 #### max-height
 

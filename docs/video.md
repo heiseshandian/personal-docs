@@ -98,7 +98,7 @@ this.videoElem.setAttribute('x5-video-player-type', 'h5-page');
 
 #### 客户端默认 poster 问题
 
-![](../assets/2020-07-16-20-10-01.png)
+![](assets/2020-07-16-20-10-01.png)
 
 > 等视频开始播放的时候再展示 video 原始
 

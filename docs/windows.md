@@ -9,7 +9,7 @@
 tasklist | grep -i "软件名称"
 ```
 
-![](../assets/2020-08-03-21-11-56.png)
+![](assets/2020-08-03-21-11-56.png)
 
 - 查看 pid 对应的端口号
 
@@ -17,7 +17,7 @@ tasklist | grep -i "软件名称"
 netstat -ano | grep {pid}
 ```
 
-![](../assets/2020-08-03-21-12-47.png)
+![](assets/2020-08-03-21-12-47.png)
 
 ### 查看端口占用情况
 
@@ -33,4 +33,4 @@ netstat -ano | grep {pid}
 taskkill /f /pid {pid}
 ```
 
-![](../assets/2020-08-03-21-20-07.png)
+![](assets/2020-08-03-21-20-07.png)

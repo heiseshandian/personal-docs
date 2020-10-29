@@ -59,7 +59,7 @@
 
 当然，有人可能会觉得这样写起来有点麻烦，能不能只写一个默认的。借助 webpack-loader 以及一些命名约定我们可以轻松实现此需求。
 
-![](../assets/2020-09-16-14-23-06.png)
+![](assets/2020-09-16-14-23-06.png)
 
 ### webpack-loader 简介
 
@@ -69,7 +69,7 @@
 
 默认情况下 webpack 无法识别 vue，ts，css，图片等文件类型，这些类型都需要借助合适的 loader 转化为 js 模块才能被 webpack 正确处理。
 
-![](../assets/2020-09-16-08-52-16.png)
+![](assets/2020-09-16-08-52-16.png)
 
 ```js
 module.exports = function awesomeLoader(source) {
@@ -80,7 +80,7 @@ module.exports = function awesomeLoader(source) {
 
 #### 举个例子
 
-![](../assets/2020-09-16-09-32-01.png)
+![](assets/2020-09-16-09-32-01.png)
 
 简化版 file-loader
 
@@ -106,7 +106,7 @@ export default function loader(content) {
 
 #### 目标
 
-![](../assets/2020-09-16-14-23-06.png)
+![](assets/2020-09-16-14-23-06.png)
 
 #### 大概思路
 
@@ -169,7 +169,7 @@ export function getFilesMap(dir: string) {
 - 通过 webpack-loader 在构建时改变代码
   这一步其实就是把前面两步拿到的东西拼接成最终的 code
 
-  ![](../assets/2020-09-16-15-06-09.png)
+  ![](assets/2020-09-16-15-06-09.png)
 
 ```js
 module.exports = function awesomeLoader(source) {
