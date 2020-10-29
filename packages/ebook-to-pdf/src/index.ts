@@ -1,4 +1,4 @@
-import { ConcurrentTasks, execAsync, makeMap, readdir } from 'zgq-shared';
+import { ConcurrentTasks, execAsync, log, makeMap, readdir } from 'zgq-shared';
 import path from 'path';
 
 function isEbook(file: string) {
@@ -15,6 +15,16 @@ function parseName(file: string) {
 
 export async function convert2Pdf(filePath: string) {
   if (!filePath) {
+    return;
+  }
+
+  const isInstalled = await isEbookConvertInstalled();
+  if (!isInstalled) {
+    log(
+      `当前环境变量中未检测到 ebook-convert ，
+      请检查下是否已经安装 calibre-ebook [https://calibre-ebook.com/download]，
+      部分windows下环境变量可能需要重启电脑才能生效`,
+    );
     return;
   }
 
@@ -35,4 +45,9 @@ export async function convert2Pdf(filePath: string) {
       }),
     'converting',
   ).run();
+}
+
+async function isEbookConvertInstalled() {
+  const [stdout] = (await execAsync('ebook-convert --version')) || [];
+  return /calibre/.test(stdout);
 }
