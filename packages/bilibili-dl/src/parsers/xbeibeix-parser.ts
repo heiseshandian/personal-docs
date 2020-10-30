@@ -27,7 +27,7 @@ export class XbeibeixParser {
     }
     const { config, maxConcurrent } = this;
 
-    return puppeteer.launch({ headless: false }).then(async browser => {
+    return puppeteer.launch({ headless: true }).then(async browser => {
       const result: Array<string> = await new ConcurrentTasks<string>(
         (blobs as string[]).map(url => async () => {
           const page = await browser.newPage();
