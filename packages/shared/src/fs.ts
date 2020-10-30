@@ -2,9 +2,18 @@ import fs, { PathLike } from 'fs';
 import { callback2Promise } from './base';
 import { execAsync } from './shell';
 
-export const readFile: (path: PathLike) => Promise<Buffer> = callback2Promise(
-  fs.readFile,
-);
+// https://www.typescriptlang.org/docs/handbook/functions.html#overloads
+export function readFile(path: PathLike): Promise<Buffer>;
+export function readFile(
+  path: PathLike,
+  options: { encoding: BufferEncoding },
+): Promise<string>;
+export function readFile(
+  path: PathLike,
+  options?: { encoding: BufferEncoding },
+): Promise<string | Buffer> {
+  return callback2Promise<any>(fs.readFile)(path, options);
+}
 
 export const writeFile: (
   path: PathLike,

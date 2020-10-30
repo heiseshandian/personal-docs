@@ -1,2 +1,2 @@
 # https://docs.npmjs.com/misc/developers#keeping-files-out-of-your-package
-# use an empty .npmignore file to override .gitignore file
+__tests__

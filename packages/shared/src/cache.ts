@@ -21,9 +21,8 @@ interface CacheData {
   result: any;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function withCache(fn: Function, maxAge?: number) {
-  return async (params: any) => {
+export function withCache<T>(fn: (params: T) => any, maxAge?: number) {
+  return async (params: T) => {
     const cache = await getCache(params);
     // hit cache
     if (cache) {

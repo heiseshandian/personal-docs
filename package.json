@@ -1,18 +1,21 @@
 {
   "name": "personal-docs",
   "version": "1.0.0",
-  "description": "[toc]",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "coding everyday",
   "scripts": {
     "commit": "cz",
     "postcommit": "git push",
     "test:o": "jest -o",
     "test": "jest",
-    "prepublish": "lerna run build",
+    "prepublish": "lerna run build & npm run test:o & ts-node ./scripts/prepack.ts",
     "publish": "lerna publish",
+    "postpublish": "ts-node ./scripts/postpack.ts",
+    "prepublish:alpha": "npm run prepublish",
+    "publish:alpha": "lerna publish --canary",
+    "postpublish:alpha": "npm run postpublish",
+    "prepublish:beta": "npm run prepublish",
+    "publish:beta": "lerna publish --canary --preid beta",
+    "postpublish:beta": "npm run postpublish",
     "debug": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
   },
   "repository": {
@@ -27,10 +30,10 @@
   },
   "homepage": "https://github.com/heiseshandian/personal-docs#readme",
   "devDependencies": {
-    "typescript": "^4.0.3",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-lerna-scopes": "^11.0.0",
     "@types/jest": "^26.0.14",
+    "@types/progress": "^2.0.3",
     "@types/puppeteer": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.3.0",
@@ -44,7 +47,8 @@
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.1",
-    "@types/progress": "^2.0.3"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   },
   "config": {
     "commitizen": {
