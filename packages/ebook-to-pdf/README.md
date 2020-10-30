@@ -1,20 +1,19 @@
-### 简介
+## Ebook-to-pdf
 
-基于 [calibre-ebook](https://calibre-ebook.com/download)将电子书转为 pdf 文件
+Convert ebook to pdf based on [calibre-ebook](https://calibre-ebook.com/download)
 
-### 使用方式
+Read this in other languages: [english](./README.md) | [简体中文](./README.zh-cn.md)
 
-- 安装 calibre
-  点击[calibre-ebook](https://calibre-ebook.com/download)选择适合自己的版本安装
+## Installation
 
-- 全局安装本包
+- install calibre-ebook
+  [calibre-ebook](https://calibre-ebook.com/download)
+- install ebook-to-pdf
 
 ```sh
 npm i -g ebook-to-pdf
 ```
 
-- 使用
+## Usage
 
-```sh
-ebook-to-pdf [input_file]
-```
+ebook-to-pdf [{path to your ebook, default is current dir}]
