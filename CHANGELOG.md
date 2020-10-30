@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/heiseshandian/personal-docs/compare/v1.28.0...v1.29.0) (2020-10-30)
+
+
+### Features
+
+* 发布前修改readme内容 ([066e898](https://github.com/heiseshandian/personal-docs/commit/066e8989e612acb74ea5d2d245e5fa8aa82aa9b3))
+
+
+
+
+
 # [1.28.0](https://github.com/heiseshandian/personal-docs/compare/v1.27.0...v1.28.0) (2020-10-29)
 
 
