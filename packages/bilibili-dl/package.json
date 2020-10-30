@@ -39,5 +39,6 @@
   "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/bilibili-dl/README.md",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "gitHead": "4e8d614d5f733f0fb4183b963366851a04dd2bcb"
 }

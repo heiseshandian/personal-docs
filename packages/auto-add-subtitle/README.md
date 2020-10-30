@@ -18,7 +18,7 @@ npm i -g auto-add-subtitle
 auto-add-subtitle {视频所在目录（默认是当前目录）}
 ```
 
-![](assets/2020-10-20-11-39-51.png)
+![](../../assets/2020-10-20-11-39-51.png)
 
 ### 参考资料
 
@@ -31,7 +31,7 @@ auto-add-subtitle {视频所在目录（默认是当前目录）}
 
 ### 视频基本概念
 
-![](assets/2020-10-12-17-13-28.png)
+![](../../assets/2020-10-12-17-13-28.png)
 
 - container format
   avi,mp4 这种属于容器类型
@@ -44,4 +44,4 @@ auto-add-subtitle {视频所在目录（默认是当前目录）}
 - packets
   压缩后的数据单元，一个 packets 可以包含多个完整的 frames
 - srt files
-  ![](assets/2020-10-15-09-22-12.png)
+  ![](../../assets/2020-10-15-09-22-12.png)
