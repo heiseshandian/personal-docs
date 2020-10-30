@@ -1,6 +1,6 @@
 {
   "name": "auto-add-subtitle",
-  "version": "1.28.0",
+  "version": "1.28.1-alpha.3+ab4dabc",
   "description": "自动为视频添加字幕",
   "keywords": [
     "video",
@@ -39,5 +39,5 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "gitHead": "cfd09161bc6e5854cfad5e27b87d6c783bb5ede7"
+  "gitHead": "ab4dabc2a9f357e2b87624590bca76243c4a6fa0"
 }
