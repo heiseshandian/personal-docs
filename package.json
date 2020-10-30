@@ -7,15 +7,12 @@
     "postcommit": "git push",
     "test:o": "jest -o",
     "test": "jest",
-    "prerelease": "lerna run build & ts-node ./scripts/prepack.ts & git add . & git commit -m \"chore: change readme before publish\"",
+    "prepack": "ts-node ./scripts/prepack.ts",
+    "postpack": "ts-node ./scripts/postpack.ts",
+    "prerelease": "lerna run build",
     "release": "lerna publish",
-    "postrelease": "ts-node ./scripts/postpack.ts & git add . & git commit -m \"chore: recover readme after publish\"",
     "prerelease:alpha": "npm run prerelease",
     "release:alpha": "lerna publish --canary",
-    "postrelease:alpha": "npm run postrelease",
-    "prerelease:beta": "npm run prerelease",
-    "release:beta": "lerna publish --canary --preid beta",
-    "postrelease:beta": "npm run postrelease",
     "debug": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
   },
   "repository": {
