@@ -13,15 +13,12 @@
   "license": "ISC",
   "scripts": {
     "prebuild": "npx rimraf dist",
-    "build": "tsc",
-    "preinstall": "npm config set puppeteer_skip_chromium_download true",
-    "postinstall": "npm config delete puppeteer_skip_chromium_download"
+    "build": "tsc"
   },
   "dependencies": {
     "axios": "^0.20.0",
     "filenamify": "^4.2.0",
-    "progress": "^2.0.3",
-    "puppeteer": "^5.3.1"
+    "progress": "^2.0.3"
   },
   "repository": {
     "type": "git",

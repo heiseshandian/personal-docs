@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prebuild": "npx rimraf bin",
-    "build": "tsc",
-    "preinstall": "npm config set puppeteer_skip_chromium_download true",
-    "postinstall": "npm config delete puppeteer_skip_chromium_download"
+    "build": "tsc"
   },
   "keywords": [
     "calibre-ebook",
