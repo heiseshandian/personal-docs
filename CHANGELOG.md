@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/heiseshandian/personal-docs/compare/v1.29.0...v1.30.0) (2020-10-30)
+
+
+### Features
+
+* 开启无头模式 ([1cea85c](https://github.com/heiseshandian/personal-docs/commit/1cea85c3e0e68ced19cb14a556eaa506ebf445af))
+
+
+
+
+
 # [1.29.0](https://github.com/heiseshandian/personal-docs/compare/v1.28.0...v1.29.0) (2020-10-30)
 
 
