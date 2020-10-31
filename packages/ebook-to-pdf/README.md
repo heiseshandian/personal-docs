@@ -16,4 +16,6 @@ npm i -g ebook-to-pdf
 
 ## Usage
 
+```sh
 ebook-to-pdf [{path to your ebook, default is current dir}]
+```
