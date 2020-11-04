@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.31.1](https://github.com/heiseshandian/personal-docs/compare/v1.31.0...v1.31.1) (2020-11-04)
+
+
+### Bug Fixes
+
+* prepack bug修复 ([268cdf6](https://github.com/heiseshandian/personal-docs/commit/268cdf69b00dedd51bac2d6e1ff79babd82eab41))
+
+
+
+
+
 # [1.31.0](https://github.com/heiseshandian/personal-docs/compare/v1.30.1...v1.31.0) (2020-11-04)
 
 
