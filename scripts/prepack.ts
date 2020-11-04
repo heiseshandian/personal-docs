@@ -5,7 +5,7 @@ import { updateMarkdownContent } from './helpers';
 })();
 
 const assetReg = /!\[\]\((.+)\)/g;
-const mdReg = /\(\W*(\w+\.md)\)/g;
+const mdReg = /\(\W*([-.\w]+\.md)\)/g;
 function updateContentPath(content: string, packageName: string) {
   return content
     .replace(
