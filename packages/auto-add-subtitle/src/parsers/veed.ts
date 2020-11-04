@@ -8,6 +8,8 @@ import {
   delay,
   DynamicTasks,
   handleError,
+  move,
+  readdir,
   setWebLifecycleState,
 } from 'zgq-shared';
 
@@ -50,14 +52,14 @@ export class Veed {
   }
 
   // 上传文件
-  private static async upload(page: Page, media: string) {
+  private static async upload(page: Page, audio: string) {
     const { uploadBtnXpath, inputFileSelector, timeout } = this.config;
 
     // https://github.com/puppeteer/puppeteer/issues/2946
     await this.safeClickXPath(page, uploadBtnXpath);
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
-    await uploadBtn?.uploadFile(media);
+    await uploadBtn?.uploadFile(audio);
 
     // 跳转编辑页面
     // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
@@ -104,8 +106,8 @@ export class Veed {
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
-  private static async download(page: Page, media: string) {
-    const { dir } = path.parse(media);
+  private static async download(page: Page, audio: string) {
+    const { dir } = path.parse(audio);
     // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
     // @ts-ignore
     await page._client.send('Browser.setDownloadBehavior', {
@@ -130,8 +132,22 @@ export class Veed {
     }, downloadXpath);
   }
 
-  public static async parseSubtitle(medias: Array<string>) {
-    if (medias.length <= 0) {
+  private static async renameSubtitleFiles(audio: string) {
+    const { dir, ext } = path.parse(audio);
+    const files = await readdir(dir);
+
+    await Promise.all(
+      files
+        .filter(isSubtitleFile)
+        .map(file => path.resolve(dir, file))
+        .map(file =>
+          move(file, file.replace(this.subtitlePrefix, '').replace(ext, '')),
+        ),
+    );
+  }
+
+  public static async parseSubtitle(audios: Array<string>) {
+    if (audios.length <= 0) {
       return;
     }
 
@@ -153,23 +169,23 @@ export class Veed {
         })
         .then(async browser => {
           await new ConcurrentTasks(
-            medias.map((media, i) => async () => {
+            audios.map((audio, i) => async () => {
               const { timeout } = this.config;
               const page = await browser.newPage();
               await clearCookies(page);
               await page.goto(url, { timeout });
               await setWebLifecycleState(page);
-              await this.upload(page, media);
+              await this.upload(page, audio);
 
               dynamicTasks.add(async () => {
                 await this._parseSubtitle(page);
-                await this.download(page, media);
+                await this.download(page, audio);
                 // 下载完再关闭页面
                 await delay(1000 * 10);
                 await page.close();
               });
 
-              if (i === medias.length - 1) {
+              if (i === audios.length - 1) {
                 dynamicTasks.end();
               }
             }),
@@ -185,9 +201,16 @@ export class Veed {
     if (browser) {
       await browser.close();
     }
+
+    await this.renameSubtitleFiles(audios[0]);
   }
 
   public static readonly subtitlePrefix = 'default_Project Name_';
 
   public static readonly subtitleExt = '.srt';
+}
+
+const subtitleFileReg = new RegExp(`\\${Veed.subtitleExt}$`);
+export function isSubtitleFile(file: string) {
+  return subtitleFileReg.test(file);
 }

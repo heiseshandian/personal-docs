@@ -10,7 +10,7 @@ import {
   readdir,
   writeFile,
 } from 'zgq-shared';
-import { Veed } from './parsers';
+import { isSubtitleFile, Veed } from './parsers';
 import {
   chunk_file_suffix,
   extractAudio,
@@ -23,13 +23,8 @@ import {
 export * from './utils';
 export * from './parsers';
 
-function isFile(file: string) {
+export function isFile(file: string) {
   return /\.\w+/.test(file);
-}
-
-const subtitleFileReg = new RegExp(`\\${Veed.subtitleExt}$`);
-function isSubtitleFile(file: string) {
-  return subtitleFileReg.test(file);
 }
 
 function toAbsolutePath(dir: string, file: string) {
