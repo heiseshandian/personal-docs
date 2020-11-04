@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import {
   clean,
+  ConcurrentTasks,
+  del,
   ensurePathExists,
   makeMap,
   move,
@@ -70,6 +72,19 @@ export default class AutoAddSubtitle {
         .map(file => toAbsolutePath(tmpPath, file)),
       chunkSeconds,
     );
+
+    const withChunks = (file: string) =>
+      fs.existsSync(
+        path.resolve(
+          tmpPath,
+          file.replace(/^(.+)\.(\w+)$/, `$1${chunk_file_suffix}0.$2`),
+        ),
+      );
+    await new ConcurrentTasks(
+      tmpFiles
+        .filter(withChunks)
+        .map(file => async () => await del(toAbsolutePath(tmpPath, file))),
+    ).run();
   }
 
   private async parseSubtitle() {
@@ -83,18 +98,10 @@ export default class AutoAddSubtitle {
         file.replace(Veed.subtitlePrefix, '').replace(/\.\w+$/, ''),
       ),
     );
-    const withoutChunks = (file: string) =>
-      !fs.existsSync(
-        path.resolve(
-          tmpPath,
-          file.replace(/^(.+)\.(\w+)$/, `$1${chunk_file_suffix}0.$2`),
-        ),
-      );
 
     await Veed.parseSubtitle(
       files
         .filter(isSupportedAudio)
-        .filter(withoutChunks)
         .filter(file => !hasParsed(file))
         .map(file => path.resolve(tmpPath, file)),
     );
@@ -108,7 +115,7 @@ export default class AutoAddSubtitle {
     }
 
     const subtitleReg = new RegExp(
-      `${Veed.subtitlePrefix}(.+)${chunk_file_suffix}[^.]*\\${Veed.subtitleExt}$`,
+      `${Veed.subtitlePrefix}(.+)${chunk_file_suffix}(\\d+)[^.]*\\${Veed.subtitleExt}$`,
     );
     const chunkFilesGroup = files
       .filter(file => isChunkFile(file) && isSubtitleFile(file))
@@ -123,9 +130,18 @@ export default class AutoAddSubtitle {
         return acc;
       }, {});
 
+    const extractChunkNum = (file: string) => {
+      const [, , chunkNum] = file.match(subtitleReg) || [null, null, 0];
+      return Number(chunkNum);
+    };
+
     const result = await Promise.all(
       Object.keys(chunkFilesGroup).map(key =>
-        mergeSrtFiles(chunkFilesGroup[key]),
+        mergeSrtFiles(
+          chunkFilesGroup[key].sort(
+            (a, b) => extractChunkNum(a) - extractChunkNum(b),
+          ),
+        ),
       ),
     );
 
