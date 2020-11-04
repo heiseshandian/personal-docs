@@ -10,7 +10,7 @@ import {
   readdir,
   writeFile,
 } from 'zgq-shared';
-import { Veed } from './parsers/veed-auto-add-title';
+import { Veed } from './parsers';
 import {
   chunk_file_suffix,
   extractAudio,
@@ -19,6 +19,9 @@ import {
   mergeSrtFiles,
   sliceMediaBySeconds,
 } from './utils';
+
+export * from './utils';
+export * from './parsers';
 
 function isFile(file: string) {
   return /\.\w+/.test(file);

@@ -5,7 +5,7 @@ import {
   concatMedias,
   extractAudio,
   isSupportedAudio,
-} from '../src/utils';
+} from '../src';
 
 async function cleanup(files: string[]) {
   await Promise.all([
