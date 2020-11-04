@@ -13,7 +13,7 @@
     "release": "lerna publish",
     "prerelease:alpha": "npm run prerelease",
     "release:alpha": "lerna publish --canary",
-    "debug": "ts-node ./packages/auto-add-subtitle/src/veed-auto-add-title.ts"
+    "debug": "jest ./packages/auto-add-subtitle/__tests__/cli.spec.ts"
   },
   "repository": {
     "type": "git",

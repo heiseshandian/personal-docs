@@ -11,7 +11,10 @@ test('cli', async () => {
   );
 
   const files = await readdir(videoDir);
-  expect(files.filter(isSrtFile).length).toBe(2);
+  expect(files.filter(isSrtFile).sort()).toEqual([
+    'video with space.srt',
+    'video1.srt',
+  ]);
 
   await Promise.all(
     files
