@@ -1,5 +1,10 @@
 import { ConcurrentTasks } from '../src';
 
+test('concurrent-tasks, handle empty tasks', async () => {
+  const result = await new ConcurrentTasks([]).run();
+  expect(result).toEqual([]);
+});
+
 test('concurrent-tasks', async () => {
   const [result1, result2, result3] = await Promise.all(
     [7, 8, 9].map(val =>

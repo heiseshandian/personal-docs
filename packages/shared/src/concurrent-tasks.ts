@@ -59,6 +59,10 @@ export class ConcurrentTasks<T> {
   }
 
   public run(maxConcurrent: number = os.cpus().length): Promise<Array<T>> {
+    if (this.tasks.length === 0) {
+      return Promise.resolve([]);
+    }
+
     return new Promise(resolve => {
       this.resolve = resolve;
 
