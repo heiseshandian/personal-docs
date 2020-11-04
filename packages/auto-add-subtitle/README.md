@@ -1,8 +1,8 @@
-Read this in other languages: [english](./README.md) | [简体中文](./README.zh-cn.md)
-
 ## Auto-add-subtitle
 
 Auto parse subtitle for videos based on [ffmpeg](https://ffmpeg.org/download.html),[puppeteer](https://github.com/puppeteer/puppeteer) and [veed](https://www.veed.io/) (an excellent website)
+
+Read this in other languages: [english](./README.md) | [简体中文](./README.zh-cn.md)
 
 ## Getting Started
 

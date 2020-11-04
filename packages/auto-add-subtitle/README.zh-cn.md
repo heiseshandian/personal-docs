@@ -1,8 +1,8 @@
-[english](./README.md) | [简体中文](./README.zh-cn.md)
-
 ### 介绍
 
 自动为指定目录下的视频文件解析并添加对应的音频文件
+
+[english](./README.md) | [简体中文](./README.zh-cn.md)
 
 ### 如何使用
 
