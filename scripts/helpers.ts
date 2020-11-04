@@ -22,23 +22,23 @@ export async function getPreviousFileContent(
 }
 
 export async function updateMarkdownContent(
-  transform: (md: string) => string = x => x,
+  transform: (md: string, packageName: string) => string = x => x,
 ) {
   const packagesDir = path.resolve(__dirname, '../packages/');
   const packages = await readdir(packagesDir);
 
   await new ConcurrentTasks(
-    packages.map(packagePath => async () => {
-      const files = await readdir(path.resolve(packagesDir, packagePath));
+    packages.map(packageName => async () => {
+      const files = await readdir(path.resolve(packagesDir, packageName));
       await Promise.all(
         files.filter(isMarkdown).map(async file => {
-          const readmePath = path.resolve(packagesDir, packagePath, file);
+          const readmePath = path.resolve(packagesDir, packageName, file);
           const md = await getPreviousFileContent(readmePath);
           if (!md) {
             return;
           }
 
-          await writeFile(readmePath, transform(md));
+          await writeFile(readmePath, transform(md, packageName));
         }),
       );
     }),
