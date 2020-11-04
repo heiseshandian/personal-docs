@@ -50,14 +50,14 @@ export class Veed {
   }
 
   // 上传文件
-  private static async upload(page: Page, audio: string) {
+  private static async upload(page: Page, media: string) {
     const { uploadBtnXpath, inputFileSelector, timeout } = this.config;
 
     // https://github.com/puppeteer/puppeteer/issues/2946
     await this.safeClickXPath(page, uploadBtnXpath);
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
-    await uploadBtn?.uploadFile(audio);
+    await uploadBtn?.uploadFile(media);
 
     // 跳转编辑页面
     // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
@@ -104,8 +104,8 @@ export class Veed {
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
-  private static async download(page: Page, audio: string) {
-    const { dir } = path.parse(audio);
+  private static async download(page: Page, media: string) {
+    const { dir } = path.parse(media);
     // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
     // @ts-ignore
     await page._client.send('Browser.setDownloadBehavior', {
@@ -130,8 +130,8 @@ export class Veed {
     }, downloadXpath);
   }
 
-  public static async parseSubtitle(audios: Array<string>) {
-    if (audios.length <= 0) {
+  public static async parseSubtitle(medias: Array<string>) {
+    if (medias.length <= 0) {
       return;
     }
 
@@ -153,23 +153,23 @@ export class Veed {
         })
         .then(async browser => {
           await new ConcurrentTasks(
-            audios.map((audio, i) => async () => {
+            medias.map((media, i) => async () => {
               const { timeout } = this.config;
               const page = await browser.newPage();
               await clearCookies(page);
               await page.goto(url, { timeout });
               await setWebLifecycleState(page);
-              await this.upload(page, audio);
+              await this.upload(page, media);
 
               dynamicTasks.add(async () => {
                 await this._parseSubtitle(page);
-                await this.download(page, audio);
+                await this.download(page, media);
                 // 下载完再关闭页面
                 await delay(1000 * 10);
                 await page.close();
               });
 
-              if (i === audios.length - 1) {
+              if (i === medias.length - 1) {
                 dynamicTasks.end();
               }
             }),
