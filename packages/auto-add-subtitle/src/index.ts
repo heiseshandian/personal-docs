@@ -108,6 +108,32 @@ export default class AutoAddSubtitle {
     );
   }
 
+  private static groupChunkSrtFiles(subtitles: string[]) {
+    const subtitleReg = new RegExp(
+      `(.+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
+    );
+
+    const groups = subtitles.reduce((acc, cur) => {
+      const [, originalFileName] = cur.match(subtitleReg) || [cur];
+      if (!acc[originalFileName]) {
+        acc[originalFileName] = [cur];
+      } else {
+        acc[originalFileName].push(cur);
+      }
+      return acc;
+    }, {} as Record<string, string[]>);
+
+    const extractChunkNo = (file: string) => {
+      const [, , chunkNo] = file.match(subtitleReg) || [null, null, 0];
+      return Number(chunkNo);
+    };
+    Object.keys(groups).forEach(key =>
+      groups[key].sort((a, b) => extractChunkNo(a) - extractChunkNo(b)),
+    );
+
+    return groups;
+  }
+
   private async mergeSrtChunks() {
     const { videoDir, TMP_DIR } = this;
     const files = await readdir(path.resolve(videoDir, TMP_DIR));
@@ -115,39 +141,18 @@ export default class AutoAddSubtitle {
       return;
     }
 
-    const subtitleReg = new RegExp(
-      `(.+)${CHUNK_FILE_SUFFIX}(\\d+)[^.]*\\${Veed.subtitleExt}$`,
+    const groups = AutoAddSubtitle.groupChunkSrtFiles(
+      files
+        .filter(file => isChunkFile(file) && isSubtitleFile(file))
+        .map(file => path.resolve(videoDir, `${TMP_DIR}/${file}`)),
     );
-    const chunkFilesGroup = files
-      .filter(file => isChunkFile(file) && isSubtitleFile(file))
-      .map(file => path.resolve(videoDir, `${TMP_DIR}/${file}`))
-      .reduce((acc: Record<string, string[]>, cur) => {
-        const [, original] = cur.match(subtitleReg) || [cur, 0];
-        if (!acc[original]) {
-          acc[original] = [cur];
-        } else {
-          acc[original].push(cur);
-        }
-        return acc;
-      }, {});
-
-    const extractChunkNum = (file: string) => {
-      const [, , chunkNum] = file.match(subtitleReg) || [null, null, 0];
-      return Number(chunkNum);
-    };
 
     const result = await Promise.all(
-      Object.keys(chunkFilesGroup).map(key =>
-        mergeSrtFiles(
-          chunkFilesGroup[key].sort(
-            (a, b) => extractChunkNum(a) - extractChunkNum(b),
-          ),
-        ),
-      ),
+      Object.keys(groups).map(key => mergeSrtFiles(groups[key])),
     );
 
     await Promise.all(
-      Object.keys(chunkFilesGroup).map((key, i) =>
+      Object.keys(groups).map((key, i) =>
         writeFile(
           path.resolve(videoDir, `${TMP_DIR}/${key}${Veed.subtitleExt}`),
           result[i],

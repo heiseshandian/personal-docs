@@ -23,3 +23,7 @@ export async function copyVideos(tmpDir: string) {
 export function getTmpDir(tmpDir: string) {
   return `${tmpDir}_spec_test`;
 }
+
+export function randomSort() {
+  return 0.5 - Math.random();
+}
