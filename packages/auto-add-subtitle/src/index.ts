@@ -36,6 +36,8 @@ export default class AutoAddSubtitle {
 
   private videoDir;
 
+  private chunkSeconds;
+
   constructor(videoDir: string, chunkSeconds: number = 6 * 60) {
     this.videoDir = videoDir;
     this.chunkSeconds = chunkSeconds;
@@ -50,8 +52,6 @@ export default class AutoAddSubtitle {
     const { videoDir, TMP_DIR } = this;
     await clean(path.resolve(videoDir, TMP_DIR));
   }
-
-  private chunkSeconds;
 
   private async extractAudioFiles() {
     const { videoDir, TMP_DIR, chunkSeconds } = this;
@@ -89,15 +89,20 @@ export default class AutoAddSubtitle {
     const tmpPath = path.resolve(videoDir, TMP_DIR);
     const files = await readdir(tmpPath);
 
+    const audios = files.filter(isSupportedAudio);
+    if (audios.length === 0) {
+      return;
+    }
+
+    const { ext } = path.parse(audios[0]);
     const hasParsed = makeMap(
-      files.map(file =>
-        file.replace(Veed.subtitlePrefix, '').replace(/\.\w+$/, ''),
-      ),
+      files
+        .filter(isSubtitleFile)
+        .map(file => file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
     );
 
     await Veed.parseSubtitle(
-      files
-        .filter(isSupportedAudio)
+      audios
         .filter(file => !hasParsed(file))
         .map(file => path.resolve(tmpPath, file)),
     );
@@ -111,7 +116,7 @@ export default class AutoAddSubtitle {
     }
 
     const subtitleReg = new RegExp(
-      `${Veed.subtitlePrefix}(.+)${CHUNK_FILE_SUFFIX}(\\d+)[^.]*\\${Veed.subtitleExt}$`,
+      `(.+)${CHUNK_FILE_SUFFIX}(\\d+)[^.]*\\${Veed.subtitleExt}$`,
     );
     const chunkFilesGroup = files
       .filter(file => isChunkFile(file) && isSubtitleFile(file))
@@ -151,31 +156,6 @@ export default class AutoAddSubtitle {
     );
   }
 
-  private async renameSrtFiles() {
-    const { videoDir, TMP_DIR } = this;
-
-    const files = await readdir(path.resolve(videoDir, TMP_DIR));
-    if (!files) {
-      return;
-    }
-
-    const unMergedFileReg = new RegExp(
-      `${Veed.subtitlePrefix}(.+)\\.\\w+\\${Veed.subtitleExt}$`,
-    );
-    await Promise.all(
-      files
-        .filter(file => !isChunkFile(file) && isSubtitleFile(file))
-        .filter(file => unMergedFileReg.test(file))
-        .map(file => path.resolve(videoDir, `${TMP_DIR}/${file}`))
-        .map(file =>
-          move(
-            file,
-            file.replace(Veed.subtitlePrefix, '').replace(/\.\w+/, ''),
-          ),
-        ),
-    );
-  }
-
   private async moveSrtFiles() {
     const { videoDir, TMP_DIR } = this;
     const tmpPath = path.resolve(videoDir, TMP_DIR);
@@ -195,7 +175,6 @@ export default class AutoAddSubtitle {
 
     await this.parseSubtitle();
     await this.mergeSrtChunks();
-    await this.renameSrtFiles();
     await this.moveSrtFiles();
 
     await this.removeTmpDir();
