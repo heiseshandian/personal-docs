@@ -14,6 +14,7 @@ import { isSubtitleFile, Veed } from './parsers';
 import {
   CHUNK_FILE_SUFFIX,
   extractAudio,
+  extractChunkNo,
   isChunkFile,
   isSupportedAudio,
   mergeSrtFiles,
@@ -123,10 +124,6 @@ export default class AutoAddSubtitle {
       return acc;
     }, {} as Record<string, string[]>);
 
-    const extractChunkNo = (file: string) => {
-      const [, , chunkNo] = file.match(subtitleReg) || [null, null, 0];
-      return Number(chunkNo);
-    };
     Object.keys(groups).forEach(key =>
       groups[key].sort((a, b) => extractChunkNo(a) - extractChunkNo(b)),
     );

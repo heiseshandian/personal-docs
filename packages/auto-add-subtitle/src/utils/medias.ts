@@ -56,9 +56,15 @@ function parseDuration(duration = '') {
 
 export const CHUNK_FILE_SUFFIX = '_chunks_';
 
-const chunkFileReg = new RegExp(`${CHUNK_FILE_SUFFIX}`);
+const chunkFileReg = new RegExp(`${CHUNK_FILE_SUFFIX}(\\d+)`);
+
 export function isChunkFile(file: string) {
   return chunkFileReg.test(file);
+}
+
+export function extractChunkNo(file: string) {
+  const [, chunkNo] = file.match(chunkFileReg) || [file];
+  return Number(chunkNo);
 }
 
 async function sliceMediaByChunks(mediaPath: string, chunks: number) {
