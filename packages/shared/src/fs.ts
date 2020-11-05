@@ -35,6 +35,11 @@ export const move: (
   newPath: PathLike,
 ) => Promise<boolean> = callback2Promise(fs.rename);
 
+export const copy: (
+  oldPath: PathLike,
+  newPath: PathLike,
+) => Promise<boolean> = callback2Promise(fs.copyFile);
+
 export async function ensurePathExists(filePath: string) {
   if (!fs.existsSync(filePath)) {
     fs.mkdirSync(filePath, { recursive: true });
