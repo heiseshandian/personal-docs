@@ -1,29 +1,24 @@
 import path from 'path';
-import { clean, copy, ensurePathExists } from 'zgq-shared';
 import {
   concatMedias,
   extractAudio,
   isSupportedAudio,
   sliceMediaBySize,
 } from '../src';
+import { copyVideos, getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
-const TMP_DIR = 'medias-spec';
+const TMP_DIR = getTmpDir('medias');
+
 const tmpPath = path.resolve(__dirname, `./videos/${TMP_DIR}`);
-
 const getVideoPath = (name: string) => path.resolve(tmpPath, name);
 
 beforeEach(async () => {
-  await prepareTmpDir();
-
-  await Promise.all(
-    ['video1.webm', 'video with space.webm'].map(file =>
-      copy(path.resolve(__dirname, `./videos/${file}`), getVideoPath(file)),
-    ),
-  );
+  await prepareTmpDir(TMP_DIR);
+  await copyVideos(TMP_DIR);
 });
 
 afterEach(async () => {
-  await removeTmpDir();
+  await removeTmpDir(TMP_DIR);
 });
 
 test('slice video', async () => {
@@ -66,11 +61,3 @@ test('is audio', () => {
   expect(isSupportedAudio('f://c//file.ogg')).toBe(true);
   expect(isSupportedAudio('test.test')).toBe(false);
 });
-
-async function prepareTmpDir() {
-  return ensurePathExists(tmpPath);
-}
-
-async function removeTmpDir() {
-  await clean(tmpPath);
-}

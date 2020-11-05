@@ -1,13 +1,14 @@
 import path from 'path';
-import { clean, ensurePathExists, readdir } from 'zgq-shared';
-import { extractAudio, isSubtitleFile, Veed, isFile } from '../src';
+import { readdir } from 'zgq-shared';
+import { extractAudio, isFile, isSubtitleFile, Veed } from '../src';
+import { getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
 jest.setTimeout(1000 * 60 * 10);
 
-const TMP_DIR = 'veed-spec';
+const TMP_DIR = getTmpDir('veed');
 
 beforeEach(async () => {
-  const tmpPath = await prepareTmpDir();
+  const tmpPath = await prepareTmpDir(TMP_DIR);
   const videoPath = path.resolve(__dirname, './videos/');
   const videos = await readdir(videoPath);
 
@@ -18,7 +19,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await removeTmpDir();
+  await removeTmpDir(TMP_DIR);
 });
 
 test('veed, parseSubtitle', async () => {
@@ -33,11 +34,3 @@ test('veed, parseSubtitle', async () => {
     'video1.srt',
   ]);
 });
-
-async function prepareTmpDir() {
-  return ensurePathExists(path.resolve(__dirname, `./videos/${TMP_DIR}`));
-}
-
-async function removeTmpDir() {
-  await clean(path.resolve(__dirname, `./videos/${TMP_DIR}`));
-}

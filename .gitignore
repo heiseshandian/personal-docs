@@ -4,3 +4,4 @@ tools-private
 bin
 dist
 test-private
+*_spec_test
