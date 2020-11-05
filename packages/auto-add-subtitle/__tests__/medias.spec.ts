@@ -1,26 +1,30 @@
 import path from 'path';
-import { del, handleError } from 'zgq-shared';
+import { clean, copy, ensurePathExists } from 'zgq-shared';
 import {
-  sliceMediaBySize,
   concatMedias,
   extractAudio,
   isSupportedAudio,
+  sliceMediaBySize,
 } from '../src';
 
-async function cleanup(files: string[]) {
-  await Promise.all([
-    files.map(file =>
-      del(
-        path.isAbsolute(file)
-          ? file
-          : path.resolve(__dirname, `./videos/${file}`),
-      ).catch(handleError),
-    ),
-  ]);
-}
+const TMP_DIR = 'medias-spec';
+const tmpPath = path.resolve(__dirname, `./videos/${TMP_DIR}`);
 
-const getVideoPath = (name: string) =>
-  path.resolve(__dirname, `./videos/${name}`);
+const getVideoPath = (name: string) => path.resolve(tmpPath, name);
+
+beforeEach(async () => {
+  await prepareTmpDir();
+
+  await Promise.all(
+    ['video1.webm', 'video with space.webm'].map(file =>
+      copy(path.resolve(__dirname, `./videos/${file}`), getVideoPath(file)),
+    ),
+  );
+});
+
+afterEach(async () => {
+  await removeTmpDir();
+});
 
 test('slice video', async () => {
   const [result1, result2] = await Promise.all(
@@ -29,14 +33,14 @@ test('slice video', async () => {
     ),
   );
 
-  await Promise.all(
-    [result1, result2].map(result =>
-      result ? cleanup(result[0]) : Promise.resolve(),
-    ),
+  expect(result1[0]).toEqual(
+    new Array(8).fill(0).map((_, i) => getVideoPath(`video1_chunks_${i}.webm`)),
   );
-
-  expect(result1 !== undefined).toBe(true);
-  expect(result2 !== undefined).toBe(true);
+  expect(result2[0]).toEqual(
+    new Array(9)
+      .fill(0)
+      .map((_, i) => getVideoPath(`video with space_chunks_${i}.webm`)),
+  );
 });
 
 test('concat videos', async () => {
@@ -45,11 +49,7 @@ test('concat videos', async () => {
     getVideoPath('video1_out.webm'),
   );
 
-  if (result !== undefined) {
-    await cleanup([result]);
-  }
-
-  expect(result !== undefined).toBe(true);
+  expect(result).toBe(getVideoPath('video1_out.webm'));
 });
 
 test('extract audio', async () => {
@@ -57,11 +57,20 @@ test('extract audio', async () => {
     ['video1.webm', 'video with space.webm'].map(getVideoPath),
   );
 
-  expect(result.length === 2).toBe(true);
-  await cleanup(result);
+  expect(result).toEqual(
+    ['video1.ogg', 'video with space.ogg'].map(getVideoPath),
+  );
 });
 
 test('is audio', () => {
   expect(isSupportedAudio('f://c//file.ogg')).toBe(true);
   expect(isSupportedAudio('test.test')).toBe(false);
 });
+
+async function prepareTmpDir() {
+  return ensurePathExists(tmpPath);
+}
+
+async function removeTmpDir() {
+  await clean(tmpPath);
+}
