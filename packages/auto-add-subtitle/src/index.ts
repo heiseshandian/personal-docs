@@ -28,10 +28,6 @@ export function isFile(file: string) {
   return /\.\w+/.test(file);
 }
 
-function toAbsolutePath(dir: string, file: string) {
-  return path.resolve(dir, file);
-}
-
 export default class AutoAddSubtitle {
   private readonly TMP_DIR = 'parsed_auto_add_subtitle';
 
@@ -44,19 +40,21 @@ export default class AutoAddSubtitle {
     this.chunkSeconds = chunkSeconds;
   }
 
-  private async prepareTmpDir() {
+  private getTmpPath() {
     const { videoDir, TMP_DIR } = this;
-    return ensurePathExists(path.resolve(videoDir, TMP_DIR));
+    return path.resolve(videoDir, TMP_DIR);
+  }
+
+  private async prepareTmpDir() {
+    return ensurePathExists(this.getTmpPath());
   }
 
   private async removeTmpDir() {
-    const { videoDir, TMP_DIR } = this;
-    await clean(path.resolve(videoDir, TMP_DIR));
+    await clean(this.getTmpPath());
   }
 
   private async removeRedundantAudios() {
-    const { videoDir, TMP_DIR } = this;
-    const tmpPath = path.resolve(videoDir, TMP_DIR);
+    const tmpPath = this.getTmpPath();
     const audios = await readdir(tmpPath);
 
     const withChunks = (file: string) =>
@@ -69,23 +67,23 @@ export default class AutoAddSubtitle {
     await new ConcurrentTasks(
       audios
         .filter(withChunks)
-        .map(file => async () => await del(toAbsolutePath(tmpPath, file))),
+        .map(file => async () => await del(path.resolve(tmpPath, file))),
     ).run();
   }
 
   private async extractAudioFiles() {
-    const { videoDir, TMP_DIR, chunkSeconds } = this;
+    const { videoDir, chunkSeconds } = this;
     const videos = await readdir(videoDir);
-    const tmpPath = path.resolve(videoDir, TMP_DIR);
+    const tmpPath = this.getTmpPath();
 
     await extractAudio(
-      (videos || []).filter(isFile).map(file => toAbsolutePath(videoDir, file)),
+      (videos || []).filter(isFile).map(file => path.resolve(videoDir, file)),
       tmpPath,
     );
 
     const audios = await readdir(tmpPath);
     await sliceMediaBySeconds(
-      (audios || []).filter(isFile).map(file => toAbsolutePath(tmpPath, file)),
+      (audios || []).filter(isFile).map(file => path.resolve(tmpPath, file)),
       chunkSeconds,
     );
 
@@ -93,9 +91,7 @@ export default class AutoAddSubtitle {
   }
 
   private async parseSubtitle() {
-    const { videoDir, TMP_DIR } = this;
-
-    const tmpPath = path.resolve(videoDir, TMP_DIR);
+    const tmpPath = this.getTmpPath();
     const files = await readdir(tmpPath);
 
     const audios = files.filter(isSupportedAudio);
@@ -141,7 +137,7 @@ export default class AutoAddSubtitle {
 
   private async mergeSrtChunks() {
     const { videoDir, TMP_DIR } = this;
-    const files = await readdir(path.resolve(videoDir, TMP_DIR));
+    const files = await readdir(this.getTmpPath());
     if (!files) {
       return;
     }
@@ -167,8 +163,8 @@ export default class AutoAddSubtitle {
   }
 
   private async moveSrtFiles() {
-    const { videoDir, TMP_DIR } = this;
-    const tmpPath = path.resolve(videoDir, TMP_DIR);
+    const { videoDir } = this;
+    const tmpPath = this.getTmpPath();
 
     const files = await readdir(tmpPath);
     await Promise.all(
@@ -179,14 +175,26 @@ export default class AutoAddSubtitle {
     );
   }
 
+  private async isAllParsed() {
+    const files = await readdir(this.getTmpPath());
+
+    return (
+      files.filter(isSubtitleFile).length ===
+      files.filter(isSupportedAudio).length
+    );
+  }
+
   public async generateSrtFiles() {
     await this.prepareTmpDir();
     await this.extractAudioFiles();
 
     await this.parseSubtitle();
-    await this.mergeSrtChunks();
-    await this.moveSrtFiles();
 
-    await this.removeTmpDir();
+    if (await this.isAllParsed()) {
+      await this.mergeSrtChunks();
+      await this.moveSrtFiles();
+
+      await this.removeTmpDir();
+    }
   }
 }
