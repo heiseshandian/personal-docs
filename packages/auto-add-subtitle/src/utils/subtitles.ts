@@ -1,11 +1,13 @@
-import { readFile } from 'zgq-shared';
+import { readFile, groupByLen } from 'zgq-shared';
+
+const ONE_SUBTITLE_LENGTH = 4;
 
 const sequenceReg = /^([+-]?)(\d+)$/;
 const timelineReg = /^\d{2}:\d{2}:\d{2}[,.]\d{3} --> \d{2}:\d{2}:\d{2}[,.]\d{3}$/;
 function merge(primaryLines: string[], secondLines: string[]) {
   const [maxTime, maxSequence] = [
-    parseMaxTime(primaryLines),
-    parseMaxSequence(primaryLines),
+    parseMaxSeconds(primaryLines.slice(-ONE_SUBTITLE_LENGTH).reverse()),
+    parseSequence(primaryLines.slice(-ONE_SUBTITLE_LENGTH).reverse()),
   ];
 
   return primaryLines.concat(
@@ -36,17 +38,85 @@ export async function mergeSrtFiles(srtFiles: string[]) {
     .join('\n');
 }
 
-function parseMaxTime(list: string[]) {
-  for (const line of list.slice(-4).reverse()) {
+export async function sliceSrtFile(srtPath: string, maxSeconds: number) {
+  const fileContent = await readFile(srtPath, { encoding: 'utf-8' });
+  const subtitleGroup = groupByLen(
+    fileContent.split(/\n/),
+    ONE_SUBTITLE_LENGTH,
+  );
+  const groups = groupByNum(subtitleGroup.map(parseMaxSeconds), maxSeconds);
+
+  let groupIndex = 0;
+  const chunks = subtitleGroup.reduce((acc, cur, i) => {
+    if (!acc[groupIndex]) {
+      acc[groupIndex] = [];
+    }
+    acc[groupIndex].push(...cur);
+
+    if (i === groups[groupIndex]) {
+      groupIndex++;
+    }
+    return acc;
+  }, [] as Array<Array<string>>);
+
+  return [
+    chunks[0],
+    ...chunks
+      .slice(1)
+      .map((chunk, i) =>
+        reset(
+          chunk,
+          parseMaxSeconds(chunks[i].slice(-ONE_SUBTITLE_LENGTH).reverse()),
+        ),
+      ),
+  ];
+}
+
+function reset(list: string[], previousMaxTime: number) {
+  const [minSequence] = [parseSequence(list)];
+
+  return list.map(line => {
+    if (sequenceReg.test(line)) {
+      return String(parseInt(line) - minSequence + 1);
+    }
     if (timelineReg.test(line)) {
-      return parseTime(line.split('-->')[1]);
+      return line
+        .split(' --> ')
+        .map(time => formatTime(parseTime(time) - previousMaxTime))
+        .join(' --> ');
+    }
+    return line;
+  });
+}
+
+function groupByNum(arr: number[], num: number) {
+  const result = [];
+  for (let i = 0; i < arr.length - 1; i++) {
+    const previous = arr[i];
+    const next = arr[i + 1];
+    if (Math.ceil(next / num) - Math.ceil(previous / num) === 1) {
+      result.push(i);
+    }
+  }
+
+  return result;
+}
+
+function parseSeconds(list: string[], index: number) {
+  for (const line of list) {
+    if (timelineReg.test(line)) {
+      return parseTime(line.split('-->')[index]);
     }
   }
   return 0;
 }
 
-function parseMaxSequence(list: string[]) {
-  for (const line of list.slice(-4).reverse()) {
+function parseMaxSeconds(list: string[]) {
+  return parseSeconds(list, 1);
+}
+
+function parseSequence(list: string[]) {
+  for (const line of list) {
     if (sequenceReg.test(line)) {
       return parseInt(line);
     }

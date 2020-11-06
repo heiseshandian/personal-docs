@@ -111,7 +111,7 @@ export default class AutoAddSubtitle {
 
   private static groupChunkSrtFiles(subtitles: string[]) {
     const subtitleReg = new RegExp(
-      `(.+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
+      `([^\\${path.sep}]+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
     );
 
     const groups = subtitles.reduce((acc, cur) => {

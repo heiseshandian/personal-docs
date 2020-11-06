@@ -1,20 +1,26 @@
 import { clean, copy, ensurePathExists } from 'zgq-shared';
 import path from 'path';
 
+function parseTmpDir(tmpDir: string) {
+  return path.isAbsolute(tmpDir)
+    ? tmpDir
+    : path.resolve(__dirname, `./data/videos/${tmpDir}`);
+}
+
 export async function prepareTmpDir(tmpDir: string) {
-  return ensurePathExists(path.resolve(__dirname, `./videos/${tmpDir}`));
+  return ensurePathExists(parseTmpDir(tmpDir));
 }
 
 export async function removeTmpDir(tmpDir: string) {
-  await clean(path.resolve(__dirname, `./videos/${tmpDir}`));
+  await clean(parseTmpDir(tmpDir));
 }
 
 export async function copyVideos(tmpDir: string) {
   await Promise.all(
     ['video1.webm', 'video with space.webm'].map(file =>
       copy(
-        path.resolve(__dirname, `./videos/${file}`),
-        path.resolve(path.resolve(__dirname, `./videos/${tmpDir}/${file}`)),
+        path.resolve(__dirname, `./data/videos/${file}`),
+        path.resolve(__dirname, `./data/videos/${tmpDir}/${file}`),
       ),
     ),
   );

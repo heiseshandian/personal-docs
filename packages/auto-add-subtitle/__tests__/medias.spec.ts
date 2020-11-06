@@ -9,7 +9,7 @@ import { copyVideos, getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
 const TMP_DIR = getTmpDir('medias');
 
-const tmpPath = path.resolve(__dirname, `./videos/${TMP_DIR}`);
+const tmpPath = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
 const getVideoPath = (name: string) => path.resolve(tmpPath, name);
 
 beforeEach(async () => {

@@ -3,6 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
+import { chunkFileReg, CHUNK_FILE_SUFFIX } from './contract';
 
 function getFileSize(filePath: string) {
   const stats = fs.statSync(path.resolve(filePath));
@@ -53,10 +54,6 @@ function parseDuration(duration = '') {
     .map(val => parseInt(val, 10))
     .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
 }
-
-export const CHUNK_FILE_SUFFIX = '_chunks_';
-
-const chunkFileReg = new RegExp(`${CHUNK_FILE_SUFFIX}(\\d+)`);
 
 export function isChunkFile(file: string) {
   return chunkFileReg.test(file);

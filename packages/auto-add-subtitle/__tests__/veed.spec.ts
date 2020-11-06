@@ -9,7 +9,7 @@ const TMP_DIR = getTmpDir('veed');
 
 beforeEach(async () => {
   const tmpPath = await prepareTmpDir(TMP_DIR);
-  const videoPath = path.resolve(__dirname, './videos/');
+  const videoPath = path.resolve(__dirname, './data/videos/');
   const videos = await readdir(videoPath);
 
   await extractAudio(
@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 test('veed, parseSubtitle', async () => {
-  const audiosPath = path.resolve(__dirname, `./videos/${TMP_DIR}`);
+  const audiosPath = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
   const audios = await readdir(audiosPath);
 
   await Veed.parseSubtitle(audios.map(file => path.resolve(audiosPath, file)));

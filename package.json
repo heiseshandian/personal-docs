@@ -13,7 +13,7 @@
     "release": "lerna publish",
     "prerelease:alpha": "npm run prerelease",
     "release:alpha": "lerna publish --canary",
-    "debug": "jest ./packages/auto-add-subtitle/__tests__/cli.spec.ts"
+    "debug": "jest ./packages/auto-add-subtitle/__tests__/index.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-lerna-scopes": "^11.0.0",
+    "@types/fs-extra": "^9.0.3",
     "@types/jest": "^26.0.14",
     "@types/progress": "^2.0.3",
     "@types/puppeteer": "^3.0.2",

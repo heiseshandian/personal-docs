@@ -17,7 +17,7 @@ afterEach(async () => {
 });
 
 test('cli', async () => {
-  const videoDir = path.resolve(__dirname, `./videos/${TMP_DIR}`);
+  const videoDir = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
   await execAsync(
     `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${videoDir}`,
   );
