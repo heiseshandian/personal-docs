@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.32.0](https://github.com/heiseshandian/personal-docs/compare/v1.31.1...v1.32.0) (2020-11-06)
+
+
+### Bug Fixes
+
+* 字幕解析顺序问题bug修复 ([735c6b4](https://github.com/heiseshandian/personal-docs/commit/735c6b4e8c78b4b18aa77f3705bc7f64f7029b87))
+
+
+
+
+
 ## [1.31.1](https://github.com/heiseshandian/personal-docs/compare/v1.31.0...v1.31.1) (2020-11-04)
 
 **Note:** Version bump only for package auto-add-subtitle
