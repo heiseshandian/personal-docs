@@ -54,6 +54,25 @@ export default class AutoAddSubtitle {
     await clean(path.resolve(videoDir, TMP_DIR));
   }
 
+  private async removeRedundantAudios() {
+    const { videoDir, TMP_DIR } = this;
+    const tmpPath = path.resolve(videoDir, TMP_DIR);
+    const audios = await readdir(tmpPath);
+
+    const withChunks = (file: string) =>
+      fs.existsSync(
+        path.resolve(
+          tmpPath,
+          file.replace(/^(.+)\.(\w+)$/, `$1${CHUNK_FILE_SUFFIX}0.$2`),
+        ),
+      );
+    await new ConcurrentTasks(
+      audios
+        .filter(withChunks)
+        .map(file => async () => await del(toAbsolutePath(tmpPath, file))),
+    ).run();
+  }
+
   private async extractAudioFiles() {
     const { videoDir, TMP_DIR, chunkSeconds } = this;
     const videos = await readdir(videoDir);
@@ -70,18 +89,7 @@ export default class AutoAddSubtitle {
       chunkSeconds,
     );
 
-    const withChunks = (file: string) =>
-      fs.existsSync(
-        path.resolve(
-          tmpPath,
-          file.replace(/^(.+)\.(\w+)$/, `$1${CHUNK_FILE_SUFFIX}0.$2`),
-        ),
-      );
-    await new ConcurrentTasks(
-      audios
-        .filter(withChunks)
-        .map(file => async () => await del(toAbsolutePath(tmpPath, file))),
-    ).run();
+    await this.removeRedundantAudios();
   }
 
   private async parseSubtitle() {
