@@ -48,7 +48,7 @@ export class Veed {
     downloadXpath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
 
-    timeout: 1000 * 60 * 15,
+    timeout: 1000 * 60 * 5,
   };
 
   private async safeClick(page: Page, selector: string) {
@@ -75,13 +75,6 @@ export class Veed {
     // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
     const uploadBtn = await page.$(inputFileSelector);
     await uploadBtn?.uploadFile(audio);
-
-    // 跳转编辑页面
-    // https://stackoverflow.com/questions/58451066/puppeteer-wait-for-url
-    await page.waitForNavigation({
-      timeout,
-      waitUntil: 'networkidle0',
-    });
 
     // 坐等上传完成
     await page.waitForFunction(

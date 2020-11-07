@@ -41,7 +41,7 @@ export default class AutoAddSubtitle {
 
   private options: AutoAddSubtitleOptions = {
     debug: false,
-    chunkSeconds: 6 * 60,
+    chunkSeconds: 5 * 60,
   };
 
   constructor(videoDir: string, options: Partial<AutoAddSubtitleOptions> = {}) {
