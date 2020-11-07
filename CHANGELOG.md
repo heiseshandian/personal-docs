@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.33.0](https://github.com/heiseshandian/personal-docs/compare/v1.32.0...v1.33.0) (2020-11-07)
+
+
+### Bug Fixes
+
+* 添加调试模式bug修复 ([a64733f](https://github.com/heiseshandian/personal-docs/commit/a64733fdf206f5af0c9d5ce41c0d6268f3ced73a))
+
+
+### Features
+
+* 添加调试模式 ([9fbbb19](https://github.com/heiseshandian/personal-docs/commit/9fbbb19079ed7306a70214d00f7086c617a559ad))
+
+
+
+
+
 # [1.32.0](https://github.com/heiseshandian/personal-docs/compare/v1.31.1...v1.32.0) (2020-11-06)
 
 
