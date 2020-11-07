@@ -118,7 +118,12 @@ export default class AutoAddSubtitle {
     const hasParsed = makeMap(
       files
         .filter(isSubtitleFile)
-        .map(file => file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
+        .map(file =>
+          file
+            .replace(Veed.subtitlePrefix, '')
+            .replace(ext, '')
+            .replace(Veed.subtitleExt, ''),
+        ),
     );
 
     const {
@@ -126,7 +131,7 @@ export default class AutoAddSubtitle {
     } = this;
     await new Veed({ debug }).parseSubtitle(
       audios
-        .filter(file => !hasParsed(file))
+        .filter(file => !hasParsed(file.replace(/\.\w+$/, '')))
         .map(file => path.resolve(tmpPath, file)),
     );
   }
@@ -216,3 +221,5 @@ export default class AutoAddSubtitle {
     }
   }
 }
+
+new AutoAddSubtitle('F:\\学习资料\\视频教程\\android\\tmp').generateSrtFiles();
