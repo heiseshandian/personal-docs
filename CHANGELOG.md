@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/heiseshandian/personal-docs/compare/v1.33.0...v1.34.0) (2020-11-07)
+
+
+### Features
+
+* 调整默认参数 ([f70354b](https://github.com/heiseshandian/personal-docs/commit/f70354beb664b70e300608731bb37d2ad40b04b2))
+
+
+
+
+
 # [1.33.0](https://github.com/heiseshandian/personal-docs/compare/v1.32.0...v1.33.0) (2020-11-07)
 
 
