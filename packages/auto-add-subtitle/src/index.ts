@@ -21,11 +21,17 @@ import {
   sliceMediaBySeconds,
 } from './utils';
 
-export * from './utils';
 export * from './parsers';
+export * from './utils';
 
 export function isFile(file: string) {
   return /\.\w+/.test(file);
+}
+
+interface AutoAddSubtitleOptions {
+  debug: boolean;
+  chunkSeconds: number;
+  [key: string]: any;
 }
 
 export default class AutoAddSubtitle {
@@ -33,11 +39,17 @@ export default class AutoAddSubtitle {
 
   private videoDir;
 
-  private chunkSeconds;
+  private options: AutoAddSubtitleOptions = {
+    debug: false,
+    chunkSeconds: 6 * 60,
+  };
 
-  constructor(videoDir: string, chunkSeconds: number = 6 * 60) {
+  constructor(videoDir: string, options: Partial<AutoAddSubtitleOptions> = {}) {
     this.videoDir = videoDir;
-    this.chunkSeconds = chunkSeconds;
+
+    Object.keys(options).forEach(key => {
+      this.options[key] = options[key];
+    });
   }
 
   private getTmpPath() {
@@ -72,7 +84,10 @@ export default class AutoAddSubtitle {
   }
 
   private async extractAudioFiles() {
-    const { videoDir, chunkSeconds } = this;
+    const {
+      videoDir,
+      options: { chunkSeconds },
+    } = this;
     const videos = await readdir(videoDir);
     const tmpPath = this.getTmpPath();
 
@@ -106,7 +121,7 @@ export default class AutoAddSubtitle {
         .map(file => file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
     );
 
-    await Veed.parseSubtitle(
+    await new Veed().parseSubtitle(
       audios
         .filter(file => !hasParsed(file))
         .map(file => path.resolve(tmpPath, file)),

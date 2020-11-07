@@ -15,8 +15,23 @@ import {
 
 puppeteer.use(StealthPlugin());
 
+interface VeedOptions {
+  debug: boolean;
+  [key: string]: any;
+}
+
 export class Veed {
-  private static config = {
+  private options: VeedOptions = {
+    debug: false,
+  };
+
+  constructor(options: Partial<VeedOptions> = {}) {
+    Object.keys(options).forEach(key => {
+      this.options[key] = options[key];
+    });
+  }
+
+  private config = {
     url: 'https://www.veed.io/',
 
     uploadBtnXpath:
@@ -36,14 +51,14 @@ export class Veed {
     timeout: 1000 * 60 * 15,
   };
 
-  private static async safeClick(page: Page, selector: string) {
+  private async safeClick(page: Page, selector: string) {
     const { timeout } = this.config;
 
     await page.waitForSelector(selector, { timeout });
     await page.click(selector);
   }
 
-  private static async safeClickXPath(page: Page, xpath: string) {
+  private async safeClickXPath(page: Page, xpath: string) {
     const { timeout } = this.config;
 
     await page.waitForXPath(xpath, { timeout });
@@ -52,7 +67,7 @@ export class Veed {
   }
 
   // 上传文件
-  private static async upload(page: Page, audio: string) {
+  private async upload(page: Page, audio: string) {
     const { uploadBtnXpath, inputFileSelector, timeout } = this.config;
 
     // https://github.com/puppeteer/puppeteer/issues/2946
@@ -83,7 +98,7 @@ export class Veed {
   }
 
   // 解析字幕
-  private static async _parseSubtitle(page: Page) {
+  private async _parseSubtitle(page: Page) {
     const {
       subtitleSelector,
       autoSubtitleSelector,
@@ -106,7 +121,7 @@ export class Veed {
     await page.waitForSelector(subtitlesSelector, { timeout });
   }
 
-  private static async download(page: Page, audio: string) {
+  private async download(page: Page, audio: string) {
     const { dir } = path.parse(audio);
     // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
     // @ts-ignore
@@ -132,7 +147,7 @@ export class Veed {
     }, downloadXpath);
   }
 
-  private static async renameSubtitleFiles(audio: string) {
+  private async renameSubtitleFiles(audio: string) {
     const { dir, ext } = path.parse(audio);
     const files = await readdir(dir);
 
@@ -141,12 +156,16 @@ export class Veed {
         .filter(isSubtitleFile)
         .map(file => path.resolve(dir, file))
         .map(file =>
-          move(file, file.replace(this.subtitlePrefix, '').replace(ext, '')),
+          move(file, file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
         ),
     );
   }
 
-  public static async parseSubtitle(audios: Array<string>) {
+  public async parseSubtitle(audios: Array<string>) {
+    const {
+      options: { debug },
+    } = this;
+
     if (audios.length <= 0) {
       return;
     }
@@ -160,7 +179,7 @@ export class Veed {
     const [browser] = await Promise.all([
       puppeteer
         .launch({
-          headless: true,
+          headless: debug ? false : true,
           defaultViewport: {
             width: 1920,
             height: 1024,

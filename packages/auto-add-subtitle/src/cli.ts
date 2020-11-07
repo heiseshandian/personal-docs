@@ -3,7 +3,13 @@ import yargs, { Options } from 'yargs';
 import AutoAddSubtitle from './index';
 import path from 'path';
 
-const options: Record<string, Options> = {};
+const options: Record<string, Options> = {
+  debug: {
+    alias: 'd',
+    default: false,
+    type: 'boolean',
+  },
+};
 
 const argv = yargs
   .usage(`Usage: auto-add-subtitle [options] {video-path}`)
@@ -16,12 +22,13 @@ interface Arguments {
   [x: string]: unknown;
   _: string[];
   $0: string;
+  debug: boolean;
 }
 
 // 搞个自执行函数方便使用return提前结束流程
 (async () => {
-  const { _: videoPath } = argv as Arguments;
-  await new AutoAddSubtitle(
-    path.resolve(process.cwd(), videoPath[0] || ''),
-  ).generateSrtFiles();
+  const { _: videoPath, debug } = argv as Arguments;
+  await new AutoAddSubtitle(path.resolve(process.cwd(), videoPath[0] || ''), {
+    debug,
+  }).generateSrtFiles();
 })();

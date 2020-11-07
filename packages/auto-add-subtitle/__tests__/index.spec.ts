@@ -54,7 +54,7 @@ describe('tests that based on temp subtitles', () => {
   });
 
   test('AutoAddSubtitle, mergeSrtChunks', async () => {
-    const autoAddSubtitle = new AutoAddSubtitle(tmpPath, 10);
+    const autoAddSubtitle = new AutoAddSubtitle(tmpPath, { chunkSeconds: 10 });
     await autoAddSubtitle['prepareTmpDir']();
     const srtFiles = ['a.srt', 'b.srt'];
 
@@ -108,7 +108,7 @@ describe('tests that based on temp videos', () => {
   });
 
   test('AutoAddSubtitle, extractAudioFiles', async () => {
-    const autoAddSubtitle = new AutoAddSubtitle(tmpPath, 1);
+    const autoAddSubtitle = new AutoAddSubtitle(tmpPath, { chunkSeconds: 1 });
     await autoAddSubtitle['prepareTmpDir']();
     await autoAddSubtitle['extractAudioFiles']();
 

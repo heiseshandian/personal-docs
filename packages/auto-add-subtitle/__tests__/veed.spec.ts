@@ -26,7 +26,9 @@ test('veed, parseSubtitle', async () => {
   const audiosPath = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
   const audios = await readdir(audiosPath);
 
-  await Veed.parseSubtitle(audios.map(file => path.resolve(audiosPath, file)));
+  await new Veed().parseSubtitle(
+    audios.map(file => path.resolve(audiosPath, file)),
+  );
 
   const files = await readdir(audiosPath);
   expect(files.filter(isSubtitleFile).sort()).toEqual([
