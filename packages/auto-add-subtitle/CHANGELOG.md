@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.34.1](https://github.com/heiseshandian/personal-docs/compare/v1.34.0...v1.34.1) (2020-11-07)
+
+
+### Bug Fixes
+
+* 过滤已经解析的字幕文件bug修复 ([7cd67cb](https://github.com/heiseshandian/personal-docs/commit/7cd67cb1a4638499addbf643af1e627411b02c78))
+
+
+
+
+
 # [1.34.0](https://github.com/heiseshandian/personal-docs/compare/v1.33.0...v1.34.0) (2020-11-07)
 
 
