@@ -121,7 +121,10 @@ export default class AutoAddSubtitle {
         .map(file => file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
     );
 
-    await new Veed().parseSubtitle(
+    const {
+      options: { debug },
+    } = this;
+    await new Veed({ debug }).parseSubtitle(
       audios
         .filter(file => !hasParsed(file))
         .map(file => path.resolve(tmpPath, file)),
