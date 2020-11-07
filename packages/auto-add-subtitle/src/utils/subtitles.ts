@@ -2,12 +2,16 @@ import { readFile, groupByLen } from 'zgq-shared';
 
 const ONE_SUBTITLE_LENGTH = 4;
 
+function getLastSubtitle(list: string[]) {
+  return list.slice(-ONE_SUBTITLE_LENGTH);
+}
+
 const sequenceReg = /^([+-]?)(\d+)$/;
 const timelineReg = /^\d{2}:\d{2}:\d{2}[,.]\d{3} --> \d{2}:\d{2}:\d{2}[,.]\d{3}$/;
 function merge(primaryLines: string[], secondLines: string[]) {
   const [maxTime, maxSequence] = [
-    parseMaxSeconds(primaryLines.slice(-ONE_SUBTITLE_LENGTH).reverse()),
-    parseSequence(primaryLines.slice(-ONE_SUBTITLE_LENGTH).reverse()),
+    parseMaxSeconds(getLastSubtitle(primaryLines)),
+    parseSequence(getLastSubtitle(primaryLines)),
   ];
 
   return primaryLines.concat(
@@ -64,10 +68,7 @@ export async function sliceSrtFile(srtPath: string, maxSeconds: number) {
     ...chunks
       .slice(1)
       .map((chunk, i) =>
-        reset(
-          chunk,
-          parseMaxSeconds(chunks[i].slice(-ONE_SUBTITLE_LENGTH).reverse()),
-        ),
+        reset(chunk, parseMaxSeconds(getLastSubtitle(chunks[i]))),
       ),
   ];
 }
