@@ -48,7 +48,7 @@ export class Veed {
     downloadXpath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
 
-    timeout: 1000 * 60 * 5,
+    timeout: 1000 * 60 * 6,
   };
 
   private async safeClick(page: Page, selector: string) {
