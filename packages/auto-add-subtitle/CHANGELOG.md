@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.36.0](https://github.com/heiseshandian/personal-docs/compare/v1.35.0...v1.36.0) (2020-11-08)
+
+
+### Bug Fixes
+
+* 字幕解析bug修复 ([6442a50](https://github.com/heiseshandian/personal-docs/commit/6442a5038a558212b65aef0e67161cc48692ed4e))
+
+
+### Features
+
+* 添加重置时间功能 ([84f550d](https://github.com/heiseshandian/personal-docs/commit/84f550d4ce0948e56493199d4581c806e47ade18))
+
+
+
+
+
 # [1.35.0](https://github.com/heiseshandian/personal-docs/compare/v1.34.1...v1.35.0) (2020-11-08)
 
 
