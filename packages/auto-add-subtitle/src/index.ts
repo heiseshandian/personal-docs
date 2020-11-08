@@ -31,6 +31,7 @@ export function isFile(file: string) {
 interface AutoAddSubtitleOptions {
   debug: boolean;
   chunkSeconds: number;
+  keepTmpFiles: boolean;
   [key: string]: any;
 }
 
@@ -40,6 +41,7 @@ export default class AutoAddSubtitle {
   private videoDir;
 
   private options: AutoAddSubtitleOptions = {
+    keepTmpFiles: false,
     debug: false,
     chunkSeconds: 5 * 60,
   };
@@ -213,13 +215,20 @@ export default class AutoAddSubtitle {
 
     await this.parseSubtitle();
 
-    if (await this.isAllParsed()) {
-      await this.mergeSrtChunks();
-      await this.moveSrtFiles();
-
-      await this.removeTmpDir();
+    const parsed = await this.isAllParsed();
+    if (!parsed) {
+      return;
     }
+
+    await this.mergeSrtChunks();
+    await this.moveSrtFiles();
+
+    const {
+      options: { keepTmpFiles },
+    } = this;
+    if (keepTmpFiles) {
+      return;
+    }
+    await this.removeTmpDir();
   }
 }
-
-new AutoAddSubtitle('F:\\学习资料\\视频教程\\android\\tmp').generateSrtFiles();

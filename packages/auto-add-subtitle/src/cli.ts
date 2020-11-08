@@ -8,6 +8,13 @@ const options: Record<string, Options> = {
     alias: 'd',
     default: false,
     type: 'boolean',
+    describe: '是否开启调试模式（默认false）',
+  },
+  keepTmpFiles: {
+    alias: ['k', 'keep'],
+    default: false,
+    type: 'boolean',
+    describe: '是否保留临时文件（默认false）',
   },
 };
 
@@ -23,12 +30,14 @@ interface Arguments {
   _: string[];
   $0: string;
   debug: boolean;
+  keepTmpFiles: boolean;
 }
 
 // 搞个自执行函数方便使用return提前结束流程
 (async () => {
-  const { _: videoPath, debug } = argv as Arguments;
+  const { _: videoPath, debug, keepTmpFiles } = argv as Arguments;
   await new AutoAddSubtitle(path.resolve(process.cwd(), videoPath[0] || ''), {
     debug,
+    keepTmpFiles,
   }).generateSrtFiles();
 })();
