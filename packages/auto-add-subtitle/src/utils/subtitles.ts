@@ -42,6 +42,33 @@ export async function mergeSrtFiles(srtFiles: string[]) {
     .join('\n');
 }
 
+export async function fixEndTime(srtFile: string, duration: string) {
+  const content = await readFile(srtFile, { encoding: 'utf-8' });
+  const lines = content.split(/\n/);
+
+  return lines
+    .slice(0, lines.length - ONE_SUBTITLE_LENGTH)
+    .concat(
+      lines.slice(-ONE_SUBTITLE_LENGTH).map(line => {
+        if (timelineReg.test(line)) {
+          return `${line.split(' --> ')[0]} --> ${formatDuration(duration)}`;
+        }
+        return line;
+      }),
+    )
+    .join('\n');
+}
+
+const durationReg = /(\d{1,2}):(\d{1,2}):(\d{1,2})[.,](\d{2,3})/;
+function formatDuration(duration: string) {
+  const [, hours, minutes, seconds, milliseconds] =
+    duration.match(durationReg) || [];
+
+  return `${[hours, minutes, seconds]
+    .map(val => val.padStart(2, '0'))
+    .join(':')},${milliseconds.padEnd(3, '0')}`;
+}
+
 export async function sliceSrtFile(srtPath: string, maxSeconds: number) {
   const fileContent = await readFile(srtPath, { encoding: 'utf-8' });
   const subtitleGroup = groupByLen(

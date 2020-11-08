@@ -1,0 +1,823 @@
+1
+00:00:00,300 --> 00:00:03,200
+The idea is our smart.
+
+2
+00:00:03,200 --> 00:00:08,200
+Avatar is a stateful component so it can hold some state
+
+3
+00:00:08,900 --> 00:00:14,500
+it can it can be responsible for counting the API and we'll
+
+4
+00:00:14,500 --> 00:00:17,000
+do that in its lifecycle hooks, right?
+
+5
+00:00:19,300 --> 00:00:25,000
+So the with after URL should return a smart Avatar itself.
+
+6
+00:00:25,600 --> 00:00:26,400
+In this case.
+
+7
+00:00:26,600 --> 00:00:28,300
+We use objects in tanks.
+
+8
+00:00:28,600 --> 00:00:32,400
+The first thing we do is instead of accepting source as a
+
+9
+00:00:32,400 --> 00:00:35,100
+prop. We accept username as a prom.
+
+10
+00:00:36,000 --> 00:00:41,500
+Right and the other thing is it should be rendering.
+
+11
+00:00:43,300 --> 00:00:46,900
+Remember to use the proper function syntax.
+
+12
+00:00:47,900 --> 00:00:50,800
+Obviously, it should be just returning the Avatar component
+
+13
+00:00:50,800 --> 00:00:54,800
+internally because ultimately this is what we're trying to
+
+14
+00:00:54,800 --> 00:01:01,100
+do. The interesting thing is we want to pass additional data.
+
+15
+00:01:02,100 --> 00:01:04,400
+One to pass props to Avatar.
+
+16
+00:01:04,500 --> 00:01:05,099
+We want to pass.
+
+17
+00:01:05,099 --> 00:01:06,100
+It's the source prompts.
+
+18
+00:01:06,600 --> 00:01:11,900
+The question is, how do we find out what the source is?
+
+19
+00:01:12,400 --> 00:01:20,600
+Right and let's just say So let's just say we have some.
+
+20
+00:01:24,300 --> 00:01:34,100
+local state anxiety this component, which is URL And by default
+
+21
+00:01:34,100 --> 00:01:37,400
+when we first load this component, we only have the username.
+
+22
+00:01:37,400 --> 00:01:38,700
+We don't have the URL yet.
+
+23
+00:01:39,200 --> 00:01:43,700
+And the requirement says we should wait.
+
+24
+00:01:43,700 --> 00:01:47,200
+It's here Hey, where's the requirement?
+
+25
+00:01:47,300 --> 00:01:47,600
+Okay.
+
+26
+00:01:47,600 --> 00:01:48,100
+It's here.
+
+27
+00:01:49,300 --> 00:01:50,800
+It says before the API Returns.
+
+28
+00:01:50,800 --> 00:01:52,800
+The higher-order component should be passing a placeholder
+
+29
+00:01:52,800 --> 00:01:54,800
+URL to the inner component.
+
+30
+00:01:55,000 --> 00:01:59,800
+So we just copy that and use that as the default value for
+
+31
+00:01:59,800 --> 00:02:07,900
+our URL here, right and we'll just whatever we're just passing
+
+32
+00:02:07,900 --> 00:02:08,199
+it in.
+
+33
+00:02:08,800 --> 00:02:13,700
+So now we first we've created a smart Avatar component not
+
+34
+00:02:13,700 --> 00:02:14,200
+so smart.
+
+35
+00:02:14,200 --> 00:02:17,000
+It always just renders in Avatar with a placeholder image
+
+36
+00:02:17,800 --> 00:02:21,600
+and now we need to figure out how to find out where the real
+
+37
+00:02:21,600 --> 00:02:22,500
+URL is.
+
+38
+00:02:23,100 --> 00:02:25,500
+So let's do that in a lifecycle hook.
+
+39
+00:02:25,600 --> 00:02:29,000
+So when the component is created we're going to call this
+
+40
+00:02:29,000 --> 00:02:31,000
+API. We're going to fetch URL.
+
+41
+00:02:33,700 --> 00:02:38,200
+And because it's Express the username, we're just right we
+
+42
+00:02:38,200 --> 00:02:41,500
+caught it with the username and it accepts a callback which
+
+43
+00:02:41,500 --> 00:02:43,800
+gives you the URL that we need.
+
+44
+00:02:46,100 --> 00:02:51,700
+in inside that call back or just set our URL to the correct
+
+45
+00:02:51,700 --> 00:03:05,600
+URL all right, so does this make sense?
+
+46
+00:03:06,100 --> 00:03:11,200
+So essentially we're maintaining an intermediate immediate
+
+47
+00:03:11,200 --> 00:03:15,800
+piece of state and this this state is the URL and it starts
+
+48
+00:03:15,800 --> 00:03:19,600
+with a placeholder and it's changed after we've fetched the
+
+49
+00:03:19,600 --> 00:03:22,600
+the desired URL from the API and all we're doing is just
+
+50
+00:03:22,600 --> 00:03:25,700
+passing it down to the inner Avatar component.
+
+51
+00:03:25,800 --> 00:03:28,900
+The good thing is we've extracted the piece of functionality
+
+52
+00:03:29,000 --> 00:03:33,700
+very cleanly out of the inner outer component into this thing.
+
+53
+00:03:34,900 --> 00:03:38,200
+And I believe this should work.
+
+54
+00:03:38,300 --> 00:03:44,700
+So it's better to just actually open it they are so this
+
+55
+00:03:44,700 --> 00:03:48,200
+is the effect so it shows the placeholder then turns into
+
+56
+00:03:48,200 --> 00:03:52,800
+that. So imagine you can do something like a blurring effect
+
+57
+00:03:52,800 --> 00:03:55,300
+or initially showing some other things you can do a lot of
+
+58
+00:03:55,300 --> 00:03:58,900
+fancy stuff in here, but the good thing is you can encapsulate
+
+59
+00:03:58,900 --> 00:04:01,300
+all of that anxiety this higher order component.
+
+60
+00:04:01,400 --> 00:04:03,000
+It doesn't leak anywhere else.
+
+61
+00:04:03,600 --> 00:04:05,600
+So we're just really nice.
+
+62
+00:04:05,700 --> 00:04:10,700
+So one small thing that we might want to think about is that
+
+63
+00:04:11,900 --> 00:04:15,300
+it's this component currently is pretty unoptimized in the
+
+64
+00:04:15,300 --> 00:04:18,800
+sense. It always hits the API whenever it's created, you
+
+65
+00:04:18,800 --> 00:04:20,800
+know, but we
+
+66
+00:04:20,900 --> 00:04:27,600
+actually create something like a cash here that cash is the
+
+67
+00:04:27,600 --> 00:04:31,100
+user name and URL pairs so that we don't need to actually
+
+68
+00:04:31,500 --> 00:04:35,000
+hit the you hit the API all the time, you know, you can have
+
+69
+00:04:35,000 --> 00:04:40,100
+a cashier with a user name and URL payers and inside our
+
+70
+00:04:42,000 --> 00:04:42,900
+Data here.
+
+71
+00:04:44,400 --> 00:04:48,100
+We can directly start with a cached hit if it exists and
+
+72
+00:04:48,100 --> 00:04:49,300
+we check again here.
+
+73
+00:04:49,600 --> 00:04:53,000
+If it's already a cache hit we don't even need to call the
+
+74
+00:04:53,000 --> 00:04:53,800
+API at all.
+
+75
+00:04:54,400 --> 00:04:59,400
+So you can do a lot of things optimizations fancy functionalities
+
+76
+00:04:59,400 --> 00:05:04,300
+anxiety here, but it doesn't affect the usage to the parent
+
+77
+00:05:04,300 --> 00:05:05,200
+component at all.
+
+78
+00:05:05,700 --> 00:05:09,000
+No matter what you do inside that component this parent component
+
+79
+00:05:09,000 --> 00:05:11,300
+use it stays the same this inner.
+
+80
+00:05:11,500 --> 00:05:14,300
+Opponents the Avatar component stayed the same.
+
+81
+00:05:14,500 --> 00:05:18,400
+They don't need to change right you can do all the work inside
+
+82
+00:05:18,400 --> 00:05:23,100
+your inner this higher order component, but you are not affecting
+
+83
+00:05:24,200 --> 00:05:25,800
+your parent your child.
+
+84
+00:05:26,000 --> 00:05:29,300
+So this is good because it shows that it has is it's a good
+
+85
+00:05:29,300 --> 00:05:33,300
+encapsulation means the only interface we're using to talk
+
+86
+00:05:33,300 --> 00:05:36,100
+between the parent and the child is vir props.
+
+87
+00:05:36,900 --> 00:05:41,200
+Because the the way we communicate is so constrained this
+
+88
+00:05:41,200 --> 00:05:44,300
+make ensures that changing the inner implementation of this
+
+89
+00:05:44,400 --> 00:05:49,000
+enhancer doesn't affect other pieces Parts in your codes.
+
+90
+00:05:49,000 --> 00:05:50,000
+This is critical.
+
+91
+00:05:50,000 --> 00:05:53,900
+If you have a large team large project and you want to make
+
+92
+00:05:53,900 --> 00:05:57,500
+sure when you are changing things, you're not stepping on
+
+93
+00:05:57,500 --> 00:06:00,400
+other people's toes and not accidentally breaking other things
+
+94
+00:06:00,800 --> 00:06:06,600
+and the trick to that is make sure this piece of codes by
+
+95
+00:06:06,800 --> 00:06:10,000
+Contracts with other parts of the code base is minimal.
+
+96
+00:06:10,400 --> 00:06:11,400
+In this case.
+
+97
+00:06:11,600 --> 00:06:14,800
+The only thing that it's connecting to other pieces in your
+
+98
+00:06:14,800 --> 00:06:17,900
+code are the incoming props and outgoing props.
+
+99
+00:06:18,500 --> 00:06:22,200
+So this is great because this is a very very clear constraint.
+
+100
+00:06:22,300 --> 00:06:23,300
+It's very minimal.
+
+101
+00:06:23,700 --> 00:06:26,000
+It gives you very little chance of breaking other people's
+
+102
+00:06:26,000 --> 00:06:28,600
+things in your render function there.
+
+103
+00:06:28,700 --> 00:06:29,999
+You're referencing Avatar.
+
+104
+00:06:29,999 --> 00:06:32,400
+Should you be actually referencing the inner components?
+
+105
+00:06:32,700 --> 00:06:33,100
+Yes.
+
+106
+00:06:33,100 --> 00:06:35,000
+That's a that's a mistake here.
+
+107
+00:06:36,300 --> 00:06:36,500
+Yep.
+
+108
+00:06:36,900 --> 00:06:40,500
+So yeah, this makes this with Avatar you are a more generic.
+
+109
+00:06:40,800 --> 00:06:46,400
+So any inner component that takes a URL props can be used
+
+110
+00:06:46,400 --> 00:06:51,500
+with this with Avatar URL thing and it can be more generic.
+
+111
+00:06:51,700 --> 00:06:55,500
+For example, you can take something like you can even pass
+
+112
+00:06:55,500 --> 00:06:59,000
+the fetch URL function here, right?
+
+113
+00:06:59,000 --> 00:07:02,900
+So instead of hard-coded to always be fetching avatars, you
+
+114
+00:07:02,900 --> 00:07:06,500
+can on the Fly customize what you're actually fetch.
+
+115
+00:07:07,200 --> 00:07:08,500
+It takes the username.
+
+116
+00:07:08,700 --> 00:07:11,000
+You can fetch the Avatar you can fetch other information
+
+117
+00:07:11,000 --> 00:07:14,500
+about the user but you're using the same interface to enhance
+
+118
+00:07:14,500 --> 00:07:18,800
+inner components and this increases the reusability for this
+
+119
+00:07:18,800 --> 00:07:19,700
+enhancer as well.
+
+120
+00:07:20,500 --> 00:07:23,300
+What are the difference between created amounted hooks for
+
+121
+00:07:23,300 --> 00:07:24,100
+fetching data?
+
+122
+00:07:27,300 --> 00:07:31,200
+To be honest, the difference is is minimal.
+
+123
+00:07:31,200 --> 00:07:35,300
+The main difference is that mounted is called after the rendering
+
+124
+00:07:35,300 --> 00:07:39,200
+happens and the dump actual Dom nodes are created.
+
+125
+00:07:40,700 --> 00:07:46,700
+So technically created will be called earlier than your the
+
+126
+00:07:46,700 --> 00:07:52,000
+mounted if your component takes, you know a long time to
+
+127
+00:07:52,000 --> 00:07:53,500
+render then create.
+
+128
+00:07:53,500 --> 00:07:56,900
+It might be called even earlier than mounted and it's good.
+
+129
+00:07:57,100 --> 00:08:01,100
+To send the request out beforehand because the request needs
+
+130
+00:08:01,100 --> 00:08:03,800
+to go through the internet and there's latency.
+
+131
+00:08:04,700 --> 00:08:07,400
+So the latency can overlap with the time it takes to render
+
+132
+00:08:07,400 --> 00:08:08,300
+a component.
+
+133
+00:08:08,900 --> 00:08:12,100
+So that's the main thing there was a there was an early question
+
+134
+00:08:12,100 --> 00:08:13,600
+about slots.
+
+135
+00:08:14,800 --> 00:08:17,700
+It's I think it's actually easier to read the docs about
+
+136
+00:08:17,700 --> 00:08:24,900
+slots, but slots API was actually derived from the same standard
+
+137
+00:08:24,900 --> 00:08:26,900
+from w3c.
+
+138
+00:08:28,000 --> 00:08:32,100
+And so in web components, there's the slot mechanism and
+
+139
+00:08:32,400 --> 00:08:36,100
+Views implementation Loosely follows that the spec but we
+
+140
+00:08:36,100 --> 00:08:40,300
+kind of enhance it in a few ways and most importantly view
+
+141
+00:08:40,300 --> 00:08:41,600
+slot mechanism Works in rent.
+
+142
+00:08:41,600 --> 00:08:48,800
+As to so if you use a function that uses rendered functions,
+
+143
+00:08:49,300 --> 00:08:52,200
+I use a component that uses random functions like this so
+
+144
+00:08:52,200 --> 00:08:53,900
+you can do slots equals Foo.
+
+145
+00:08:57,000 --> 00:09:00,300
+And the way to access this slot inside a random function
+
+146
+00:09:00,900 --> 00:09:04,900
+is by doing this dollar slots Foo.
+
+147
+00:09:06,300 --> 00:09:09,500
+This will give you an array of virtual nodes.
+
+148
+00:09:10,700 --> 00:09:14,100
+That falls into the slot.
+
+149
+00:09:16,700 --> 00:09:20,100
+Because this you can have multiple things that falls into
+
+150
+00:09:20,100 --> 00:09:21,000
+the same slot.
+
+151
+00:09:21,500 --> 00:09:25,700
+So you get have an array and if you don't give it any slot
+
+152
+00:09:25,700 --> 00:09:32,800
+name. Then all unnamed ones will be inside this daughter
+
+153
+00:09:32,800 --> 00:09:34,100
+slots the default.
+
+154
+00:09:34,400 --> 00:09:37,700
+This is also an array so you can like pass them directly
+
+155
+00:09:37,700 --> 00:09:38,800
+as children.
+
+156
+00:09:41,100 --> 00:09:50,000
+to this essentially you're passing on the slot content into
+
+157
+00:09:50,000 --> 00:09:53,700
+this inner component even better.
+
+158
+00:09:55,000 --> 00:09:57,100
+Well, yeah, this is a typical use case.
+
+159
+00:09:59,000 --> 00:10:01,800
+Another thing another trick that we can talk about is.
+
+160
+00:10:03,500 --> 00:10:05,500
+Inheriting the outer attributes.
+
+161
+00:10:05,500 --> 00:10:08,700
+So we have this higher order components like here.
+
+162
+00:10:09,000 --> 00:10:12,400
+If you do something like ID equals Foo, unfortunately, it
+
+163
+00:10:12,400 --> 00:10:15,500
+won't be passed down to the inner component because we didn't
+
+164
+00:10:15,500 --> 00:10:19,700
+explicitly list it but this ID will in fact be collected
+
+165
+00:10:19,700 --> 00:10:23,200
+inside an attribute card a property called at this dollar
+
+166
+00:10:23,200 --> 00:10:27,900
+attrs. This is a new feature in two point four, which means
+
+167
+00:10:27,900 --> 00:10:32,000
+you can pass it down like this.
+
+168
+00:10:35,500 --> 00:10:39,800
+So this way you're relaying all the additional attributes
+
+169
+00:10:39,800 --> 00:10:41,300
+down to the inner component.
+
+170
+00:10:41,600 --> 00:10:45,600
+So this ID will in fact now be rendered on the internal Avatar.
+
+171
+00:10:48,000 --> 00:10:51,700
+But the default behavior is only explicitly listed props
+
+172
+00:10:51,700 --> 00:10:52,700
+will be passed down.
+
+173
+00:10:54,100 --> 00:10:57,000
+This also means in created hook you cannot access Domino's.
+
+174
+00:10:57,000 --> 00:10:58,200
+That's correct.
+
+175
+00:10:58,300 --> 00:11:01,900
+So the created hook only Mount Hood guarantees.
+
+176
+00:11:01,900 --> 00:11:05,500
+The Dom has been created in created hook.
+
+177
+00:11:05,500 --> 00:11:11,000
+It means instance is created on the dock on the website.
+
+178
+00:11:11,000 --> 00:11:12,600
+There is a documentation.
+
+179
+00:11:14,600 --> 00:11:21,600
+life cycle diagram As you can see when the create a hook
+
+180
+00:11:21,600 --> 00:11:25,500
+is called we have initialized events lifecycle injections
+
+181
+00:11:25,500 --> 00:11:26,400
+and reactivity.
+
+182
+00:11:26,600 --> 00:11:29,500
+These are instance specific.
+
+183
+00:11:29,500 --> 00:11:32,800
+They don't have anything to do with the Dom or rendering
+
+184
+00:11:32,800 --> 00:11:33,500
+or anything.
+
+185
+00:11:35,700 --> 00:11:39,400
+Real rendering only happens after create a hook has been
+
+186
+00:11:39,400 --> 00:11:45,300
+called and there could be on the fire compliation and then
+
+187
+00:11:45,300 --> 00:11:48,800
+virtual Dom rendering and eventually when the actual Dom
+
+188
+00:11:48,800 --> 00:11:50,000
+has been created.
+
+189
+00:11:50,300 --> 00:11:51,900
+That's when mounted will be called.
+
+190
+00:11:53,800 --> 00:11:56,700
+So now the component is considered to being mounted States.
+
+191
+00:11:58,100 --> 00:12:03,800
+Off-topic question in new router could import food would
+
+192
+00:12:03,800 --> 00:12:08,000
+be changed to something like lazy and ports to get a slightly
+
+193
+00:12:08,000 --> 00:12:09,500
+simpler syntax.
+
+194
+00:12:12,700 --> 00:12:13,400
+Not really.
+
+195
+00:12:15,100 --> 00:12:19,200
+So the question is really about a sink components and code
+
+196
+00:12:19,200 --> 00:12:20,300
+splitting together.
+
+197
+00:12:22,600 --> 00:12:25,500
+I think this currency in Texas is already simple enough.
+
+198
+00:12:27,800 --> 00:12:32,300
+Introducing so the more important thing is the import syntax
+
+199
+00:12:32,300 --> 00:12:37,300
+Dynamic import is a speck right arrow function is part of
+
+200
+00:12:37,300 --> 00:12:39,800
+JavaScript Dynamic important part of JavaScript.
+
+201
+00:12:39,800 --> 00:12:44,100
+We're just using these standard language features for acing
+
+202
+00:12:44,100 --> 00:12:46,400
+components and code splitting which in my opinion is better
+
+203
+00:12:46,400 --> 00:12:50,100
+than having to have a custom lazy import function, which
+
+204
+00:12:50,100 --> 00:12:54,700
+is not part of the standard in my you know, Essentially,
+
+205
+00:12:54,700 --> 00:12:58,300
+we're having a our own API instead of using standard language
+
+206
+00:12:58,300 --> 00:13:00,090
+features.
