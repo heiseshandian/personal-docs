@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.37.0](https://github.com/heiseshandian/personal-docs/compare/v1.36.0...v1.37.0) (2020-11-08)
+
+
+### Features
+
+* 调整veed的超时时间 ([b5930ca](https://github.com/heiseshandian/personal-docs/commit/b5930ca0747db866d23ab1154fdbafa16b978195))
+
+
+
+
+
 # [1.36.0](https://github.com/heiseshandian/personal-docs/compare/v1.35.0...v1.36.0) (2020-11-08)
 
 
