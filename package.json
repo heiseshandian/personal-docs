@@ -11,6 +11,8 @@
     "postpack": "ts-node ./scripts/postpack.ts",
     "prerelease": "lerna run build",
     "release": "lerna publish",
+    "prerelease:from-package": "lerna run build",
+    "release:from-package": "lerna publish from-package",
     "prerelease:alpha": "npm run prerelease",
     "release:alpha": "lerna publish --canary",
     "debug": "jest ./packages/auto-add-subtitle/__tests__/index.spec.ts"
