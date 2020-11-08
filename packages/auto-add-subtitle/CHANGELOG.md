@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.35.0](https://github.com/heiseshandian/personal-docs/compare/v1.34.1...v1.35.0) (2020-11-08)
+
+
+### Features
+
+* 自动解析字幕添加是否保留临时文件选项 ([71b2947](https://github.com/heiseshandian/personal-docs/commit/71b2947ab21b4225df328b5a51f06d50e03bf5e1))
+
+
+
+
+
 ## [1.34.1](https://github.com/heiseshandian/personal-docs/compare/v1.34.0...v1.34.1) (2020-11-07)
 
 
