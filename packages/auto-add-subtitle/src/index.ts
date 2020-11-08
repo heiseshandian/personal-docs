@@ -15,10 +15,12 @@ import {
   CHUNK_FILE_SUFFIX,
   extractAudio,
   extractChunkNo,
+  fixEndTime,
   isChunkFile,
   isSupportedAudio,
   mergeSrtFiles,
   sliceMediaBySeconds,
+  getDuration,
 } from './utils';
 
 export * from './parsers';
@@ -138,6 +140,38 @@ export default class AutoAddSubtitle {
     );
   }
 
+  // 音频切割过程中若结尾处存在音频空白则直接拼接字幕会导致后面的字幕提前出现（末尾的空白时间被跳过了）
+  // 此处手动修复下字幕文件的结束时间，使得字幕的结束时间与音频的结束时间保持同步
+  private async fixEndTimeOfChunks() {
+    const tmpPath = this.getTmpPath();
+    const files = await readdir(tmpPath);
+    if (!files) {
+      return;
+    }
+    const chunks = files.filter(isChunkFile);
+    if (chunks.length === 0) {
+      return;
+    }
+
+    const audios = chunks.filter(isSupportedAudio);
+    const { ext } = path.parse(audios[0]);
+
+    await new ConcurrentTasks(
+      files
+        .filter(isSubtitleFile)
+        .map(file => path.resolve(tmpPath, file))
+        .map(file => async () => {
+          const duration = await getDuration(file.replace(/\.\w+$/, ext));
+          if (!duration) {
+            return;
+          }
+
+          const fixed = await fixEndTime(file, duration);
+          await writeFile(file, fixed);
+        }),
+    ).run();
+  }
+
   private static groupChunkSrtFiles(subtitles: string[]) {
     const subtitleReg = new RegExp(
       `([^\\${path.sep}]+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
@@ -220,6 +254,7 @@ export default class AutoAddSubtitle {
       return;
     }
 
+    await this.fixEndTimeOfChunks();
     await this.mergeSrtChunks();
     await this.moveSrtFiles();
 

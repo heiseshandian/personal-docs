@@ -27,7 +27,7 @@ function parseSize(size = '') {
 }
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
-function getDuration(mediaPath: string) {
+export function getDuration(mediaPath: string) {
   return new Promise<string | null | undefined>(resolve => {
     exec(`ffprobe ${JSON.stringify(mediaPath)}`, (err, _, stderr) => {
       if (err) {

@@ -46,7 +46,9 @@ test('AutoAddSubtitle, groupChunkSrtFiles', () => {
 describe('tests that based on temp subtitles', () => {
   let tmpPath: string;
   beforeEach(async () => {
-    tmpPath = await prepareTmpDir(path.resolve(__dirname, `./data/${TMP_DIR}`));
+    tmpPath = await prepareTmpDir(
+      path.resolve(__dirname, `./data/subtitles_${TMP_DIR}`),
+    );
     await fse.copy(path.resolve(__dirname, `./data/subtitles/`), tmpPath);
   });
   afterEach(async () => {
@@ -93,6 +95,40 @@ describe('tests that based on temp subtitles', () => {
 
     expect(mergedA).toEqual(originalA);
     expect(mergedB).toEqual(originalB);
+  });
+});
+
+describe('tests that based on temp audios', () => {
+  let tmpPath: string;
+  beforeEach(async () => {
+    tmpPath = await prepareTmpDir(
+      path.resolve(__dirname, `./data/audios_${TMP_DIR}`),
+    );
+  });
+  afterEach(async () => {
+    await removeTmpDir(tmpPath);
+  });
+
+  test('fixEndTimeOfChunks', async () => {
+    const autoAddSubtitle = new AutoAddSubtitle(tmpPath);
+    await autoAddSubtitle['prepareTmpDir']();
+    await fse.copy(
+      path.resolve(__dirname, `./data/audios/`),
+      path.resolve(tmpPath, autoAddSubtitle['TMP_DIR']),
+    );
+    await autoAddSubtitle['fixEndTimeOfChunks']();
+
+    const fixed = await readFile(
+      path.resolve(tmpPath, autoAddSubtitle['TMP_DIR'], 'video_chunks_0.srt'),
+      { encoding: 'utf-8' },
+    );
+    const result = await readFile(
+      path.resolve(__dirname, './data/audios/', 'video_chunks_0.srt.result'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+    expect(fixed).toEqual(result);
   });
 });
 

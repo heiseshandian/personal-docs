@@ -1,0 +1,11 @@
+1
+00:00:00,300 --> 00:00:03,200
+The idea is our smart.
+
+2
+00:00:03,200 --> 00:00:08,200
+Avatar is a stateful component so it can hold some state
+
+3
+00:00:08,900 --> 00:00:12,000
+it can it can be responsible for counting the API and we'll
