@@ -17,7 +17,7 @@ import {
 } from './helpers';
 
 jest.setTimeout(1000 * 60 * 10);
-const TMP_DIR = getTmpDir('index');
+const TMP_DIR = getTmpDir(__filename);
 
 function generateChunkFiles(count: number, prefix: string, suffix = '') {
   return new Array(count)

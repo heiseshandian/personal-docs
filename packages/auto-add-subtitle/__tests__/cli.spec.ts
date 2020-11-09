@@ -5,7 +5,7 @@ import { copyVideos, getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
 jest.setTimeout(1000 * 60 * 10);
 
-const TMP_DIR = getTmpDir('cli');
+const TMP_DIR = getTmpDir(__filename);
 
 beforeEach(async () => {
   await prepareTmpDir(TMP_DIR);

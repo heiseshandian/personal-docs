@@ -10,7 +10,7 @@ import path from 'path';
 import fse from 'fs-extra';
 import { readdir, readFile, writeFile } from 'zgq-shared';
 
-const TMP_DIR = getTmpDir('subtitles');
+const TMP_DIR = getTmpDir(__filename);
 
 describe('tests that based on tmp srt files', () => {
   let tmpPath: string;

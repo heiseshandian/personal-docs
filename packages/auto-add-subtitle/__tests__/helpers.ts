@@ -26,8 +26,8 @@ export async function copyVideos(tmpDir: string) {
   );
 }
 
-export function getTmpDir(tmpDir: string) {
-  return `${tmpDir}_spec_test`;
+export function getTmpDir(fileName: string) {
+  return `${path.parse(fileName).name}_spec_test`;
 }
 
 export function randomSort() {
