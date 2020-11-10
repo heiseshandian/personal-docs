@@ -102,7 +102,10 @@ export default class AutoAddSubtitle {
 
     const audios = await readdir(tmpPath);
     await sliceMediaBySeconds(
-      (audios || []).filter(isFile).map(file => path.resolve(tmpPath, file)),
+      (audios || [])
+        .filter(isFile)
+        .filter(file => !isChunkFile(file))
+        .map(file => path.resolve(tmpPath, file)),
       chunkSeconds,
     );
 

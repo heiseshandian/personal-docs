@@ -42,7 +42,7 @@ export class Veed {
     closeSelector: '[alt^="close"]',
     startXPath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/button',
-    subtitlesSelector: '[data-testid="@editor/subtitle-row-0/textarea"]',
+    subtitlesSelector: '[data-testid="@design-system/text-editor-0/textarea"]',
     translateXpath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
     downloadXpath:
