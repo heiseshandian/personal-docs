@@ -22,15 +22,15 @@ export function getDuration(mediaPath: string) {
 }
 
 const durationReg = /(\d{1,2}):(\d{1,2}):(\d{1,2})\.(\d{2})/;
-function parseDuration(duration = '') {
+function duration2Seconds(duration = '') {
   const match = duration.match(durationReg);
   if (!match) {
     return 0;
   }
 
-  const [, hours, minutes, seconds, milliseconds] = match;
+  const [, hours, minutes, seconds] = match;
 
-  return [hours, minutes, seconds, milliseconds]
+  return [hours, minutes, seconds]
     .map(val => parseInt(val, 10))
     .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
 }
@@ -58,7 +58,7 @@ export async function sliceMediaBySeconds(
       if (!duration) {
         return;
       }
-      const chunks = Math.ceil(parseDuration(duration) / maxSeconds);
+      const chunks = Math.ceil(duration2Seconds(duration) / maxSeconds);
       if (chunks <= 1) {
         return;
       }
