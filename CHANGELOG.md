@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.2](https://github.com/heiseshandian/personal-docs/compare/v1.38.1...v1.38.2) (2020-11-10)
+
+
+### Bug Fixes
+
+* 更改默认音频后缀 ([f2bde91](https://github.com/heiseshandian/personal-docs/commit/f2bde91dbde47fd4543215872cfab8affb4f4c65))
+* 测试用例bug修复 ([474b45d](https://github.com/heiseshandian/personal-docs/commit/474b45de5be06a197cdef7341d3e21c69dc5a67d))
+
+
+
+
+
 ## [1.38.1](https://github.com/heiseshandian/personal-docs/compare/v1.38.0...v1.38.1) (2020-11-10)
 
 
