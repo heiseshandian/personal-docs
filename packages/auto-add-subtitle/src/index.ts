@@ -166,7 +166,13 @@ export default class AutoAddSubtitle {
             return;
           }
 
-          const fixed = await fixEndTime(file, duration);
+          const fixed = await fixEndTime(
+            file,
+            // 媒体切割存在精度问题，无法精确到毫秒级别
+            // （预期 00:00:00.000 - 00:00:05:000 实际切割出来的可能是 00:00:00.000 - 00:00:05:030）
+            // 这里手动修复下避免字幕合并后与音频不匹配
+            duration.replace(/\.\d+$/, '.000'),
+          );
           await writeFile(file, fixed);
         }),
     ).run();
