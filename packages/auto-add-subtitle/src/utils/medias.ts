@@ -243,9 +243,9 @@ export async function extractAudio(
 
       // https://gist.github.com/protrolium/e0dbd4bb0f1a396fcb55
       const result = await execAsync(
-        `ffmpeg -i ${JSON.stringify(
-          mediaPath,
-        )} -vn -acodec copy ${JSON.stringify(outputFile)}`,
+        `ffmpeg -i ${JSON.stringify(mediaPath)} -vn ${JSON.stringify(
+          outputFile,
+        )}`,
       );
       return result !== undefined ? outputFile : result;
     }),
