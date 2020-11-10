@@ -203,7 +203,7 @@ interface Codec2Ext {
 const codec2Ext: Codec2Ext = {
   vorbis: 'ogg',
   opus: 'opus',
-  default: 'aac',
+  default: 'ogg',
 };
 
 const audioReg = new RegExp(`(?:${Object.values(codec2Ext).join('|')})$`, 'i');
