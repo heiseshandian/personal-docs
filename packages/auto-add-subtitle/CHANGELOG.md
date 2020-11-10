@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.5](https://github.com/heiseshandian/personal-docs/compare/v1.38.4...v1.38.5) (2020-11-10)
+
+
+### Bug Fixes
+
+* 修复veed改版导致的解析超时问题 ([0364c16](https://github.com/heiseshandian/personal-docs/commit/0364c163140209b076638f69e7ee4861b28317ca))
+
+
+
+
+
 ## [1.38.4](https://github.com/heiseshandian/personal-docs/compare/v1.38.3...v1.38.4) (2020-11-10)
 
 
