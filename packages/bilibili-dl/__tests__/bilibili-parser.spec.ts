@@ -6,7 +6,7 @@ test('BilibiliParser', async () => {
   );
 
   expect(result.map(item => item.href)).toEqual(
-    new Array(52)
+    Array(78)
       .fill(0)
       .map((_, i) => `https://www.bilibili.com/video/BV1Mh411Z7LC?p=${i + 1}`),
   );
