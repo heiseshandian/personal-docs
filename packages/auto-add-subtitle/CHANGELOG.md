@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.38.0](https://github.com/heiseshandian/personal-docs/compare/v1.37.0...v1.38.0) (2020-11-10)
+
+
+### Bug Fixes
+
+* 修复媒体切割精度问题 ([a338391](https://github.com/heiseshandian/personal-docs/commit/a338391e2e8306f70e8f9f36820a922cd540b13d))
+* 修复媒体切割精度问题 ([f04ab39](https://github.com/heiseshandian/personal-docs/commit/f04ab39a275d57c8da8bd319b40bb8eb0697ae8d))
+
+
+### Features
+
+* 为字幕解析添加自动重试功能 ([971ac22](https://github.com/heiseshandian/personal-docs/commit/971ac22a11995d9c74e012f14681508c9cfc2241))
+
+
+
+
+
 # [1.37.0](https://github.com/heiseshandian/personal-docs/compare/v1.36.0...v1.37.0) (2020-11-08)
 
 
