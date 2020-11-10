@@ -1,4 +1,5 @@
 import { readFile, groupByLen } from 'zgq-shared';
+import { formatTime, parseTime } from './time';
 
 const ONE_SUBTITLE_LENGTH = 4;
 
@@ -150,41 +151,4 @@ function parseSequence(list: string[]) {
     }
   }
   return 0;
-}
-
-const timeRegex = /^([+-]?)(\d{2}):(\d{2}):(\d{2})[,.](\d{3})$/;
-function parseTime(value: string) {
-  if (!value) {
-    return 0;
-  }
-  const match = value.trim().match(timeRegex);
-  if (!match) {
-    return 0;
-  }
-
-  const [, symbol, hours, minutes, seconds, milliseconds] = match;
-  return (
-    (symbol === '-' ? -1 : 1) *
-    ([hours, minutes, seconds]
-      .map(val => Number(val))
-      .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0) +
-      Number(milliseconds) / 1000)
-  );
-}
-
-function formatTime(value: number) {
-  const hours = Math.floor(value / (60 * 60));
-  value -= hours * 60 * 60;
-  const minutes = Math.floor(value / 60);
-  value -= minutes * 60;
-  const seconds = Math.floor(value);
-  value -= seconds;
-  const milliseconds = Math.round(value * 1000);
-
-  return (
-    (value < 0 ? '-' : '') +
-    [hours, minutes, seconds].map(val => `${val}`.padStart(2, '0')).join(':') +
-    ',' +
-    `${milliseconds}`.padStart(3, '0')
-  );
 }

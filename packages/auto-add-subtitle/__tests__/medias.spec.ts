@@ -1,9 +1,13 @@
 import path from 'path';
+import { readdir } from 'zgq-shared';
 import {
   concatMedias,
   extractAudio,
+  getDuration,
+  isChunkFile,
   isSupportedAudio,
-  sliceMediaBySize,
+  parseTime,
+  sliceMediaBySeconds,
 } from '../src';
 import { copyVideos, getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
@@ -21,24 +25,23 @@ afterEach(async () => {
   await removeTmpDir(TMP_DIR);
 });
 
-test('slice video', async () => {
-  const [result1, result2] = await Promise.all(
-    ['video1.webm', 'video with space.webm'].map(file =>
-      sliceMediaBySize(getVideoPath(file), '100k'),
-    ),
+test('sliceMediaBySeconds', async () => {
+  const [maxSeconds, video] = [5, 'video1.webm'];
+
+  await sliceMediaBySeconds(getVideoPath(video), maxSeconds);
+  const files = await readdir(tmpPath);
+  const result = await Promise.all(
+    files
+      .filter(isChunkFile)
+      .map(file => path.resolve(tmpPath, file))
+      .map(file => getDuration(file)),
   );
 
-  expect(result1[0]).toEqual(
-    new Array(8).fill(0).map((_, i) => getVideoPath(`video1_chunks_${i}.webm`)),
-  );
-  expect(result2[0]).toEqual(
-    new Array(9)
-      .fill(0)
-      .map((_, i) => getVideoPath(`video with space_chunks_${i}.webm`)),
-  );
+  const duration = await getDuration(getVideoPath(video));
+  expect(result.length).toEqual(Math.ceil(parseTime(duration) / maxSeconds));
 });
 
-test('concat videos', async () => {
+test('concatMedias', async () => {
   const result = await concatMedias(
     ['video1.webm', 'video with space.webm'].map(getVideoPath),
     getVideoPath('video1_out.webm'),
@@ -47,7 +50,7 @@ test('concat videos', async () => {
   expect(result).toBe(getVideoPath('video1_out.webm'));
 });
 
-test('extract audio', async () => {
+test('extractAudio', async () => {
   const result = await extractAudio(
     ['video1.webm', 'video with space.webm'].map(getVideoPath),
   );
@@ -57,7 +60,7 @@ test('extract audio', async () => {
   );
 });
 
-test('is audio', () => {
+test('isSupportedAudio', () => {
   expect(isSupportedAudio('f://c//file.ogg')).toBe(true);
   expect(isSupportedAudio('test.test')).toBe(false);
 });

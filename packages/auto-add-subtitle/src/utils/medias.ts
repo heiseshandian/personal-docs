@@ -4,27 +4,7 @@ import os from 'os';
 import path from 'path';
 import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
 import { chunkFileReg, CHUNK_FILE_SUFFIX } from './contract';
-
-function getFileSize(filePath: string) {
-  const stats = fs.statSync(path.resolve(filePath));
-  return stats.size;
-}
-
-const sizeMap: Record<string, number> = {
-  k: 2 ** 10,
-  m: 2 ** 20,
-  default: 1,
-};
-
-const sizeReg = /^(\d*\.?\d+)([km]?)$/i;
-function parseSize(size = '') {
-  const match = size.match(sizeReg);
-  if (!match) {
-    return 0;
-  }
-  const [, num, unit] = match;
-  return parseFloat(num) * (sizeMap[unit] || sizeMap.default);
-}
+import { formatDuration } from './time';
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 export function getDuration(mediaPath: string) {
@@ -64,64 +44,6 @@ export function extractChunkNo(file: string) {
   return Number(chunkNo);
 }
 
-async function sliceMediaByChunks(mediaPath: string, chunks: number) {
-  const duration = await getDuration(mediaPath);
-  if (!duration) {
-    return;
-  }
-
-  const chunkDuration = Math.ceil(parseDuration(duration) / chunks);
-  const { ext, name, dir } = path.parse(mediaPath);
-
-  return await new ConcurrentTasks<string>(
-    Array(chunks)
-      .fill(0)
-      .map((_, i) => () => {
-        const outputFile = path.resolve(
-          dir,
-          `${name}${CHUNK_FILE_SUFFIX}${i}${ext}`,
-        );
-        if (fs.existsSync(outputFile)) {
-          return Promise.resolve(outputFile);
-        }
-        const cmd = `ffmpeg -i ${JSON.stringify(mediaPath)} -ss ${
-          i * chunkDuration
-        } -t ${chunkDuration} -codec copy ${JSON.stringify(outputFile)}`;
-
-        return new Promise(resolve => {
-          exec(cmd, err => {
-            if (err) {
-              handleError(err);
-              resolve();
-            } else {
-              resolve(outputFile);
-            }
-          });
-        });
-      }),
-  ).run();
-}
-
-export async function sliceMediaBySize(
-  mediaPaths: string | string[],
-  maxSize: string,
-) {
-  if (typeof mediaPaths === 'string') {
-    mediaPaths = [mediaPaths];
-  }
-
-  return await new ConcurrentTasks<string[]>(
-    mediaPaths.map(mediaPath => async () => {
-      const chunks = Math.ceil(getFileSize(mediaPath) / parseSize(maxSize));
-      if (chunks <= 1) {
-        return;
-      }
-      return await sliceMediaByChunks(mediaPath, chunks);
-    }),
-    'slicing',
-  ).run();
-}
-
 export async function sliceMediaBySeconds(
   mediaPaths: string | string[],
   maxSeconds: number,
@@ -141,7 +63,37 @@ export async function sliceMediaBySeconds(
         return;
       }
 
-      return await sliceMediaByChunks(mediaPath, chunks);
+      const { ext, name, dir } = path.parse(mediaPath);
+      return await new ConcurrentTasks<string>(
+        Array(chunks)
+          .fill(0)
+          .map((_, i) => () => {
+            const outputFile = path.resolve(
+              dir,
+              `${name}${CHUNK_FILE_SUFFIX}${i}${ext}`,
+            );
+            if (fs.existsSync(outputFile)) {
+              return Promise.resolve(outputFile);
+            }
+
+            const cmd = `ffmpeg -i ${JSON.stringify(
+              mediaPath,
+            )} -ss ${formatDuration(i * maxSeconds)} -t ${formatDuration(
+              maxSeconds,
+            )} -codec copy ${JSON.stringify(outputFile)}`;
+
+            return new Promise(resolve => {
+              exec(cmd, err => {
+                if (err) {
+                  handleError(err);
+                  resolve();
+                } else {
+                  resolve(outputFile);
+                }
+              });
+            });
+          }),
+      ).run();
     }),
     'slicing',
   ).run();
