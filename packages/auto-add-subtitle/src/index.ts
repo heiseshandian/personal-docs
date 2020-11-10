@@ -249,14 +249,24 @@ export default class AutoAddSubtitle {
     );
   }
 
-  public async generateSrtFiles() {
+  private async preParseSubtitle() {
     await this.prepareTmpDir();
     await this.extractAudioFiles();
+  }
+
+  public async generateSrtFiles(isRetry?: boolean) {
+    if (!isRetry) {
+      await this.preParseSubtitle();
+    }
 
     await this.parseSubtitle();
+    await this.postParseSubtitle();
+  }
 
+  private async postParseSubtitle() {
     const parsed = await this.isAllParsed();
     if (!parsed) {
+      this.generateSrtFiles(true);
       return;
     }
 
