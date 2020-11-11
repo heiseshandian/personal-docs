@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
-import { chunkFileReg, CHUNK_FILE_SUFFIX } from './contract';
+import { CHUNK_FILE_SUFFIX } from './contract';
 import { formatDuration } from './time';
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
@@ -33,15 +33,6 @@ function duration2Seconds(duration = '') {
   return [hours, minutes, seconds]
     .map(val => parseInt(val, 10))
     .reduce((acc, cur, i) => acc + cur * 60 ** (2 - i), 0);
-}
-
-export function isChunkFile(file: string) {
-  return chunkFileReg.test(file);
-}
-
-export function extractChunkNo(file: string) {
-  const [, chunkNo] = file.match(chunkFileReg) || [file];
-  return Number(chunkNo);
 }
 
 export async function sliceMediaBySeconds(

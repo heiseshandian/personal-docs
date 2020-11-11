@@ -21,6 +21,7 @@ import {
   mergeSrtFiles,
   sliceMediaBySeconds,
   getDuration,
+  INDEX_OF_FIRST_CHUNK,
 } from './utils';
 
 export * from './parsers';
@@ -77,7 +78,10 @@ export default class AutoAddSubtitle {
       fs.existsSync(
         path.resolve(
           tmpPath,
-          file.replace(/^(.+)\.(\w+)$/, `$1${CHUNK_FILE_SUFFIX}0.$2`),
+          file.replace(
+            /^(.+)\.(\w+)$/,
+            `$1${CHUNK_FILE_SUFFIX}${INDEX_OF_FIRST_CHUNK}.$2`,
+          ),
         ),
       );
     await new ConcurrentTasks(
@@ -157,6 +161,7 @@ export default class AutoAddSubtitle {
     }
 
     const audios = chunks.filter(isSupportedAudio);
+    // 临时文件中的所有音频都是我们抽取出来的，我们可以认为所有音频文件都拥有相同的扩展名
     const { ext } = path.parse(audios[0]);
 
     await new ConcurrentTasks(
