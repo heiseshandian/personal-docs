@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
