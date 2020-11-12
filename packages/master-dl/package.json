@@ -18,5 +18,17 @@
     "node-fetch": "^2.6.0",
     "node-ffprobe": "^3.0.0",
     "progress": "^2.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/master-dl"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/master-dl/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
