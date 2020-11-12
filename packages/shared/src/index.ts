@@ -35,3 +35,4 @@ export * from './shell';
 export * from './dynamic-tasks';
 export * from './logger';
 export * from './array';
+export * from './cmd';
