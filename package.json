@@ -31,8 +31,11 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-lerna-scopes": "^11.0.0",
+    "@types/fluent-ffmpeg": "^2.1.16",
     "@types/fs-extra": "^9.0.3",
+    "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.14",
+    "@types/node-fetch": "^2.5.7",
     "@types/progress": "^2.0.3",
     "@types/puppeteer": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
