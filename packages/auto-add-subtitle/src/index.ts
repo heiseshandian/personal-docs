@@ -31,25 +31,25 @@ export function isFile(file: string) {
   return /\.\w+/.test(file);
 }
 
-interface AutoAddSubtitleOptions {
+interface SubtitleParserOptions {
   debug: boolean;
   chunkSeconds: number;
   keepTmpFiles: boolean;
   [key: string]: any;
 }
 
-export default class AutoAddSubtitle {
+export default class SubtitleParser {
   private readonly TMP_DIR = 'parsed_auto_add_subtitle';
 
   private videoDir;
 
-  private options: AutoAddSubtitleOptions = {
+  private options: SubtitleParserOptions = {
     keepTmpFiles: false,
     debug: false,
     chunkSeconds: 5 * 60,
   };
 
-  constructor(videoDir: string, options: Partial<AutoAddSubtitleOptions> = {}) {
+  constructor(videoDir: string, options: Partial<SubtitleParserOptions> = {}) {
     this.videoDir = videoDir;
 
     Object.keys(options).forEach(key => {
@@ -209,7 +209,7 @@ export default class AutoAddSubtitle {
       return;
     }
 
-    const groups = AutoAddSubtitle.groupChunkSrtFiles(
+    const groups = SubtitleParser.groupChunkSrtFiles(
       files
         .filter(file => isChunkFile(file) && isSubtitleFile(file))
         .map(file => path.resolve(videoDir, `${TMP_DIR}/${file}`)),

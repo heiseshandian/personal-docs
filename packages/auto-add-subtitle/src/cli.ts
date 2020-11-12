@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import yargs, { Options } from 'yargs';
-import AutoAddSubtitle from './index';
+import SubtitleParser from './index';
 import path from 'path';
 
 const options: Record<string, Options> = {
@@ -36,7 +36,7 @@ interface Arguments {
 // 搞个自执行函数方便使用return提前结束流程
 (async () => {
   const { _: videoPath, debug, keepTmpFiles } = argv as Arguments;
-  await new AutoAddSubtitle(path.resolve(process.cwd(), videoPath[0] || ''), {
+  await new SubtitleParser(path.resolve(process.cwd(), videoPath[0] || ''), {
     debug,
     keepTmpFiles,
   }).generateSrtFiles();
