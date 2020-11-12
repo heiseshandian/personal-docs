@@ -1,12 +1,12 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 
 import inquirer from 'inquirer';
 
-import fedApi, { Course } from './fedApi.js';
-import prompts from './prompts.js';
-import dl from './downloader.js';
-import { sanitize } from './utils.js';
-import { extractPrograms } from './programsExtractor.js';
+import fedApi, { Course } from './fedApi';
+import prompts from './prompts';
+import { setDir, setTotal, download } from './downloader';
+import { sanitize } from './utils';
+import { extractPrograms } from './programsExtractor';
 
 (async function run() {
   if (!(await fedApi.tryExistingTokens())) {
@@ -50,14 +50,14 @@ import { extractPrograms } from './programsExtractor.js';
 
   const { quality } = await inquirer.prompt(prompts.selectQuality(programs));
 
-  dl.setDir(`./${sanitize(course.title)}/`);
-  dl.setTotal(downloadList.length);
+  setDir(`./${sanitize(course.title)}/`);
+  setTotal(downloadList.length);
 
   for (const file of downloadList) {
     const { streamingURL, transcriptURL, pos, title } = file;
     if (transcriptURL) {
-      await dl.download(transcriptURL, pos, title, 'srt');
+      await download(transcriptURL, pos, title, 'srt');
     }
-    await dl.download(streamingURL, pos, title, 'mp4', quality);
+    await download(streamingURL, pos, title, 'mp4', quality);
   }
 })();

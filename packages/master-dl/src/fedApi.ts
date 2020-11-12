@@ -2,8 +2,8 @@ import fetch from 'node-fetch';
 import os from 'os';
 import fs from 'fs';
 
-import fedHasher from './fedHasher.js';
-import constants from './constants.js';
+import fedHasher from './fedHasher';
+import constants from './constants';
 
 export default {
   login,

@@ -2,21 +2,23 @@ import fetch from 'node-fetch';
 import progress from 'progress';
 import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
+import { getExecutableFilePath } from 'zgq-shared';
+import os from 'os';
 
-import { sanitize } from './utils.js';
+import { sanitize } from './utils';
 
 let total: number;
 let dir: string;
 
-function setDir(_dir: string) {
+export function setDir(_dir: string) {
   dir = _dir;
 }
 
-function setTotal(_total: number) {
+export function setTotal(_total: number) {
   total = _total;
 }
 
-async function download(
+export async function download(
   url: string,
   id: string,
   title: string,
@@ -52,7 +54,13 @@ async function download(
     const bar = new progress(progressLine, { width: 30, total: 100 });
 
     const update = (prog: any) => bar.tick(prog.percent - bar.curr);
+
+    const ffmpegPath = await getExecutableFilePath('ffmpeg');
+    const ffprobePath = await getExecutableFilePath('ffprobe');
+
     const run = ffmpeg(url)
+      .setFfmpegPath(JSON.stringify(ffmpegPath.replace(os.EOL, '')))
+      .setFfprobePath(JSON.stringify(ffprobePath.replace(os.EOL, '')))
       .outputOptions([`-map p:${programId}`, '-c copy'])
       .on('progress', update)
       .save(destPath);
@@ -60,9 +68,3 @@ async function download(
     return new Promise(resolve => run.on('end', resolve));
   }
 }
-
-export default {
-  download,
-  setDir,
-  setTotal,
-};
