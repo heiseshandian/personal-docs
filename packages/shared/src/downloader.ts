@@ -1,9 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import filenamify from 'filenamify';
 import fs from 'fs';
-import { handleError } from './base';
-import { toValidFilePath } from './path';
-import { MultiProgressBar } from './progress';
+import { handleError, MultiProgressBar, toValidFilePath } from './utils';
 
 // 下载文件到本地
 export async function download(url: string, dest: string) {

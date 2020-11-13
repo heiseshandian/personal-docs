@@ -1,6 +1,5 @@
 import os from 'os';
-import { handleError } from './base';
-import { MultiProgressBar, withProgress } from './progress';
+import { handleError, MultiProgressBar, withProgress } from './utils';
 
 type Task = () => Promise<any>;
 

@@ -1,5 +1,4 @@
-import { handleError } from './base';
-import { MultiProgressBar } from './progress';
+import { handleError, MultiProgressBar } from './utils';
 
 type Task = () => Promise<any>;
 
