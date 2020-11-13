@@ -11,7 +11,7 @@
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "bin": {
-    "master-dl": "./bin/index.js"
+    "master-dl": "./bin/cli.js"
   },
   "dependencies": {
     "fluent-ffmpeg": "^2.1.2",

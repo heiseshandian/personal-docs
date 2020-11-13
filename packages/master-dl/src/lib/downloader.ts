@@ -2,6 +2,8 @@ import fetch from 'node-fetch';
 import progress from 'progress';
 import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
+import os from 'os';
+import path from 'path';
 
 import { sanitize } from './utils';
 import { handleError } from 'zgq-shared';
@@ -63,4 +65,25 @@ export async function download(
 
     return new Promise(resolve => run.on('end', resolve));
   }
+}
+
+fixEnvs();
+
+// 部分电脑上的环境变量设置不对，这里手动修复下
+function fixEnvs() {
+  if (!isWindows()) {
+    return;
+  }
+
+  const { FFMPEG_PATH, FFPROBE_PATH } = process.env;
+  if (FFMPEG_PATH && !FFMPEG_PATH.endsWith('exe')) {
+    process.env.FFMPEG_PATH = path.resolve(FFMPEG_PATH, 'ffmpeg.exe');
+  }
+  if (FFPROBE_PATH && !FFPROBE_PATH.endsWith('exe')) {
+    process.env.FFPROBE_PATH = path.resolve(FFPROBE_PATH, 'ffprobe.exe');
+  }
+}
+
+function isWindows() {
+  return os.platform() === 'win32';
 }

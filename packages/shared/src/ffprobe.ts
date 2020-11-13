@@ -3,7 +3,7 @@ import { handleError } from './utils';
 
 export async function ffprobe(file: string): Promise<any> {
   return new Promise(resolve => {
-    const proc = spawn(process.env.FFPROBE_PATH || 'ffprobe', [
+    const proc = spawn('ffprobe', [
       '-hide_banner',
       '-loglevel',
       'fatal',

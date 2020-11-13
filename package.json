@@ -15,7 +15,7 @@
     "release:from-package": "lerna publish from-package",
     "prerelease:alpha": "npm run prerelease",
     "release:alpha": "lerna publish --canary",
-    "debug": "ts-node ./packages/master-dl/src/index.ts"
+    "debug": "ts-node ./packages/master-dl/src/cli.ts"
   },
   "repository": {
     "type": "git",
