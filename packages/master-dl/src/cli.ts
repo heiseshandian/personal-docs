@@ -2,6 +2,7 @@
 
 import inquirer from 'inquirer';
 import { ConcurrentTasks } from 'zgq-shared';
+import { Course } from './global';
 import {
   download,
   extractPrograms,
@@ -23,7 +24,7 @@ import {
     }
   }
 
-  let searchCourseRes: MasterDl.Course[] = [];
+  let searchCourseRes: Course[] = [];
   while (searchCourseRes.length < 1) {
     const searchCoursePromptRes = await inquirer.prompt(prompts.searchCourse);
     const { query } = searchCoursePromptRes;

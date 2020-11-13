@@ -1,3 +1,5 @@
+import { CourseChoice, QualityChoice } from '../global';
+
 const login = [
   {
     type: 'input',
@@ -20,7 +22,7 @@ const searchCourse = [
   },
 ];
 
-const selectCourse = (list: MasterDl.CourseChoice[]) => [
+const selectCourse = (list: CourseChoice[]) => [
   {
     type: 'list',
     name: 'course',
@@ -29,7 +31,7 @@ const selectCourse = (list: MasterDl.CourseChoice[]) => [
   },
 ];
 
-const selectQuality = (list: MasterDl.QualityChoice[]) => [
+const selectQuality = (list: QualityChoice[]) => [
   {
     type: 'list',
     name: 'quality',

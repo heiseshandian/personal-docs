@@ -5,6 +5,7 @@ import ffmpeg from 'fluent-ffmpeg';
 
 import { sanitize } from './utils';
 import { handleError } from 'zgq-shared';
+import { Progress } from '../global';
 
 let total: number;
 let dir: string;
@@ -52,8 +53,7 @@ export async function download(
   } else if (ext == 'mp4') {
     const bar = new progress(progressLine, { width: 30, total: 100 });
 
-    const update = (prog: MasterDl.Progress) =>
-      bar.tick(prog.percent - bar.curr);
+    const update = (prog: Progress) => bar.tick(prog.percent - bar.curr);
 
     const run = ffmpeg(url)
       .outputOptions([`-map p:${programId}`, '-c copy'])

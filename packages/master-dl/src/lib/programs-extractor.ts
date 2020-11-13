@@ -1,10 +1,11 @@
 import { ffprobe } from 'zgq-shared';
+import { DownloadItem, Program } from '../global';
 
-export async function extractPrograms(downloadList: MasterDl.DownloadItem[]) {
+export async function extractPrograms(downloadList: DownloadItem[]) {
   const url = downloadList[0].streamingURL;
 
   const { programs } = (await ffprobe(url)) as {
-    programs: MasterDl.Program[];
+    programs: Program[];
   };
   if (!programs) {
     return;

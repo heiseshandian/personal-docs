@@ -4,6 +4,7 @@ import fs from 'fs';
 
 import fedHasher from './fed-hasher';
 import constants from './constants';
+import { Course, RequestOptions, TokenRecord } from '../global';
 
 const tokensPath = `${os.homedir}/.frontendmasters-downloader`;
 
@@ -56,7 +57,7 @@ function saveTokens() {
   fs.writeFileSync(tokensPath, JSON.stringify({ timestamp, hash, token }));
 }
 
-async function testTokens(items: MasterDl.TokenRecord) {
+async function testTokens(items: TokenRecord) {
   timestamp = items.timestamp;
   hash = items.hash;
   token = items.token;
@@ -67,13 +68,13 @@ async function testTokens(items: MasterDl.TokenRecord) {
 
 async function search(query: string) {
   const lower = query.toLowerCase();
-  const courses: MasterDl.Course[] = await sendRequest('courses/?limit=9999');
+  const courses: Course[] = await sendRequest('courses/?limit=9999');
   return courses.filter(course => course.title.toLowerCase().includes(lower));
 }
 
 async function course(hash: string) {
   const json = await sendRequest(`courses/${hash}`);
-  const list: MasterDl.Course[] = json.lessonGroups.reduce(
+  const list: Course[] = json.lessonGroups.reduce(
     (acc: any, cur: any) => [...acc, ...cur.lessons],
     [],
   );
@@ -84,7 +85,7 @@ async function course(hash: string) {
 }
 
 async function sendRequest(target: string, body: any = null) {
-  const options: MasterDl.RequestOptions = {
+  const options: RequestOptions = {
     method: body ? 'POST' : 'GET',
     headers: baseHeaders,
   };
