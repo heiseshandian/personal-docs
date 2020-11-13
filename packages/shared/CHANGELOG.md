@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/heiseshandian/personal-docs/compare/v1.39.1...v1.40.0) (2020-11-13)
+
+
+### Bug Fixes
+
+* windows下路径带空格问题修复 ([50d4df0](https://github.com/heiseshandian/personal-docs/commit/50d4df03754f2471ff9440076546006a50dccfa5))
+* 删除冗余代码 ([01eec77](https://github.com/heiseshandian/personal-docs/commit/01eec7781cc7d36013efb0eb17d9e08218ecf09d))
+* 循环依赖问题修复 ([6583b7b](https://github.com/heiseshandian/personal-docs/commit/6583b7b7f664b6b495c2d664f91991ff94cd6cfb))
+
+
+### Features
+
+* 为master-dl添加类型 ([50388db](https://github.com/heiseshandian/personal-docs/commit/50388dbb070b5edece6f8df067a0b75cbaac72e3))
+
+
+
+
+
 ## [1.38.6](https://github.com/heiseshandian/personal-docs/compare/v1.38.5...v1.38.6) (2020-11-11)
 
 **Note:** Version bump only for package zgq-shared

@@ -1,6 +1,6 @@
 {
   "name": "zgq-shared",
-  "version": "1.38.6",
+  "version": "1.40.0",
   "description": "大白的个人工具库",
   "main": "./dist/index.js",
   "module": "src/index.ts",
