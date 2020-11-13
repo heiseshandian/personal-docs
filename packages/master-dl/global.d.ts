@@ -74,7 +74,7 @@ namespace MasterDl {
 
   interface QualityChoice {
     name: string;
-    value: string;
+    value: number;
   }
 
   interface CourseChoice {
