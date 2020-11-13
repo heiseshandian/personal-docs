@@ -4,6 +4,7 @@ import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
 
 import { sanitize } from './utils';
+import { handleError } from 'zgq-shared';
 
 let total: number;
 let dir: string;
@@ -57,6 +58,7 @@ export async function download(
     const run = ffmpeg(url)
       .outputOptions([`-map p:${programId}`, '-c copy'])
       .on('progress', update)
+      .on('error', handleError)
       .save(destPath);
 
     return new Promise(resolve => run.on('end', resolve));

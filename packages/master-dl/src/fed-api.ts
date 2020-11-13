@@ -90,14 +90,8 @@ async function course(hash: string) {
   });
 }
 
-interface Options {
-  method: 'POST' | 'GET';
-  headers: Record<string, string>;
-  body?: any;
-}
-
 async function sendRequest(target: string, body: any = null) {
-  const options: Options = {
+  const options: MasterDl.RequestOptions = {
     method: body ? 'POST' : 'GET',
     headers: baseHeaders,
   };

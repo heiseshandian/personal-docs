@@ -91,4 +91,10 @@ namespace MasterDl {
     hash: string;
     token: string;
   }
+
+  interface RequestOptions {
+    method: 'POST' | 'GET';
+    headers: Record<string, string>;
+    body?: any;
+  }
 }
