@@ -7,6 +7,7 @@ import prompts from './prompts';
 import { setDir, setTotal, download } from './downloader';
 import { sanitize } from './utils';
 import { extractPrograms } from './programs-extractor';
+import { ConcurrentTasks } from 'zgq-shared';
 
 (async function run() {
   if (!(await fedApi.tryExistingTokens())) {
@@ -56,11 +57,14 @@ import { extractPrograms } from './programs-extractor';
   setDir(`./${sanitize(course.title)}/`);
   setTotal(downloadList.length);
 
-  for (const file of downloadList) {
-    const { streamingURL, transcriptURL, pos, title } = file;
-    if (transcriptURL) {
-      await download(transcriptURL, pos, title, 'srt');
-    }
-    await download(streamingURL, pos, title, 'mp4', quality);
-  }
+  await new ConcurrentTasks(
+    downloadList.map(
+      ({ streamingURL, transcriptURL, pos, title }) => async () => {
+        if (transcriptURL) {
+          await download(transcriptURL, pos, title, 'srt');
+        }
+        await download(streamingURL, pos, title, 'mp4', quality);
+      },
+    ),
+  ).run();
 })();
