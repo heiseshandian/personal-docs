@@ -5,13 +5,6 @@ import fs from 'fs';
 import fedHasher from './fed-hasher';
 import constants from './constants';
 
-export default {
-  login,
-  course,
-  search,
-  tryExistingTokens,
-};
-
 const tokensPath = `${os.homedir}/.frontendmasters-downloader`;
 
 async function generateTimestamp() {
@@ -124,3 +117,10 @@ async function tryExistingTokens() {
   }
   return true;
 }
+
+export const fedApi = {
+  login,
+  course,
+  search,
+  tryExistingTokens,
+};

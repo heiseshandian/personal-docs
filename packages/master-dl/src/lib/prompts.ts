@@ -38,7 +38,8 @@ const selectQuality = (list: MasterDl.QualityChoice[]) => [
   },
 ];
 
-export default {
+// 放在一个对象上导出可提供上下文信息
+export const prompts = {
   login,
   searchCourse,
   selectCourse,
