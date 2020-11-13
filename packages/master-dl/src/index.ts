@@ -2,11 +2,11 @@
 
 import inquirer from 'inquirer';
 
-import fedApi, { Course } from './fedApi';
+import fedApi from './fed-api';
 import prompts from './prompts';
 import { setDir, setTotal, download } from './downloader';
 import { sanitize } from './utils';
-import { extractPrograms } from './programsExtractor';
+import { extractPrograms } from './programs-extractor';
 
 (async function run() {
   if (!(await fedApi.tryExistingTokens())) {
@@ -19,7 +19,7 @@ import { extractPrograms } from './programsExtractor';
     }
   }
 
-  let searchCourseRes: Course[] = [];
+  let searchCourseRes: MasterDl.Course[] = [];
   while (searchCourseRes.length < 1) {
     const searchCoursePromptRes = await inquirer.prompt(prompts.searchCourse);
     const { query } = searchCoursePromptRes;
@@ -47,6 +47,9 @@ import { extractPrograms } from './programsExtractor';
   const downloadList = await fedApi.course(course.hash);
 
   const programs = await extractPrograms(downloadList);
+  if (!programs) {
+    return;
+  }
 
   const { quality } = await inquirer.prompt(prompts.selectQuality(programs));
 

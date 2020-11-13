@@ -20,7 +20,7 @@ const searchCourse = [
   },
 ];
 
-const selectCourse = (list: any[]) => [
+const selectCourse = (list: MasterDl.CourseChoice[]) => [
   {
     type: 'list',
     name: 'course',
@@ -29,7 +29,7 @@ const selectCourse = (list: any[]) => [
   },
 ];
 
-const selectQuality = (list: string[]) => [
+const selectQuality = (list: MasterDl.QualityChoice[]) => [
   {
     type: 'list',
     name: 'quality',

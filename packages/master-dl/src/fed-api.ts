@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import os from 'os';
 import fs from 'fs';
 
-import fedHasher from './fedHasher';
+import fedHasher from './fed-hasher';
 import constants from './constants';
 
 export default {
@@ -63,7 +63,7 @@ function saveTokens() {
   fs.writeFileSync(tokensPath, JSON.stringify({ timestamp, hash, token }));
 }
 
-async function testTokens(items: any) {
+async function testTokens(items: MasterDl.TokenRecord) {
   timestamp = items.timestamp;
   hash = items.hash;
   token = items.token;
@@ -72,25 +72,15 @@ async function testTokens(items: any) {
   return !!session.user;
 }
 
-export interface Course {
-  title: string;
-  pos: string;
-  streamingURL: string;
-  transcriptURL: string;
-  instructors: any;
-  hasCC: boolean;
-  durationSeconds: number;
-}
-
 async function search(query: string) {
   const lower = query.toLowerCase();
-  const courses: Course[] = await sendRequest('courses/?limit=9999');
+  const courses: MasterDl.Course[] = await sendRequest('courses/?limit=9999');
   return courses.filter(course => course.title.toLowerCase().includes(lower));
 }
 
 async function course(hash: string) {
   const json = await sendRequest(`courses/${hash}`);
-  const list: Course[] = json.lessonGroups.reduce(
+  const list: MasterDl.Course[] = json.lessonGroups.reduce(
     (acc: any, cur: any) => [...acc, ...cur.lessons],
     [],
   );
@@ -106,10 +96,7 @@ interface Options {
   body?: any;
 }
 
-async function sendRequest(
-  target: string,
-  body: Record<string, any> | null = null,
-) {
+async function sendRequest(target: string, body: any = null) {
   const options: Options = {
     method: body ? 'POST' : 'GET',
     headers: baseHeaders,

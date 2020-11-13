@@ -2,3 +2,4 @@ test
 bin
 dist
 *.html
+*.d.ts

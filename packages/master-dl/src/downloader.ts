@@ -18,7 +18,7 @@ export function setTotal(_total: number) {
 
 export async function download(
   url: string,
-  id: string,
+  id: number,
   title: string,
   ext: string,
   programId?: string,
@@ -51,7 +51,8 @@ export async function download(
   } else if (ext == 'mp4') {
     const bar = new progress(progressLine, { width: 30, total: 100 });
 
-    const update = (prog: any) => bar.tick(prog.percent - bar.curr);
+    const update = (prog: MasterDl.Progress) =>
+      bar.tick(prog.percent - bar.curr);
 
     const run = ffmpeg(url)
       .outputOptions([`-map p:${programId}`, '-c copy'])

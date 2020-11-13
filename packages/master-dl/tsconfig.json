@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "bin"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "global.d.ts"]
 }
