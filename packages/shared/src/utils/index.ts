@@ -6,3 +6,4 @@ export * from './fs';
 export * from './path';
 export * from './logger';
 export * from './cache';
+export * from './puppter';
