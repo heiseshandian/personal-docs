@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.1](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.43.0...master-dl@1.43.1) (2020-11-14)
+
+
+### Bug Fixes
+
+* 为下载进度条添加宽度 ([156ef70](https://github.com/heiseshandian/personal-docs/commit/156ef701b2f44559e02e85939adf9576af2bbb76))
+
+
+
+
+
 # [1.43.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.42.0...master-dl@1.43.0) (2020-11-14)
 
 
