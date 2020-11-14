@@ -58,6 +58,7 @@ export async function download({
       body.pipe(fs.createWriteStream(destPath));
 
       const bar = new progress(progressFormat, {
+        width: 30,
         total: Number(data.headers.get('content-length')),
       });
       body.on('data', chunk => bar.tick(chunk.length));
@@ -82,7 +83,7 @@ export async function download({
         .on('error', handleError)
         .save(destPath);
 
-      const bar = new progress(progressFormat, { total: 100 });
+      const bar = new progress(progressFormat, { width: 30, total: 100 });
       run.on('progress', (prog: Progress) => bar.tick(prog.percent - bar.curr));
 
       return new Promise(resolve => run.on('end', resolve));
