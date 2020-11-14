@@ -1,12 +1,12 @@
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 import fetch from 'node-fetch';
+import progress from 'progress';
 import {
   del,
   ensurePathExists,
   fixFfmpegEnvs,
   handleError,
-  MultiProgressBar,
   readFile,
   writeFile,
 } from 'zgq-shared';
@@ -57,7 +57,7 @@ export async function download({
       const { body } = data;
       body.pipe(fs.createWriteStream(destPath));
 
-      const bar = MultiProgressBar.createProgressBar(progressFormat, {
+      const bar = new progress(progressFormat, {
         total: Number(data.headers.get('content-length')),
       });
       body.on('data', chunk => bar.tick(chunk.length));
@@ -82,9 +82,7 @@ export async function download({
         .on('error', handleError)
         .save(destPath);
 
-      const bar = MultiProgressBar.createProgressBar(progressFormat, {
-        total: 100,
-      });
+      const bar = new progress(progressFormat, { total: 100 });
       run.on('progress', (prog: Progress) => bar.tick(prog.percent - bar.curr));
 
       return new Promise(resolve => run.on('end', resolve));

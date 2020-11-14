@@ -18,6 +18,7 @@
     "inquirer": "^7.1.0",
     "node-fetch": "^2.6.0",
     "node-ffprobe": "^3.0.0",
+    "progress": "^2.0.3",
     "zgq-shared": "^1.42.0"
   },
   "repository": {
