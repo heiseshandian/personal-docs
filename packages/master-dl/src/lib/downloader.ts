@@ -7,6 +7,8 @@ import {
   fixFfmpegEnvs,
   handleError,
   MultiProgressBar,
+  readFile,
+  writeFile,
 } from 'zgq-shared';
 import { DownloadOptions, Progress } from '../global';
 import { isValidMedia } from './medias';
@@ -60,7 +62,9 @@ export async function download({
       });
       body.on('data', chunk => bar.tick(chunk.length));
 
-      return new Promise(resolve => body.on('end', resolve));
+      return new Promise(resolve =>
+        body.on('end', () => fixSrtFile(destPath).then(resolve)),
+      );
     },
     async mp4() {
       if (fs.existsSync(destPath)) {
@@ -87,4 +91,9 @@ export async function download({
     },
   };
   return strategies[ext]();
+}
+
+async function fixSrtFile(filePath: string) {
+  const content = await readFile(filePath, { encoding: 'utf-8' });
+  await writeFile(filePath, content.replace(/^WEBVTT[\r\n]{2}/, ''));
 }
