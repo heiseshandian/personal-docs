@@ -84,10 +84,13 @@ export class DynamicTasks<T> {
     }
 
     if (!this.bar) {
-      this.bar = MultiProgressBar.getProgressBar(this.progressMsg, {
-        total: this.tasks.length,
-        curr: this.doneTasksCount,
-      });
+      this.bar = MultiProgressBar.createProgressBar(
+        `${this.progressMsg} ${MultiProgressBar.defaultFormat}`,
+        {
+          total: this.tasks.length,
+          curr: this.doneTasksCount,
+        },
+      );
     }
   }
 

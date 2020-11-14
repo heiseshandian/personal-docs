@@ -40,7 +40,10 @@ function showProgressBar(response: AxiosResponse) {
     return;
   }
 
-  const bar = MultiProgressBar.getProgressBar('downloading', { total });
+  const bar = MultiProgressBar.createProgressBar(
+    `downloading ${MultiProgressBar.defaultFormat}`,
+    { total },
+  );
 
   response.data.on('data', (chunk: any) => {
     bar.tick(chunk.length);

@@ -111,17 +111,17 @@ class MultiProgress {
 export class MultiProgressBar {
   private static multi = new MultiProgress(process.stderr);
 
-  public static getProgressBar(
-    msg: string,
+  public static createProgressBar(
+    format: string,
     options: Progress.ProgressBarOptions,
   ) {
-    return this.multi.newBar(`${msg} [:bar] :rate/bps :percent :etas`, {
-      complete: '=',
-      incomplete: ' ',
+    return this.multi.newBar(format, {
       width: 30,
       ...options,
     });
   }
+
+  public static readonly defaultFormat = '[:bar] :percent :etas';
 }
 
 export function withProgress(

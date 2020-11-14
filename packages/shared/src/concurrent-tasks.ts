@@ -12,9 +12,12 @@ export class ConcurrentTasks<T> {
   private withProgress(msg: string) {
     const bar =
       this.bar ||
-      (this.bar = MultiProgressBar.getProgressBar(msg, {
-        total: this.tasks.length,
-      }));
+      (this.bar = MultiProgressBar.createProgressBar(
+        `${msg} ${MultiProgressBar.defaultFormat}`,
+        {
+          total: this.tasks.length,
+        },
+      ));
 
     this.tasks = this.tasks.map(task => withProgress(task, bar));
   }
