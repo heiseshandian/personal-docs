@@ -1,6 +1,6 @@
 {
   "name": "ebook-to-pdf",
-  "version": "1.41.0",
+  "version": "1.41.1",
   "description": "电子书转pdf",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "yargs": "^16.1.0",
-    "zgq-shared": "^1.41.0"
+    "zgq-shared": "^1.42.0"
   },
   "gitHead": "4e8d614d5f733f0fb4183b963366851a04dd2bcb"
 }

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.41.0...master-dl@1.42.0) (2020-11-14)
+
+
+### Features
+
+* ffprobe支持通过环境变量查找可执行文件路径 ([de48420](https://github.com/heiseshandian/personal-docs/commit/de484203ccedfaa72a147bf359a5b674bbd03274))
+* 下载逻辑优化 ([315d1dc](https://github.com/heiseshandian/personal-docs/commit/315d1dca9337d188778ba8c18380adff16231ef1))
+
+
+
+
+
 # 1.41.0 (2020-11-14)
 
 

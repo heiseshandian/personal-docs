@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.41.0...zgq-shared@1.42.0) (2020-11-14)
+
+
+### Features
+
+* ffprobe支持通过环境变量查找可执行文件路径 ([de48420](https://github.com/heiseshandian/personal-docs/commit/de484203ccedfaa72a147bf359a5b674bbd03274))
+* 多进度条参数调整 ([e787cce](https://github.com/heiseshandian/personal-docs/commit/e787cceafe35b82a519758aa32980aee1f9149a9))
+
+
+
+
+
 # 1.41.0 (2020-11-14)
 
 
