@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.42.0...master-dl@1.43.0) (2020-11-14)
+
+
+### Bug Fixes
+
+* 下载完字幕之后修复字幕格式问题 ([bc7669d](https://github.com/heiseshandian/personal-docs/commit/bc7669d05b37bbedadd49fde56471abe725b32bd))
+
+
+### Features
+
+* 去掉支持多进度条 ([3a0e29e](https://github.com/heiseshandian/personal-docs/commit/3a0e29e2c98aac4da633ab71c7fd9b70fd94019d))
+
+
+
+
+
 # [1.42.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.41.0...master-dl@1.42.0) (2020-11-14)
 
 
