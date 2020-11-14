@@ -63,11 +63,22 @@ import {
 
   await new ConcurrentTasks(
     downloadList.map(
-      ({ streamingURL, transcriptURL, pos, title }) => async () => {
-        if (transcriptURL) {
-          await download(transcriptURL, pos, title, 'srt');
-        }
-        await download(streamingURL, pos, title, 'mp4', quality);
+      ({ streamingURL, transcriptURL, pos: id, title }) => async () => {
+        await Promise.all([
+          download({
+            url: transcriptURL,
+            id,
+            title,
+            ext: 'srt',
+          }),
+          download({
+            url: streamingURL,
+            id,
+            title,
+            ext: 'mp4',
+            programId: quality,
+          }),
+        ]);
       },
     ),
   ).run();

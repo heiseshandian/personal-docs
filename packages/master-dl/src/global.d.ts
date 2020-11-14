@@ -96,3 +96,11 @@ export interface RequestOptions {
   headers: Record<string, string>;
   body?: any;
 }
+
+export interface DownloadOptions {
+  url: string;
+  id: number;
+  title: string;
+  ext: 'srt' | 'mp4';
+  programId?: string;
+}

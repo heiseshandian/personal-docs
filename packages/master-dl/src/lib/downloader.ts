@@ -1,9 +1,15 @@
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 import fetch from 'node-fetch';
-import progress from 'progress';
-import { fixFfmpegEnvs, handleError } from 'zgq-shared';
-import { Progress } from '../global';
+import {
+  del,
+  ensurePathExists,
+  fixFfmpegEnvs,
+  handleError,
+  MultiProgressBar,
+} from 'zgq-shared';
+import { DownloadOptions, Progress } from '../global';
+import { isValidMedia } from './medias';
 import { sanitize } from './utils';
 
 // fluent-ffmpeg 依赖于系统环境变量来寻找ffmpeg和ffprobe路径，
@@ -14,6 +20,7 @@ let total: number;
 let dir: string;
 
 export function setDir(_dir: string) {
+  ensurePathExists(_dir);
   dir = _dir;
 }
 
@@ -21,49 +28,63 @@ export function setTotal(_total: number) {
   total = _total;
 }
 
-export async function download(
-  url: string,
-  id: number,
-  title: string,
-  ext: string,
-  programId?: string,
-) {
-  const filename = sanitize(`${id + 1}. ${title}.${ext}`);
-  const destPath = `${dir}/${filename}`;
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
-
-  if (fs.existsSync(destPath)) {
-    console.log('File already exists, skips');
+export async function download({
+  url,
+  id,
+  title,
+  ext,
+  programId,
+}: DownloadOptions) {
+  if (!url) {
     return;
   }
 
-  const progressLine = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
+  const filename = sanitize(`${id + 1}. ${title}.${ext}`);
+  const destPath = `${dir}/${filename}`;
 
-  if (ext == 'srt') {
-    const bar = new progress(progressLine, { width: 30, total: 100 });
-    const data = await fetch(url);
-    const { body } = data;
+  const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
 
-    bar.total = Number(data.headers.get('content-length'));
+  const strategies = {
+    async srt() {
+      if (fs.existsSync(destPath)) {
+        console.log('File already exists, skips');
+        return;
+      }
 
-    body.pipe(fs.createWriteStream(destPath));
-    body.on('data', chunk => bar.tick(chunk.length));
+      const data = await fetch(url);
+      const { body } = data;
+      body.pipe(fs.createWriteStream(destPath));
 
-    return new Promise(resolve => body.on('end', resolve));
-  } else if (ext == 'mp4') {
-    const bar = new progress(progressLine, { width: 30, total: 100 });
+      const bar = MultiProgressBar.createProgressBar(progressFormat, {
+        total: Number(data.headers.get('content-length')),
+      });
+      body.on('data', chunk => bar.tick(chunk.length));
 
-    const update = (prog: Progress) => bar.tick(prog.percent - bar.curr);
+      return new Promise(resolve => body.on('end', resolve));
+    },
+    async mp4() {
+      if (fs.existsSync(destPath)) {
+        const isValid = await isValidMedia(destPath);
+        if (!isValid) {
+          await del(destPath);
+          return;
+        }
+        console.log('File already exists, skips');
+        return;
+      }
 
-    const run = ffmpeg(url)
-      .outputOptions([`-map p:${programId}`, '-c copy'])
-      .on('progress', update)
-      .on('error', handleError)
-      .save(destPath);
+      const run = ffmpeg(url)
+        .outputOptions([`-map p:${programId}`, '-c copy'])
+        .on('error', handleError)
+        .save(destPath);
 
-    return new Promise(resolve => run.on('end', resolve));
-  }
+      const bar = MultiProgressBar.createProgressBar(progressFormat, {
+        total: 100,
+      });
+      run.on('progress', (prog: Progress) => bar.tick(prog.percent - bar.curr));
+
+      return new Promise(resolve => run.on('end', resolve));
+    },
+  };
+  return strategies[ext]();
 }
