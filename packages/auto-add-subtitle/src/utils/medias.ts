@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
-import { CHUNK_FILE_SUFFIX } from './contract';
+import { CHUNK_FILE_SUFFIX, MINIMAL_CHUNK_SECONDS } from './contract';
 import { formatDuration } from './time';
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
@@ -43,20 +43,30 @@ export async function sliceMediaBySeconds(
     mediaPaths = [mediaPaths];
   }
 
-  return await new ConcurrentTasks<string[]>(
+  await new ConcurrentTasks<string[]>(
     mediaPaths.map(mediaPath => async () => {
       const duration = await getDuration(mediaPath);
       if (!duration) {
         return;
       }
       const chunks = Math.ceil(duration2Seconds(duration) / maxSeconds);
-      if (chunks <= 1) {
+      const lastChunkSeconds =
+        duration2Seconds(duration) - maxSeconds * (chunks - 1);
+
+      if (
+        chunks <= 1 ||
+        (chunks === 2 && lastChunkSeconds < MINIMAL_CHUNK_SECONDS)
+      ) {
         return;
       }
 
+      // 如果最后一个chunk的时间太短则合并最后两个chunk
+      const computedChunks =
+        lastChunkSeconds < MINIMAL_CHUNK_SECONDS ? chunks - 1 : chunks;
       const { ext, name, dir } = path.parse(mediaPath);
-      return await new ConcurrentTasks<string>(
-        Array(chunks)
+
+      await new ConcurrentTasks<string>(
+        Array(computedChunks)
           .fill(0)
           .map((_, i) => () => {
             const outputFile = path.resolve(
@@ -70,7 +80,7 @@ export async function sliceMediaBySeconds(
             const cmd = `ffmpeg -i ${JSON.stringify(
               mediaPath,
             )} -ss ${formatDuration(i * maxSeconds)} -t ${formatDuration(
-              maxSeconds,
+              maxSeconds + (i === computedChunks - 1 ? lastChunkSeconds : 0),
             )} -codec copy ${JSON.stringify(outputFile)}`;
 
             return new Promise(resolve => {

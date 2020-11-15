@@ -38,7 +38,11 @@ test('sliceMediaBySeconds', async () => {
   );
 
   const duration = await getDuration(getVideoPath(video));
-  expect(result.length).toEqual(Math.ceil(parseTime(duration) / maxSeconds));
+  expect(result.length).toEqual(
+    Math.ceil(parseTime(duration) / maxSeconds) - 1,
+  );
+
+  expect(result.map(parseTime).map(Math.floor).sort()).toEqual([5, 7]);
 });
 
 test('concatMedias', async () => {
