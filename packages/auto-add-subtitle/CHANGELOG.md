@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.2](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.43.1...auto-add-subtitle@1.43.2) (2020-11-15)
+
+
+### Bug Fixes
+
+* 去掉不合适的检测逻辑 ([3606232](https://github.com/heiseshandian/personal-docs/commit/3606232b70423afdb2ac51fa423de89c7238b27c))
+
+
+
+
+
 ## [1.43.1](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.43.0...auto-add-subtitle@1.43.1) (2020-11-15)
 
 
