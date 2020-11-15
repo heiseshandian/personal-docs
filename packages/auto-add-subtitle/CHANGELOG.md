@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.41.2...auto-add-subtitle@1.42.0) (2020-11-15)
+
+
+### Bug Fixes
+
+* 修复最后一个chunk过短导致veed无法正常解析的问题 ([0a43edc](https://github.com/heiseshandian/personal-docs/commit/0a43edca29f4f6f4f9440315f9c59dfd758dfbf9))
+
+
+### Features
+
+* 修改提示文案 ([84527e0](https://github.com/heiseshandian/personal-docs/commit/84527e0a91967c67030ff6972e36df2da7be97c0))
+* 自动解析字幕前先进行简单测试 ([d0b57b0](https://github.com/heiseshandian/personal-docs/commit/d0b57b063f2497d9c3f2859707e4b707df0f5c9f))
+
+
+
+
+
 ## [1.41.2](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.41.1...auto-add-subtitle@1.41.2) (2020-11-15)
 
 
