@@ -46,7 +46,7 @@ export class Veed {
     translateXpath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
     downloadXpath:
-      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/button[1]',
+      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div[2]/div[2]/div/div/div/button[1]',
 
     timeout: 1000 * 60 * 6,
   };
