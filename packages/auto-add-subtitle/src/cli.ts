@@ -39,13 +39,13 @@ interface Arguments {
 (async () => {
   const { _: videoPath, debug, keepTmpFiles } = argv as Arguments;
 
-  const pass = await testBeforeParse();
-  if (!pass) {
-    console.log(
-      '测试解析失败，请检查网络或尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
-    );
-    return;
-  }
+  // const pass = await testBeforeParse();
+  // if (!pass) {
+  //   console.log(
+  //     '测试解析失败，请检查网络或尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
+  //   );
+  //   return;
+  // }
 
   await new SubtitleParser(path.resolve(process.cwd(), videoPath[0] || ''), {
     debug,
@@ -53,6 +53,7 @@ interface Arguments {
   }).generateSrtFiles();
 })();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function testBeforeParse() {
   const parser = new SubtitleParser(path.resolve(__dirname, '../data/'), {
     timeout: 1000 * 60 * 2,
