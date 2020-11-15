@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.41.2](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.41.1...auto-add-subtitle@1.41.2) (2020-11-15)
+
+
+### Bug Fixes
+
+* veed bug修复 ([de232c5](https://github.com/heiseshandian/personal-docs/commit/de232c50ff7e7cd75eb7bb24f64489b84ae56805))
+
+
+
+
+
 ## [1.41.1](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.41.0...auto-add-subtitle@1.41.1) (2020-11-14)
 
 **Note:** Version bump only for package auto-add-subtitle
