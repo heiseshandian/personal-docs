@@ -42,7 +42,7 @@ interface Arguments {
   const pass = await testBeforeParse();
   if (!pass) {
     console.log(
-      '测试解析失败，请尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
+      '测试解析失败，请检查网络或尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
     );
     return;
   }
