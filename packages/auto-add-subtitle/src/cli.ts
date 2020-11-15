@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 import yargs, { Options } from 'yargs';
 import SubtitleParser from './index';
 import path from 'path';
@@ -54,7 +54,7 @@ interface Arguments {
 })();
 
 async function testBeforeParse() {
-  const parser = new SubtitleParser(path.resolve(__dirname, './data/'), {
+  const parser = new SubtitleParser(path.resolve(__dirname, '../data/'), {
     timeout: 1000 * 60 * 2,
     autoRetry: false,
   });
@@ -62,9 +62,9 @@ async function testBeforeParse() {
 
   await parser.generateSrtFiles();
 
-  if (!fs.existsSync(path.resolve(__dirname, './data/video1.srt'))) {
+  if (!fs.existsSync(path.resolve(__dirname, '../data/video1.srt'))) {
     return false;
   }
-  await del(path.resolve(__dirname, './data/video1.srt'));
+  await del(path.resolve(__dirname, '../data/video1.srt'));
   return true;
 }
