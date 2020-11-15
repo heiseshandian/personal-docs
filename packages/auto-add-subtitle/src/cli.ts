@@ -1,4 +1,4 @@
-// #!/usr/bin/env node
+#!/usr/bin/env node
 import yargs, { Options } from 'yargs';
 import SubtitleParser from './index';
 import path from 'path';
