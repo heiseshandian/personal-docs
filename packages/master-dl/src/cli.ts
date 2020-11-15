@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import inquirer from 'inquirer';
-import { ConcurrentTasks } from 'zgq-shared';
+import { ConcurrentTasks, readdir } from 'zgq-shared';
 import { Course } from './global';
 import {
   download,
@@ -58,28 +58,42 @@ import {
 
   const { quality } = await inquirer.prompt(prompts.selectQuality(programs));
 
-  setDir(`./${sanitize(course.title)}/`);
+  const destDir = `./${sanitize(course.title)}/`;
+
+  setDir(destDir);
   setTotal(downloadList.length);
 
-  await new ConcurrentTasks(
-    downloadList.map(
-      ({ streamingURL, transcriptURL, pos: id, title }) => async () => {
-        await Promise.all([
-          download({
-            url: transcriptURL,
-            id,
-            title,
-            ext: 'srt',
-          }),
-          download({
-            url: streamingURL,
-            id,
-            title,
-            ext: 'mp4',
-            programId: quality,
-          }),
-        ]);
-      },
-    ),
-  ).run();
+  while (!(await isAllDownloaded(downloadList, destDir))) {
+    await new ConcurrentTasks(
+      downloadList.map(
+        ({ streamingURL, transcriptURL, pos: id, title }) => async () => {
+          await Promise.all([
+            download({
+              url: transcriptURL,
+              id,
+              title,
+              ext: 'srt',
+            }),
+            download({
+              url: streamingURL,
+              id,
+              title,
+              ext: 'mp4',
+              programId: quality,
+            }),
+          ]);
+        },
+      ),
+    ).run();
+  }
 })();
+
+async function isAllDownloaded(downloadList: Partial<Course>[], dir: string) {
+  const count = downloadList.reduce((acc, { transcriptURL }) => {
+    acc += transcriptURL ? 2 : 1;
+    return acc;
+  }, 0);
+
+  const files = await readdir(dir);
+  return files.length === count;
+}

@@ -49,7 +49,6 @@ export async function download({
   const strategies = {
     async srt() {
       if (fs.existsSync(destPath)) {
-        console.log('File already exists, skips');
         return;
       }
 
@@ -74,7 +73,6 @@ export async function download({
           await del(destPath);
           return;
         }
-        console.log('File already exists, skips');
         return;
       }
 
