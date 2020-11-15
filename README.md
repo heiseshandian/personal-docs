@@ -13,6 +13,7 @@ coding everyday
 
 #### auto-add-subtitle
 
+- 正式解析前测试能否正常解析，不能的话借助 inquirer 提示用户升级依赖包
 - 仿照 fluent-ffmpeg 更新说明文档
 - 支持通过环境变量取 ffmpeg 路径，进度通知优化（比如说去掉前面无意义的速度信息）
 - 考虑用 fluent-ffmpeg 替换裸写命令
