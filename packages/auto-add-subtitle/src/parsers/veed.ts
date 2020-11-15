@@ -12,23 +12,24 @@ import {
   readdir,
   setWebLifecycleState,
 } from 'zgq-shared';
+import { mergeOptions } from '../utils';
 
 puppeteer.use(StealthPlugin());
 
 interface VeedOptions {
   debug: boolean;
+  timeout: number;
   [key: string]: any;
 }
 
 export class Veed {
   private options: VeedOptions = {
     debug: false,
+    timeout: 1000 * 60 * 6,
   };
 
   constructor(options: Partial<VeedOptions> = {}) {
-    Object.keys(options).forEach(key => {
-      this.options[key] = options[key];
-    });
+    mergeOptions(this.options, options);
   }
 
   private config = {
@@ -47,19 +48,17 @@ export class Veed {
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
     downloadXpath:
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div[2]/div[2]/div/div/div/button[1]',
-
-    timeout: 1000 * 60 * 6,
   };
 
   private async safeClick(page: Page, selector: string) {
-    const { timeout } = this.config;
+    const { timeout } = this.options;
 
     await page.waitForSelector(selector, { timeout });
     await page.click(selector);
   }
 
   private async safeClickXPath(page: Page, xpath: string) {
-    const { timeout } = this.config;
+    const { timeout } = this.options;
 
     await page.waitForXPath(xpath, { timeout });
     const elements = await page.$x(xpath);
@@ -68,7 +67,8 @@ export class Veed {
 
   // 上传文件
   private async upload(page: Page, audio: string) {
-    const { uploadBtnXpath, inputFileSelector, timeout } = this.config;
+    const { uploadBtnXpath, inputFileSelector } = this.config;
+    const { timeout } = this.options;
 
     // https://github.com/puppeteer/puppeteer/issues/2946
     await this.safeClickXPath(page, uploadBtnXpath);
@@ -98,8 +98,8 @@ export class Veed {
       startXPath,
       subtitlesSelector,
       closeSelector,
-      timeout,
     } = this.config;
+    const { timeout } = this.options;
 
     await Promise.all([
       page.waitForSelector(closeSelector, { timeout }),
@@ -182,23 +182,27 @@ export class Veed {
         .then(async browser => {
           await new ConcurrentTasks(
             audios.map((audio, i) => async () => {
-              const { timeout } = this.config;
+              const { timeout } = this.options;
               const page = await browser.newPage();
               await clearCookies(page);
-              await page.goto(url, { timeout });
-              await setWebLifecycleState(page);
-              await this.upload(page, audio);
+              try {
+                await page.goto(url, { timeout });
+                await setWebLifecycleState(page);
+                await this.upload(page, audio);
+              } catch (e) {
+                handleError(e);
+              } finally {
+                dynamicTasks.add(async () => {
+                  await this._parseSubtitle(page);
+                  await this.download(page, audio);
+                  // 下载完再关闭页面
+                  await delay(1000 * 10);
+                  await page.close();
+                });
 
-              dynamicTasks.add(async () => {
-                await this._parseSubtitle(page);
-                await this.download(page, audio);
-                // 下载完再关闭页面
-                await delay(1000 * 10);
-                await page.close();
-              });
-
-              if (i === audios.length - 1) {
-                dynamicTasks.end();
+                if (i === audios.length - 1) {
+                  dynamicTasks.end();
+                }
               }
             }),
             'uploading files',

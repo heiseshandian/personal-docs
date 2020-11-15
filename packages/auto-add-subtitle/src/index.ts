@@ -22,6 +22,7 @@ import {
   sliceMediaBySeconds,
   getDuration,
   INDEX_OF_FIRST_CHUNK,
+  mergeOptions,
 } from './utils';
 
 export * from './parsers';
@@ -33,8 +34,10 @@ export function isFile(file: string) {
 
 interface SubtitleParserOptions {
   debug: boolean;
+  timeout?: number;
   chunkSeconds: number;
   keepTmpFiles: boolean;
+  autoRetry: boolean;
   [key: string]: any;
 }
 
@@ -47,14 +50,12 @@ export default class SubtitleParser {
     keepTmpFiles: false,
     debug: false,
     chunkSeconds: 5 * 60,
+    autoRetry: true,
   };
 
   constructor(videoDir: string, options: Partial<SubtitleParserOptions> = {}) {
     this.videoDir = videoDir;
-
-    Object.keys(options).forEach(key => {
-      this.options[key] = options[key];
-    });
+    mergeOptions(this.options, options);
   }
 
   private getTmpPath() {
@@ -138,9 +139,9 @@ export default class SubtitleParser {
     );
 
     const {
-      options: { debug },
+      options: { debug, timeout },
     } = this;
-    await new Veed({ debug }).parseSubtitle(
+    await new Veed({ debug, timeout }).parseSubtitle(
       audios
         .filter(file => !hasParsed(file.replace(/\.\w+$/, '')))
         .map(file => path.resolve(tmpPath, file)),
@@ -268,7 +269,10 @@ export default class SubtitleParser {
   private async postParseSubtitle() {
     const parsed = await this.isAllParsed();
     if (!parsed) {
-      this.generateSrtFiles(true);
+      if (this.options.autoRetry) {
+        this.generateSrtFiles(true);
+      }
+
       return;
     }
 
