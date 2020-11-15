@@ -26,7 +26,7 @@ const selectCourse = (list: CourseChoice[]) => [
   {
     type: 'list',
     name: 'course',
-    message: 'Select a course form search results:',
+    message: 'Select a course from search results:',
     choices: list,
   },
 ];
