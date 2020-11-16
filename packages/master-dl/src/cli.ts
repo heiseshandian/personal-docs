@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 import inquirer from 'inquirer';
-import { ConcurrentTasks } from 'zgq-shared';
 import { Course } from './global';
 import { extractPrograms, fedApi, prompts, sanitize } from './index';
-import { Downloader } from './lib';
+import { DownloadRunner } from './lib';
 
 (async function run() {
   if (!(await fedApi.tryExistingTokens())) {
@@ -51,30 +50,9 @@ import { Downloader } from './lib';
 
   const { quality } = await inquirer.prompt(prompts.selectQuality(programs));
 
-  const downloader = new Downloader(
+  await new DownloadRunner(
     `./${sanitize(course.title)}/`,
-    downloadList.length,
-  );
-
-  await new ConcurrentTasks(
-    downloadList.map(
-      ({ streamingURL, transcriptURL, pos: id, title }) => async () => {
-        await Promise.all([
-          downloader.download({
-            url: transcriptURL,
-            id,
-            title,
-            ext: 'srt',
-          }),
-          downloader.download({
-            url: streamingURL,
-            id,
-            title,
-            ext: 'mp4',
-            programId: quality,
-          }),
-        ]);
-      },
-    ),
+    downloadList,
+    quality,
   ).run();
 })();
