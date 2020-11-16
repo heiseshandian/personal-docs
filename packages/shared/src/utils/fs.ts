@@ -40,7 +40,7 @@ export const copy: (
   newPath: PathLike,
 ) => Promise<boolean> = callback2Promise(fs.copyFile);
 
-export async function ensurePathExists(filePath: string) {
+export function ensurePathExists(filePath: string) {
   if (!fs.existsSync(filePath)) {
     fs.mkdirSync(filePath, { recursive: true });
   }

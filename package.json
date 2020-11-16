@@ -7,6 +7,7 @@
     "postcommit": "git push",
     "test:o": "jest -o",
     "test": "jest",
+    "create": "ts-node ./scripts/create-project.ts",
     "prepack": "ts-node ./scripts/prepack.ts",
     "postpack": "ts-node ./scripts/postpack.ts",
     "prerelease": "lerna run build",

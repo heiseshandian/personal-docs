@@ -1,0 +1,28 @@
+{
+  "name": "project_place_holder",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "bin": {
+    "project_place_holder": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/project_place_holder"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/project_place_holder/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
