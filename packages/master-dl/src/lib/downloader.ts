@@ -18,76 +18,73 @@ import { sanitize } from './utils';
 // 部分电脑的环境变量设置的与 fluent-ffmpeg 预期的不一致，这里在程序运行期间手动修复下
 fixFfmpegEnvs();
 
-let total: number;
-let dir: string;
+export class Downloader {
+  private dir: string;
 
-export function setDir(_dir: string) {
-  ensurePathExists(_dir);
-  dir = _dir;
-}
+  private total: number;
 
-export function setTotal(_total: number) {
-  total = _total;
-}
-
-export async function download({
-  url,
-  id,
-  title,
-  ext,
-  programId,
-}: DownloadOptions) {
-  if (!url) {
-    return;
+  constructor(dir: string, total: number) {
+    ensurePathExists(dir);
+    this.dir = dir;
+    this.total = total;
   }
 
-  const filename = sanitize(`${id + 1}. ${title}.${ext}`);
-  const destPath = `${dir}/${filename}`;
+  public async download({ url, id, title, ext, programId }: DownloadOptions) {
+    if (!url) {
+      return;
+    }
+    const { dir, total } = this;
 
-  const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
+    const filename = sanitize(`${id + 1}. ${title}.${ext}`);
+    const destPath = `${dir}/${filename}`;
 
-  const strategies = {
-    async srt() {
-      if (fs.existsSync(destPath)) {
-        return;
-      }
+    const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
 
-      const data = await fetch(url);
-      const { body } = data;
-      body.pipe(fs.createWriteStream(destPath));
-
-      const bar = new progress(progressFormat, {
-        width: 30,
-        total: Number(data.headers.get('content-length')),
-      });
-      body.on('data', chunk => bar.tick(chunk.length));
-
-      return new Promise(resolve =>
-        body.on('end', () => fixSrtFile(destPath).then(resolve)),
-      );
-    },
-    async mp4() {
-      if (fs.existsSync(destPath)) {
-        const isValid = await isValidMedia(destPath);
-        if (!isValid) {
-          await del(destPath);
+    const strategies = {
+      async srt() {
+        if (fs.existsSync(destPath)) {
           return;
         }
-        return;
-      }
 
-      const run = ffmpeg(url)
-        .outputOptions([`-map p:${programId}`, '-c copy'])
-        .on('error', handleError)
-        .save(destPath);
+        const data = await fetch(url);
+        const { body } = data;
+        body.pipe(fs.createWriteStream(destPath));
 
-      const bar = new progress(progressFormat, { width: 30, total: 100 });
-      run.on('progress', (prog: Progress) => bar.tick(prog.percent - bar.curr));
+        const bar = new progress(progressFormat, {
+          width: 30,
+          total: Number(data.headers.get('content-length')),
+        });
+        body.on('data', chunk => bar.tick(chunk.length));
 
-      return new Promise(resolve => run.on('end', resolve));
-    },
-  };
-  return strategies[ext]();
+        return new Promise(resolve =>
+          body.on('end', () => fixSrtFile(destPath).then(resolve)),
+        );
+      },
+      async mp4() {
+        if (fs.existsSync(destPath)) {
+          const isValid = await isValidMedia(destPath);
+          if (!isValid) {
+            await del(destPath);
+            return;
+          }
+          return;
+        }
+
+        const run = ffmpeg(url)
+          .outputOptions([`-map p:${programId}`, '-c copy'])
+          .on('error', handleError)
+          .save(destPath);
+
+        const bar = new progress(progressFormat, { width: 30, total: 100 });
+        run.on('progress', (prog: Progress) =>
+          bar.tick(prog.percent - bar.curr),
+        );
+
+        return new Promise(resolve => run.on('end', resolve));
+      },
+    };
+    return strategies[ext]();
+  }
 }
 
 async function fixSrtFile(filePath: string) {
