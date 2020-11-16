@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.42.0...zgq-shared@1.43.0) (2020-11-16)
+
+
+### Features
+
+* 添加创建项目脚本避免每次手动复制 ([8cfc50a](https://github.com/heiseshandian/personal-docs/commit/8cfc50a262990808012dd9282dadf0b0869b6330))
+
+
+
+
+
 # [1.42.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.41.0...zgq-shared@1.42.0) (2020-11-14)
 
 

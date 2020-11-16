@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.44.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.43.1...master-dl@1.44.0) (2020-11-16)
+
+
+### Bug Fixes
+
+* 下载器bug修复 ([75ef94e](https://github.com/heiseshandian/personal-docs/commit/75ef94ecfc32c42d67de76afb00d2d43e3b89cdd))
+
+
+### Features
+
+* 为master-dl添加自动重试功能 ([846401f](https://github.com/heiseshandian/personal-docs/commit/846401f7ffd41f53dc1b7e98c0be2a289192e942))
+* 修复打字错误 ([405ad3a](https://github.com/heiseshandian/personal-docs/commit/405ad3ae52a306d35eebe74faa2b9f25094d51fd))
+* 去掉错误的自动重试功能 ([5f00425](https://github.com/heiseshandian/personal-docs/commit/5f00425e7da7c2449e2ff01f7446c6b421431c93))
+* 将下载器改为class ([9bb8528](https://github.com/heiseshandian/personal-docs/commit/9bb8528d55c09a97ccb3c3b7eccfb0535ddd4217))
+* 支持重试机制 ([5ff3d9d](https://github.com/heiseshandian/personal-docs/commit/5ff3d9def61a940727a3e6134c30b295af14713b))
+
+
+
+
+
 ## [1.43.1](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.43.0...master-dl@1.43.1) (2020-11-14)
 
 
