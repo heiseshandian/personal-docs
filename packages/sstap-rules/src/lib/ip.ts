@@ -1,6 +1,8 @@
 import { exec } from 'child_process';
 
-export async function lookIp(domain: string) {
+export async function lookIp(
+  domain: string,
+): Promise<string | undefined | null> {
   return new Promise(resolve => {
     exec(`ping ${domain}`, (err, stdout) => {
       if (err) {

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import yargs, { Options } from 'yargs';
+import { readFile, uniq, writeFile } from 'zgq-shared';
 import { getCache, lookIp, updateCache } from './lib';
 
 const options: Record<string, Options> = {
@@ -17,8 +18,7 @@ const options: Record<string, Options> = {
 };
 
 const argv = yargs
-  .usage(`Usage: bilibili-dl [options] {url}`)
-  .example('bilibili-dl', '下载bilibili上的视频')
+  .usage(`Usage: sstap-rules --rulePath={your rule path} --domain={domain}`)
   .help('help')
   .alias('help', 'h')
   .options(options).argv;
@@ -44,4 +44,17 @@ interface Arguments {
     console.log('规则路径未传入');
     return;
   }
+
+  const ip = await lookIp(domain);
+  if (!ip) {
+    console.log(`${domain} 解析失败，请检查拼写或网络后重试`);
+    return;
+  }
+
+  const content = await readFile(finalRulePath, { encoding: 'utf-8' });
+  await writeFile(
+    finalRulePath,
+    uniq(content.replace(/\n$/, '').split('\n').concat(ip)).join('\n'),
+  );
+  console.log(`${finalRulePath} 添加ip成功`);
 })();
