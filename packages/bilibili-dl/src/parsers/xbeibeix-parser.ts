@@ -19,6 +19,7 @@ export class XbeibeixParser {
     mp4UrlSelector: '#mp4-url2',
   };
 
+  // 并发访问会导致 xbeibeix 将访问识别为恶意访问，从而使得服务不可，所以这里将并发数改为1
   private static maxConcurrent = 1;
 
   private static async _parse(blobs: string | Array<string>) {
