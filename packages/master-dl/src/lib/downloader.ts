@@ -26,13 +26,13 @@ interface InnerDownloadOptions {
 }
 
 export class Downloader {
-  private dir: string;
+  private destDir: string;
 
   private total: number;
 
-  constructor(dir: string, total: number) {
-    ensurePathExists(dir);
-    this.dir = dir;
+  constructor(destDir: string, total: number) {
+    ensurePathExists(destDir);
+    this.destDir = destDir;
     this.total = total;
   }
 
@@ -90,10 +90,10 @@ export class Downloader {
     if (!url) {
       return;
     }
-    const { dir, total } = this;
+    const { destDir, total } = this;
 
     const filename = sanitize(`${id + 1}. ${title}.${ext}`);
-    const destPath = `${dir}/${filename}`;
+    const destPath = `${destDir}/${filename}`;
 
     const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
 

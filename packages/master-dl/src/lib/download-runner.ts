@@ -7,19 +7,25 @@ type SubDownloadList = Pick<
   'pos' | 'title' | 'streamingURL' | 'transcriptURL'
 >[];
 
+interface DownloadRunnerOptions {
+  destDir: string;
+  downloadList: SubDownloadList;
+  quality: string;
+}
+
 export class DownloadRunner {
-  private dir: string;
+  private destDir: string;
 
   private downloadList: SubDownloadList;
 
   private quality: string;
 
-  constructor(dir: string, downloadList: SubDownloadList, quality: string) {
-    this.dir = dir;
+  constructor({ destDir, downloadList, quality }: DownloadRunnerOptions) {
+    this.destDir = destDir;
     this.downloadList = downloadList;
     this.quality = quality;
 
-    this.downloader = new Downloader(dir, downloadList.length);
+    this.downloader = new Downloader(destDir, downloadList.length);
   }
 
   private downloader: Downloader;
@@ -60,7 +66,7 @@ export class DownloadRunner {
   }
 
   private async isAllDownloaded() {
-    const { dir, downloadList } = this;
+    const { destDir: dir, downloadList } = this;
 
     const files = await readdir(dir);
     const count = downloadList.reduce((acc, { transcriptURL }) => {

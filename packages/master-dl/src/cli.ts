@@ -50,9 +50,9 @@ import { DownloadRunner } from './lib';
 
   const { quality } = await inquirer.prompt(prompts.selectQuality(programs));
 
-  await new DownloadRunner(
-    `./${sanitize(course.title)}/`,
+  await new DownloadRunner({
+    destDir: `./${sanitize(course.title)}/`,
     downloadList,
     quality,
-  ).run();
+  }).run();
 })();
