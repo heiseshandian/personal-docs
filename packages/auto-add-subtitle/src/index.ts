@@ -71,32 +71,31 @@ export default class SubtitleParser {
     await clean(this.getTmpPath());
   }
 
+  private getFirstChunkFileName(file: string) {
+    const originalFileReg = /^(.+)\.(\w+)$/;
+    const firstChunkFileReplacement = `$1${CHUNK_FILE_SUFFIX}${INDEX_OF_FIRST_CHUNK}.$2`;
+
+    return file.replace(originalFileReg, firstChunkFileReplacement);
+  }
+
   private async removeRedundantAudios() {
     const tmpPath = this.getTmpPath();
     const audios = await readdir(tmpPath);
 
-    const withChunks = (file: string) =>
+    const hasChunks = (file: string) =>
       fs.existsSync(
-        path.resolve(
-          tmpPath,
-          file.replace(
-            /^(.+)\.(\w+)$/,
-            `$1${CHUNK_FILE_SUFFIX}${INDEX_OF_FIRST_CHUNK}.$2`,
-          ),
-        ),
+        path.resolve(this.getTmpPath(), this.getFirstChunkFileName(file)),
       );
+
     await new ConcurrentTasks(
       audios
-        .filter(withChunks)
+        .filter(hasChunks)
         .map(file => async () => await del(path.resolve(tmpPath, file))),
     ).run();
   }
 
-  private async extractAudioFiles() {
-    const {
-      videoDir,
-      options: { chunkSeconds },
-    } = this;
+  private async extractAudios() {
+    const { videoDir } = this;
     const videos = await readdir(videoDir);
     const tmpPath = this.getTmpPath();
 
@@ -104,6 +103,13 @@ export default class SubtitleParser {
       (videos || []).filter(isFile).map(file => path.resolve(videoDir, file)),
       tmpPath,
     );
+  }
+
+  private async sliceBigAudios() {
+    const {
+      options: { chunkSeconds },
+    } = this;
+    const tmpPath = this.getTmpPath();
 
     const audios = await readdir(tmpPath);
     await sliceMediaBySeconds(
@@ -113,7 +119,11 @@ export default class SubtitleParser {
         .map(file => path.resolve(tmpPath, file)),
       chunkSeconds,
     );
+  }
 
+  private async prepareTmpAudioFiles() {
+    await this.extractAudios();
+    await this.sliceBigAudios();
     await this.removeRedundantAudios();
   }
 
@@ -254,7 +264,7 @@ export default class SubtitleParser {
 
   private async preParseSubtitle() {
     await this.prepareTmpDir();
-    await this.extractAudioFiles();
+    await this.prepareTmpAudioFiles();
   }
 
   public async generateSrtFiles(isRetry?: boolean) {

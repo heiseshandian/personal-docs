@@ -143,10 +143,10 @@ describe('tests that based on temp videos', () => {
     await removeTmpDir(TMP_DIR);
   });
 
-  test('subtitleParser, extractAudioFiles', async () => {
+  test('subtitleParser, prepareTmpAudioFiles', async () => {
     const subtitleParser = new SubtitleParser(tmpPath, { chunkSeconds: 1 });
     await subtitleParser['prepareTmpDir']();
-    await subtitleParser['extractAudioFiles']();
+    await subtitleParser['prepareTmpAudioFiles']();
 
     const audios = await readdir(
       path.resolve(tmpPath, subtitleParser['TMP_DIR']),
