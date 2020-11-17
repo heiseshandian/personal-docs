@@ -8,11 +8,30 @@
 
 - 安装 ffmpeg
   [download ffmpeg](https://ffmpeg.org/download.html)
+
+安装完后输入以下命令查看是否安装成功
+
+```sh
+ffmpeg -version
+```
+
+![](../../assets/2020-11-17-19-37-03.png)
+
+```sh
+ffprobe -version
+```
+
+![](../../assets/2020-11-17-19-37-58.png)
+
+部分 windows 电脑可能需要重启电脑才能让环境变量生效。
+
 - 安装本工具
 
 ```sh
 npm i -g auto-add-subtitle
 ```
+
+本工具依赖于 chromium，请确保你没有跳过安装 chromium。
 
 - 使用
 

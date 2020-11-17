@@ -10,11 +10,30 @@ Read this in other languages: [english](./README.md) | [简体中文](./README.z
 
 - install ffmpeg
   [ffmpeg](https://ffmpeg.org/download.html)
+
+Make sure you can access `ffmpeg` and `ffprobe` like below.
+
+```sh
+ffmpeg -version
+```
+
+![](../../assets/2020-11-17-19-37-03.png)
+
+```sh
+ffprobe -version
+```
+
+![](../../assets/2020-11-17-19-37-58.png)
+
+In windows, maybe you need restart your computer to make it works.
+
 - install auto-add-subtitle
 
 ```sh
 npm i -g auto-add-subtitle
 ```
+
+Make sure you did not skip the installation of chromium.
 
 ### Usage
 
