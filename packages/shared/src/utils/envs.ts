@@ -1,5 +1,5 @@
 import path from 'path';
-import os from 'os';
+import { isWindows } from './system';
 
 // 部分电脑上的环境变量设置不对（比如说我的），这里手动修复下
 export function fixFfmpegEnvs() {
@@ -14,8 +14,4 @@ export function fixFfmpegEnvs() {
   if (FFPROBE_PATH && !FFPROBE_PATH.endsWith('exe')) {
     process.env.FFPROBE_PATH = path.resolve(FFPROBE_PATH, 'ffprobe.exe');
   }
-}
-
-function isWindows() {
-  return os.platform() === 'win32';
 }

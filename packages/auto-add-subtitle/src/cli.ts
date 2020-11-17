@@ -2,7 +2,7 @@
 import yargs, { Options } from 'yargs';
 import SubtitleParser from './index';
 import path from 'path';
-import { clean, del } from 'zgq-shared';
+import { clean, del, shutdown } from 'zgq-shared';
 import fs from 'fs';
 
 const options: Record<string, Options> = {
@@ -24,6 +24,12 @@ const options: Record<string, Options> = {
     type: 'boolean',
     describe: '是否测试解析',
   },
+  autoShutdown: {
+    alias: 'as',
+    default: false,
+    type: 'boolean',
+    describe: '解析完自动关机',
+  },
 };
 
 const argv = yargs
@@ -40,21 +46,22 @@ interface Arguments {
   debug: boolean;
   keepTmpFiles: boolean;
   test: boolean;
+  autoShutdown: boolean;
 }
 
 // 搞个自执行函数方便使用return提前结束流程
 (async () => {
-  const { _: videoPath, debug, keepTmpFiles, test } = argv as Arguments;
+  const {
+    _: videoPath,
+    debug,
+    keepTmpFiles,
+    test,
+    autoShutdown,
+  } = argv as Arguments;
 
   if (test) {
     const pass = await testParse(debug);
-    if (pass) {
-      console.log('测试解析成功!');
-    } else {
-      console.log(
-        '测试解析失败，请检查网络或尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
-      );
-    }
+    showPromptsByTestResult(pass);
     return;
   }
 
@@ -62,7 +69,21 @@ interface Arguments {
     debug,
     keepTmpFiles,
   }).generateSrtFiles();
+
+  if (autoShutdown) {
+    shutdown();
+  }
 })();
+
+function showPromptsByTestResult(testResult: boolean) {
+  if (testResult) {
+    console.log('测试解析成功!');
+  } else {
+    console.log(
+      '测试解析失败，请检查网络或尝试升级版本后 (npm i -g auto-add-subtitle) 重试~',
+    );
+  }
+}
 
 async function testParse(debug = false) {
   const parser = new SubtitleParser(path.resolve(__dirname, '../data/'), {
