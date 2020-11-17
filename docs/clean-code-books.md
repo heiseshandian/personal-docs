@@ -122,3 +122,28 @@ class User {
 ### 参数
 
 尽量避免使用三个或三个以上的参数
+
+### 避免未知的副作用
+
+所谓未知的副作用指的就是函数做了额外的事情，并且这些额外的事情无法体现在函数名称上，如下所示
+
+```java
+public class UserValidator {
+	private Cryptographer cryptographer;
+
+	public boolean checkPassword(String userName, String password) {
+		User user = UserGateway.findByName(userName);
+		if (user != User.NULL) {
+			String codedPhrase = user.getPhraseEncodedByPassword();
+			String phrase = cryptographer.decrypt(codedPhrase, password);
+			if ("Valid Password".equals(phrase)) {
+				Session.initialize();
+				return true;
+			}
+		}
+		return false;
+	}
+}
+```
+
+上述代码中 checkPassword 的职责看似是仅检测用户名和密码是否匹配，但是 Session.initialize() 其实是额外的事情，并且在名称上也无法体现。对于上述代码，checkPasswordAndInitializeSession 或许是更为适合的名字，当然，更好的方式是不要在 checkPassword 中初始化 session。
