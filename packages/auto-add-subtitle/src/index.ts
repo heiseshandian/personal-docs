@@ -22,7 +22,7 @@ import {
   sliceMediaBySeconds,
   getDuration,
   INDEX_OF_FIRST_CHUNK,
-  mergeOptions,
+  merge,
 } from './utils';
 
 export * from './parsers';
@@ -55,7 +55,7 @@ export default class SubtitleParser {
 
   constructor(videoDir: string, options: Partial<SubtitleParserOptions> = {}) {
     this.videoDir = videoDir;
-    mergeOptions(this.options, options);
+    this.options = merge(this.options, options);
   }
 
   private getTmpPath() {

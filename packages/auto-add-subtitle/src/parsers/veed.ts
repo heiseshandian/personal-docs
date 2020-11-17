@@ -12,7 +12,7 @@ import {
   readdir,
   setWebLifecycleState,
 } from 'zgq-shared';
-import { mergeOptions } from '../utils';
+import { merge } from '../utils';
 
 puppeteer.use(StealthPlugin());
 
@@ -29,7 +29,7 @@ export class Veed {
   };
 
   constructor(options: Partial<VeedOptions> = {}) {
-    mergeOptions(this.options, options);
+    this.options = merge(this.options, options);
   }
 
   private config = {
