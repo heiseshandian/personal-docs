@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 import yargs, { Options } from 'yargs';
 import { readFile, uniq, writeFile } from 'zgq-shared';
 import { getCache, lookIp, updateCache } from './lib';
@@ -35,7 +35,7 @@ interface Arguments {
 (async () => {
   const { domain, rulePath } = argv as Arguments;
   const { rulePath: cachedRulePath } = await getCache();
-  if (rulePath !== cachedRulePath) {
+  if (rulePath && rulePath !== cachedRulePath) {
     await updateCache({ rulePath });
   }
 
