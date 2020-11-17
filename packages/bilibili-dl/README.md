@@ -17,5 +17,5 @@ npm i -g bilibili-dl
 ## Usage
 
 ```sh
-bilibili-dl {url}
+bilibili-dl [{-s should parse and download whole series,default is false}] {url}
 ```

@@ -14,7 +14,6 @@ const options: Record<string, Options> = {
 
 const argv = yargs
   .usage(`Usage: bilibili-dl [options] {url}`)
-  .example('bilibili-dl', '下载bilibili上的视频')
   .help('help')
   .alias('help', 'h')
   .options(options).argv;

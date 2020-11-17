@@ -19,9 +19,5 @@ npm i -g bilibili-dl
 - 下载视频
 
 ```sh
-bilibili-dl {url}
+bilibili-dl [{-s 是否下载整个系列，默认是false}] {url}
 ```
-
-### 待实现功能
-
-- 检测，过滤用户输入，提前终止解析并提示用户
