@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/heiseshandian/personal-docs/compare/sstap-rules@0.2.0...sstap-rules@0.3.0) (2020-11-17)
+
+
+### Features
+
+* 发布前检测cli文件 ([ee53f3b](https://github.com/heiseshandian/personal-docs/commit/ee53f3bcdcaaa6354b3629b1edb28de0498354a8))
+
+
+
+
+
 # [0.2.0](https://github.com/heiseshandian/personal-docs/compare/sstap-rules@0.1.0...sstap-rules@0.2.0) (2020-11-17)
 
 
