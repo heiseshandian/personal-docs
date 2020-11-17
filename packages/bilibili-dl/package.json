@@ -1,6 +1,6 @@
 {
   "name": "bilibili-dl",
-  "version": "1.41.2",
+  "version": "1.41.3",
   "description": "自动下载bilibili上的视频",
   "main": "src/index.ts",
   "scripts": {

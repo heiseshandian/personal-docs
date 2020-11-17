@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.41.3](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.41.2...bilibili-dl@1.41.3) (2020-11-17)
+
+**Note:** Version bump only for package bilibili-dl
+
+
+
+
+
 ## [1.41.2](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.41.1...bilibili-dl@1.41.2) (2020-11-16)
 
 **Note:** Version bump only for package bilibili-dl

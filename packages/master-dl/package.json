@@ -1,6 +1,6 @@
 {
   "name": "master-dl",
-  "version": "1.44.0",
+  "version": "1.44.1",
   "description": "",
   "main": "index.js",
   "scripts": {
