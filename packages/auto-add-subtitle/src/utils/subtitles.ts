@@ -50,7 +50,7 @@ export async function fixEndTime(srtFile: string, duration: string) {
   return lines
     .slice(0, lines.length - ONE_SUBTITLE_LENGTH)
     .concat(
-      lines.slice(-ONE_SUBTITLE_LENGTH).map(line => {
+      getLastSubtitle(lines).map(line => {
         if (timelineReg.test(line)) {
           return `${line.split(' --> ')[0]} --> ${formatDuration(duration)}`;
         }
@@ -70,39 +70,48 @@ function formatDuration(duration: string) {
     .join(':')},${milliseconds.padEnd(3, '0')}`;
 }
 
-export async function sliceSrtFile(srtPath: string, maxSeconds: number) {
-  const fileContent = await readFile(srtPath, { encoding: 'utf-8' });
-  const subtitleGroup = groupByLen(
-    fileContent.split(/\n/),
-    ONE_SUBTITLE_LENGTH,
+function lines2Subtitles(lines: string[]) {
+  return groupByLen(lines, ONE_SUBTITLE_LENGTH);
+}
+
+function subtitles2Chunks(subtitles: string[][], maxSeconds: number) {
+  const slicePositions = findSlicePositions(
+    subtitles.map(parseMaxSeconds),
+    maxSeconds,
   );
-  const groups = groupByNum(subtitleGroup.map(parseMaxSeconds), maxSeconds);
 
-  let groupIndex = 0;
-  const chunks = subtitleGroup.reduce((acc, cur, i) => {
-    if (!acc[groupIndex]) {
-      acc[groupIndex] = [];
+  let chunkIndex = 0;
+  return subtitles.reduce((chunks, cur, i) => {
+    if (!chunks[chunkIndex]) {
+      chunks[chunkIndex] = [];
     }
-    acc[groupIndex].push(...cur);
+    chunks[chunkIndex].push(...cur);
 
-    if (i === groups[groupIndex]) {
-      groupIndex++;
+    if (i === slicePositions[chunkIndex]) {
+      chunkIndex++;
     }
-    return acc;
-  }, [] as Array<Array<string>>);
+    return chunks;
+  }, [] as string[][]);
+}
 
+export async function sliceSrtFile(srtPath: string, maxSeconds: number) {
+  const content = await readFile(srtPath, { encoding: 'utf-8' });
+  const subtitles = lines2Subtitles(content.split(/\n/));
+  const chunks = subtitles2Chunks(subtitles, maxSeconds);
+
+  const [first, ...rest] = chunks;
   return [
-    chunks[0],
-    ...chunks
-      .slice(1)
-      .map((chunk, i) =>
-        reset(chunk, parseMaxSeconds(getLastSubtitle(chunks[i]))),
-      ),
+    first,
+    ...rest.map((currentChunk, i) => {
+      const previousChunk = chunks[i];
+      const previousMaxTime = parseMaxSeconds(getLastSubtitle(previousChunk));
+      return resetSequenceAndTimeline(currentChunk, previousMaxTime);
+    }),
   ];
 }
 
-function reset(list: string[], previousMaxTime: number) {
-  const [minSequence] = [parseSequence(list)];
+function resetSequenceAndTimeline(list: string[], previousMaxTime: number) {
+  const minSequence = parseSequence(list);
 
   return list.map(line => {
     if (sequenceReg.test(line)) {
@@ -118,12 +127,13 @@ function reset(list: string[], previousMaxTime: number) {
   });
 }
 
-function groupByNum(arr: number[], num: number) {
+function findSlicePositions(maxSecondsArr: number[], maxSeconds: number) {
   const result = [];
-  for (let i = 0; i < arr.length - 1; i++) {
-    const previous = arr[i];
-    const next = arr[i + 1];
-    if (Math.ceil(next / num) - Math.ceil(previous / num) === 1) {
+
+  for (let i = 0; i < maxSecondsArr.length - 1; i++) {
+    const current = maxSecondsArr[i];
+    const next = maxSecondsArr[i + 1];
+    if (Math.ceil(next / maxSeconds) - Math.ceil(current / maxSeconds) === 1) {
       result.push(i);
     }
   }
