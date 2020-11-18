@@ -28,10 +28,10 @@ function generateChunkFiles(count: number, prefix: string, suffix = '') {
 const generateSrtFiles = (count: number, prefix: string) =>
   generateChunkFiles(count, prefix, Veed.subtitleExt);
 
-test('subtitleParser, groupChunkSrtFiles', () => {
+test('subtitleParser, groupAndSortChunkSrtFiles', () => {
   // https://stackoverflow.com/questions/35987055/how-to-write-unit-testing-for-angular-typescript-for-private-methods-with-jasm
   // https://github.com/microsoft/TypeScript/issues/19335
-  const groups = SubtitleParser['groupChunkSrtFiles'](
+  const groups = SubtitleParser['groupAndSortChunkSrtFiles'](
     generateSrtFiles(20, 'video with space')
       .concat(generateSrtFiles(20, 'video1'))
       .sort(randomSort),

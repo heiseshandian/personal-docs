@@ -191,7 +191,7 @@ export default class SubtitleParser {
     ).run();
   }
 
-  private static groupChunkSrtFiles(subtitles: string[]) {
+  private static groupAndSortChunkSrtFiles(subtitles: string[]) {
     const subtitleReg = new RegExp(
       `([^\\${path.sep}]+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
     );
@@ -220,7 +220,7 @@ export default class SubtitleParser {
       return;
     }
 
-    const groups = SubtitleParser.groupChunkSrtFiles(
+    const groups = SubtitleParser.groupAndSortChunkSrtFiles(
       files
         .filter(file => isChunkFile(file) && isSubtitleFile(file))
         .map(file => path.resolve(videoDir, `${TMP_DIR}/${file}`)),
@@ -276,26 +276,22 @@ export default class SubtitleParser {
     await this.postParseSubtitle();
   }
 
-  private async postParseSubtitle() {
+  private async shouldRetry() {
     const parsed = await this.isAllParsed();
-    if (!parsed) {
-      if (this.options.autoRetry) {
-        this.generateSrtFiles(true);
-      }
+    return !parsed && this.options.autoRetry;
+  }
 
-      return;
+  private async postParseSubtitle() {
+    if (await this.shouldRetry()) {
+      this.generateSrtFiles(true);
     }
 
     await this.fixEndTimeOfChunks();
     await this.mergeSrtChunks();
     await this.moveSrtFiles();
 
-    const {
-      options: { keepTmpFiles },
-    } = this;
-    if (keepTmpFiles) {
-      return;
+    if (!this.options.keepTmpFiles) {
+      await this.removeTmpDir();
     }
-    await this.removeTmpDir();
   }
 }
