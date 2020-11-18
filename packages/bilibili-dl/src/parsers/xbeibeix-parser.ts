@@ -22,6 +22,13 @@ export class XbeibeixParser {
   // 并发访问会导致 xbeibeix 将访问识别为恶意访问，从而使得服务不可用，所以这里将并发数设置的尽可能小
   private static maxConcurrent = 1;
 
+  @logWrapper(log('parsing related mp4 urls'))
+  public static async parse(
+    blobs: string | Array<string>,
+  ): Promise<Array<string>> {
+    return withCache(this._parse.bind(this), 1000 * 60 * 30)(blobs);
+  }
+
   private static async _parse(blobs: string | Array<string>) {
     if (typeof blobs === 'string') {
       blobs = [blobs];
@@ -57,12 +64,5 @@ export class XbeibeixParser {
 
       return result;
     });
-  }
-
-  @logWrapper(log('parsing related mp4 urls'))
-  public static async parse(
-    blobs: string | Array<string>,
-  ): Promise<Array<string>> {
-    return withCache(this._parse.bind(this), 1000 * 60 * 30)(blobs);
   }
 }

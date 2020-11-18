@@ -28,10 +28,6 @@ export class Veed {
     timeout: 1000 * 60 * 6,
   };
 
-  constructor(options: Partial<VeedOptions> = {}) {
-    this.options = merge(this.options, options);
-  }
-
   private config = {
     url: 'https://www.veed.io/',
 
@@ -50,20 +46,80 @@ export class Veed {
       '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div[2]/div[2]/div/div/div/button[1]',
   };
 
-  private async safeClick(page: Page, selector: string) {
-    const { timeout } = this.options;
-
-    await page.waitForSelector(selector, { timeout });
-    await page.click(selector);
+  constructor(options: Partial<VeedOptions> = {}) {
+    this.options = merge(this.options, options);
   }
 
-  private async safeClickXPath(page: Page, xpath: string) {
-    const { timeout } = this.options;
+  public async parseSubtitle(audios: Array<string>) {
+    const {
+      options: { debug },
+    } = this;
 
-    await page.waitForXPath(xpath, { timeout });
-    const elements = await page.$x(xpath);
-    await elements[0].click();
+    if (audios.length <= 0) {
+      return;
+    }
+
+    const {
+      config: { url },
+    } = this;
+
+    const dynamicTasks = new DynamicTasks('parsing subtitles');
+
+    const [browser] = await Promise.all([
+      puppeteer
+        .launch({
+          headless: debug ? false : true,
+          defaultViewport: {
+            width: 1920,
+            height: 1024,
+          },
+          args: ['--start-maximized'],
+        })
+        .then(async browser => {
+          await new ConcurrentTasks(
+            audios.map((audio, i) => async () => {
+              const { timeout } = this.options;
+              const page = await browser.newPage();
+              await clearCookies(page);
+              try {
+                await page.goto(url, { timeout });
+                await setWebLifecycleState(page);
+                await this.upload(page, audio);
+              } catch (e) {
+                handleError(e);
+              } finally {
+                dynamicTasks.add(async () => {
+                  await this._parseSubtitle(page);
+                  await this.download(page, audio);
+                  // 下载完再关闭页面
+                  await delay(1000 * 10);
+                  await page.close();
+                });
+
+                if (i === audios.length - 1) {
+                  dynamicTasks.end();
+                }
+              }
+            }),
+            'uploading files',
+          ).run(1);
+
+          return browser;
+        })
+        .catch(handleError),
+      dynamicTasks.run(),
+    ]);
+
+    if (browser) {
+      await browser.close();
+    }
+
+    await this.renameSubtitleFiles(audios[0]);
   }
+
+  public static readonly subtitlePrefix = 'default_Project Name_';
+
+  public static readonly subtitleExt = '.srt';
 
   // 上传文件
   private async upload(page: Page, audio: string) {
@@ -154,76 +210,20 @@ export class Veed {
     );
   }
 
-  public async parseSubtitle(audios: Array<string>) {
-    const {
-      options: { debug },
-    } = this;
+  private async safeClick(page: Page, selector: string) {
+    const { timeout } = this.options;
 
-    if (audios.length <= 0) {
-      return;
-    }
-
-    const {
-      config: { url },
-    } = this;
-
-    const dynamicTasks = new DynamicTasks('parsing subtitles');
-
-    const [browser] = await Promise.all([
-      puppeteer
-        .launch({
-          headless: debug ? false : true,
-          defaultViewport: {
-            width: 1920,
-            height: 1024,
-          },
-          args: ['--start-maximized'],
-        })
-        .then(async browser => {
-          await new ConcurrentTasks(
-            audios.map((audio, i) => async () => {
-              const { timeout } = this.options;
-              const page = await browser.newPage();
-              await clearCookies(page);
-              try {
-                await page.goto(url, { timeout });
-                await setWebLifecycleState(page);
-                await this.upload(page, audio);
-              } catch (e) {
-                handleError(e);
-              } finally {
-                dynamicTasks.add(async () => {
-                  await this._parseSubtitle(page);
-                  await this.download(page, audio);
-                  // 下载完再关闭页面
-                  await delay(1000 * 10);
-                  await page.close();
-                });
-
-                if (i === audios.length - 1) {
-                  dynamicTasks.end();
-                }
-              }
-            }),
-            'uploading files',
-          ).run(1);
-
-          return browser;
-        })
-        .catch(handleError),
-      dynamicTasks.run(),
-    ]);
-
-    if (browser) {
-      await browser.close();
-    }
-
-    await this.renameSubtitleFiles(audios[0]);
+    await page.waitForSelector(selector, { timeout });
+    await page.click(selector);
   }
 
-  public static readonly subtitlePrefix = 'default_Project Name_';
+  private async safeClickXPath(page: Page, xpath: string) {
+    const { timeout } = this.options;
 
-  public static readonly subtitleExt = '.srt';
+    await page.waitForXPath(xpath, { timeout });
+    const elements = await page.$x(xpath);
+    await elements[0].click();
+  }
 }
 
 const subtitleFileReg = new RegExp(`\\${Veed.subtitleExt}$`);

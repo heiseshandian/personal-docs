@@ -36,6 +36,29 @@ export class Downloader {
     this.total = total;
   }
 
+  public async download({ url, id, title, ext, programId }: DownloadOptions) {
+    if (!url) {
+      return;
+    }
+    const { destDir, total } = this;
+
+    const filename = sanitize(`${id + 1}. ${title}.${ext}`);
+    const destPath = `${destDir}/${filename}`;
+
+    const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
+
+    const strategies = {
+      srt: () => {
+        return this.downloadSrt({ url, destPath, progressFormat });
+      },
+      mp4: () => {
+        return this.downloadVideo({ url, destPath, progressFormat, programId });
+      },
+    };
+
+    return strategies[ext]();
+  }
+
   private async downloadSrt({
     destPath,
     url,
@@ -84,29 +107,6 @@ export class Downloader {
     run.on('progress', (prog: Progress) => bar.tick(prog.percent - bar.curr));
 
     return new Promise(resolve => run.on('end', resolve));
-  }
-
-  public async download({ url, id, title, ext, programId }: DownloadOptions) {
-    if (!url) {
-      return;
-    }
-    const { destDir, total } = this;
-
-    const filename = sanitize(`${id + 1}. ${title}.${ext}`);
-    const destPath = `${destDir}/${filename}`;
-
-    const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
-
-    const strategies = {
-      srt: () => {
-        return this.downloadSrt({ url, destPath, progressFormat });
-      },
-      mp4: () => {
-        return this.downloadVideo({ url, destPath, progressFormat, programId });
-      },
-    };
-
-    return strategies[ext]();
   }
 }
 

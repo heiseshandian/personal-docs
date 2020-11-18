@@ -55,11 +55,6 @@ export class ConcurrentTasks<T> {
   private resolve: ((value: Array<T>) => void) | null;
   private results: Array<any>;
 
-  private runTask(task: Task) {
-    this.ranTasks++;
-    task();
-  }
-
   public run(maxConcurrent: number = os.cpus().length): Promise<Array<T>> {
     if (this.tasks.length === 0) {
       return Promise.resolve([]);
@@ -70,5 +65,10 @@ export class ConcurrentTasks<T> {
 
       this.tasks.slice(0, maxConcurrent).forEach(task => this.runTask(task));
     });
+  }
+
+  private runTask(task: Task) {
+    this.ranTasks++;
+    task();
   }
 }

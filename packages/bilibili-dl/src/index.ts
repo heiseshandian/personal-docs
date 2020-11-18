@@ -67,8 +67,8 @@ export class BilibiliDl {
   }
 }
 
-const urlReg = /(\.\w+)\?/;
+const URL_REG = /(\.\w+)\?/;
 function parseExt(url: string) {
-  const match = url.match(urlReg);
+  const match = url.match(URL_REG);
   return (match && match[1]) || '.mp4';
 }

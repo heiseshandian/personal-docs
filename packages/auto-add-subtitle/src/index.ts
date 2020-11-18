@@ -58,40 +58,28 @@ export default class SubtitleParser {
     this.options = merge(this.options, options);
   }
 
-  private getTmpPath() {
-    const { videoDir, TMP_DIR } = this;
-    return path.resolve(videoDir, TMP_DIR);
+  public async generateSrtFiles(isRetry?: boolean) {
+    if (!isRetry) {
+      await this.preParseSubtitle();
+    }
+
+    await this.parseSubtitle();
+    await this.postParseSubtitle();
+  }
+
+  private async preParseSubtitle() {
+    await this.prepareTmpDir();
+    await this.prepareTmpAudioFiles();
   }
 
   private async prepareTmpDir() {
     return ensurePathExists(this.getTmpPath());
   }
 
-  private async removeTmpDir() {
-    await clean(this.getTmpPath());
-  }
-
-  private getFirstChunkFileName(file: string) {
-    const originalFileReg = /^(.+)\.(\w+)$/;
-    const firstChunkFileReplacement = `$1${CHUNK_FILE_SUFFIX}${INDEX_OF_FIRST_CHUNK}.$2`;
-
-    return file.replace(originalFileReg, firstChunkFileReplacement);
-  }
-
-  private async removeRedundantAudios() {
-    const tmpPath = this.getTmpPath();
-    const audios = await readdir(tmpPath);
-
-    const hasChunks = (file: string) =>
-      fs.existsSync(
-        path.resolve(this.getTmpPath(), this.getFirstChunkFileName(file)),
-      );
-
-    await new ConcurrentTasks(
-      audios
-        .filter(hasChunks)
-        .map(file => async () => await del(path.resolve(tmpPath, file))),
-    ).run();
+  private async prepareTmpAudioFiles() {
+    await this.extractAudios();
+    await this.sliceBigAudios();
+    await this.removeRedundantAudios();
   }
 
   private async extractAudios() {
@@ -121,10 +109,27 @@ export default class SubtitleParser {
     );
   }
 
-  private async prepareTmpAudioFiles() {
-    await this.extractAudios();
-    await this.sliceBigAudios();
-    await this.removeRedundantAudios();
+  private async removeRedundantAudios() {
+    const tmpPath = this.getTmpPath();
+    const audios = await readdir(tmpPath);
+
+    const hasChunks = (file: string) =>
+      fs.existsSync(
+        path.resolve(this.getTmpPath(), this.getFirstChunkFileName(file)),
+      );
+
+    await new ConcurrentTasks(
+      audios
+        .filter(hasChunks)
+        .map(file => async () => await del(path.resolve(tmpPath, file))),
+    ).run();
+  }
+
+  private getFirstChunkFileName(file: string) {
+    const originalFileReg = /^(.+)\.(\w+)$/;
+    const firstChunkFileReplacement = `$1${CHUNK_FILE_SUFFIX}${INDEX_OF_FIRST_CHUNK}.$2`;
+
+    return file.replace(originalFileReg, firstChunkFileReplacement);
   }
 
   private async parseSubtitle() {
@@ -155,6 +160,34 @@ export default class SubtitleParser {
       audios
         .filter(file => !hasParsed(file.replace(/\.\w+$/, '')))
         .map(file => path.resolve(tmpPath, file)),
+    );
+  }
+
+  private async postParseSubtitle() {
+    if (await this.shouldRetry()) {
+      this.generateSrtFiles(true);
+    }
+
+    await this.fixEndTimeOfChunks();
+    await this.mergeSrtChunks();
+    await this.moveSrtFiles();
+
+    if (!this.options.keepTmpFiles) {
+      await this.removeTmpDir();
+    }
+  }
+
+  private async shouldRetry() {
+    const parsed = await this.isAllParsed();
+    return !parsed && this.options.autoRetry;
+  }
+
+  private async isAllParsed() {
+    const files = await readdir(this.getTmpPath());
+
+    return (
+      files.filter(isSubtitleFile).length ===
+      files.filter(isSupportedAudio).length
     );
   }
 
@@ -191,28 +224,6 @@ export default class SubtitleParser {
     ).run();
   }
 
-  private static groupAndSortChunkSrtFiles(subtitles: string[]) {
-    const subtitleReg = new RegExp(
-      `([^\\${path.sep}]+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
-    );
-
-    const groups = subtitles.reduce((acc, cur) => {
-      const [, originalFileName] = cur.match(subtitleReg) || [cur];
-      if (!acc[originalFileName]) {
-        acc[originalFileName] = [cur];
-      } else {
-        acc[originalFileName].push(cur);
-      }
-      return acc;
-    }, {} as Record<string, string[]>);
-
-    Object.keys(groups).forEach(key =>
-      groups[key].sort((a, b) => extractChunkNo(a) - extractChunkNo(b)),
-    );
-
-    return groups;
-  }
-
   private async mergeSrtChunks() {
     const { videoDir, TMP_DIR } = this;
     const files = await readdir(this.getTmpPath());
@@ -240,6 +251,28 @@ export default class SubtitleParser {
     );
   }
 
+  private static groupAndSortChunkSrtFiles(subtitles: string[]) {
+    const subtitleReg = new RegExp(
+      `([^\\${path.sep}]+)${CHUNK_FILE_SUFFIX}(\\d+).*\\${Veed.subtitleExt}$`,
+    );
+
+    const groups = subtitles.reduce((acc, cur) => {
+      const [, originalFileName] = cur.match(subtitleReg) || [cur];
+      if (!acc[originalFileName]) {
+        acc[originalFileName] = [cur];
+      } else {
+        acc[originalFileName].push(cur);
+      }
+      return acc;
+    }, {} as Record<string, string[]>);
+
+    Object.keys(groups).forEach(key =>
+      groups[key].sort((a, b) => extractChunkNo(a) - extractChunkNo(b)),
+    );
+
+    return groups;
+  }
+
   private async moveSrtFiles() {
     const { videoDir } = this;
     const tmpPath = this.getTmpPath();
@@ -253,45 +286,12 @@ export default class SubtitleParser {
     );
   }
 
-  private async isAllParsed() {
-    const files = await readdir(this.getTmpPath());
-
-    return (
-      files.filter(isSubtitleFile).length ===
-      files.filter(isSupportedAudio).length
-    );
+  private async removeTmpDir() {
+    await clean(this.getTmpPath());
   }
 
-  private async preParseSubtitle() {
-    await this.prepareTmpDir();
-    await this.prepareTmpAudioFiles();
-  }
-
-  public async generateSrtFiles(isRetry?: boolean) {
-    if (!isRetry) {
-      await this.preParseSubtitle();
-    }
-
-    await this.parseSubtitle();
-    await this.postParseSubtitle();
-  }
-
-  private async shouldRetry() {
-    const parsed = await this.isAllParsed();
-    return !parsed && this.options.autoRetry;
-  }
-
-  private async postParseSubtitle() {
-    if (await this.shouldRetry()) {
-      this.generateSrtFiles(true);
-    }
-
-    await this.fixEndTimeOfChunks();
-    await this.mergeSrtChunks();
-    await this.moveSrtFiles();
-
-    if (!this.options.keepTmpFiles) {
-      await this.removeTmpDir();
-    }
+  private getTmpPath() {
+    const { videoDir, TMP_DIR } = this;
+    return path.resolve(videoDir, TMP_DIR);
   }
 }
