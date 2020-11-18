@@ -21,7 +21,6 @@ test('cache', async () => {
 });
 
 test('cache expires', async () => {
-  await clearCache(params);
   const cachedFn = withCache(mockFn, 100);
   const result = await cachedFn(params);
   await cachedFn(params);
