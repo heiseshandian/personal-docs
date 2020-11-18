@@ -17,7 +17,7 @@ const PROJECT_PLACE_HOLDER = 'project_place_holder';
   }
 
   const project = createEmptyProject(name);
-  await copyFiles(path.resolve(__dirname, './templates/'), project);
+  await copyTemplates(project);
   await updatePlaceHolders(project, name);
 })();
 
@@ -33,21 +33,11 @@ function createEmptyProject(name: string) {
   return project;
 }
 
-async function updatePlaceHolders(project: string, name: string) {
-  const content = await readFile(path.resolve(project, 'package.json'), {
-    encoding: 'utf-8',
-  });
-  await writeFile(
-    path.resolve(project, 'package.json'),
-    content.replace(new RegExp(PROJECT_PLACE_HOLDER, 'g'), name),
-  );
+async function copyTemplates(destDir: string) {
+  await copyFiles(destDir, path.resolve(__dirname, './templates/'));
 }
 
-function isFile(file: string) {
-  return /\w+$/.test(file);
-}
-
-async function copyFiles(srcDir: string, destDir: string) {
+async function copyFiles(destDir: string, srcDir: string) {
   const files = await readdir(srcDir);
 
   await Promise.all(
@@ -56,6 +46,20 @@ async function copyFiles(srcDir: string, destDir: string) {
       .map(file =>
         copy(path.resolve(srcDir, file), path.resolve(destDir, file)),
       ),
+  );
+}
+
+function isFile(file: string) {
+  return /\w+$/.test(file);
+}
+
+async function updatePlaceHolders(project: string, name: string) {
+  const content = await readFile(path.resolve(project, 'package.json'), {
+    encoding: 'utf-8',
+  });
+  await writeFile(
+    path.resolve(project, 'package.json'),
+    content.replace(new RegExp(PROJECT_PLACE_HOLDER, 'g'), name),
   );
 }
 
