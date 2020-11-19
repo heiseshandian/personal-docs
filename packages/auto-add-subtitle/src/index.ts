@@ -110,19 +110,23 @@ export default class SubtitleParser {
   }
 
   private async removeRedundantAudios() {
+    const redundantAudios = await this.getRedundantAudios();
+
+    await new ConcurrentTasks(
+      redundantAudios.map(file => async () =>
+        await del(path.resolve(this.getTmpPath(), file)),
+      ),
+    ).run();
+  }
+
+  private async getRedundantAudios() {
     const tmpPath = this.getTmpPath();
     const audios = await readdir(tmpPath);
 
-    const hasChunks = (file: string) =>
-      fs.existsSync(
-        path.resolve(this.getTmpPath(), this.getFirstChunkFileName(file)),
-      );
+    const isRedundantAudio = (file: string) =>
+      fs.existsSync(path.resolve(tmpPath, this.getFirstChunkFileName(file)));
 
-    await new ConcurrentTasks(
-      audios
-        .filter(hasChunks)
-        .map(file => async () => await del(path.resolve(tmpPath, file))),
-    ).run();
+    return audios.filter(isRedundantAudio);
   }
 
   private getFirstChunkFileName(file: string) {
