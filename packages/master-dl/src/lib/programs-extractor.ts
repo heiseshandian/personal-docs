@@ -5,7 +5,7 @@ export async function extractPrograms(downloadList: DownloadItem[]) {
   const url = downloadList[0].streamingURL;
 
   const { programs } = (await ffprobe(url)) as {
-    programs: Program[];
+    programs?: Program[];
   };
   if (!programs) {
     return;
