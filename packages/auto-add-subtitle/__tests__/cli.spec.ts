@@ -17,11 +17,10 @@ describe('cli normal parse', () => {
     await removeTmpDir(TMP_DIR);
   });
 
+  // 耗时2分钟，跳过
   test.skip('cli', async () => {
     const videoDir = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
-    await execAsync(
-      `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${videoDir}`,
-    );
+    await runCli(videoDir);
 
     const files = await readdir(videoDir);
     expect(files.filter(isSubtitleFile).sort()).toEqual([
@@ -31,10 +30,14 @@ describe('cli normal parse', () => {
   });
 });
 
-test('test parse', async () => {
-  const [stdout] = await execAsync(
-    `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} -t=true`,
-  );
-
+// 耗时1分钟，跳过
+test.skip('test parse', async () => {
+  const [stdout] = await runCli('-t=true');
   expect(stdout.replace('\n', '')).toEqual('测试解析成功!');
 });
+
+async function runCli(params: string) {
+  return await execAsync(
+    `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${params}`,
+  );
+}

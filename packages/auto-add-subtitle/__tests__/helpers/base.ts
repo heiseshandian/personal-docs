@@ -4,7 +4,7 @@ import path from 'path';
 function parseTmpDir(tmpDir: string) {
   return path.isAbsolute(tmpDir)
     ? tmpDir
-    : path.resolve(__dirname, `./data/videos/${tmpDir}`);
+    : path.resolve(__dirname, `../data/videos/${tmpDir}`);
 }
 
 export async function prepareTmpDir(tmpDir: string) {
@@ -19,8 +19,8 @@ export async function copyVideos(tmpDir: string) {
   await Promise.all(
     ['video1.webm', 'video with space.webm'].map(file =>
       copy(
-        path.resolve(__dirname, `./data/videos/${file}`),
-        path.resolve(__dirname, `./data/videos/${tmpDir}/${file}`),
+        path.resolve(__dirname, `../data/videos/${file}`),
+        path.resolve(__dirname, `../data/videos/${tmpDir}/${file}`),
       ),
     ),
   );

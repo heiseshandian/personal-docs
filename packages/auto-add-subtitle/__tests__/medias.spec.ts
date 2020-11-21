@@ -8,6 +8,7 @@ import {
   isSupportedAudio,
   parseTime,
   sliceMediaBySeconds,
+  duration2Seconds,
 } from '../src';
 import { copyVideos, getTmpDir, prepareTmpDir, removeTmpDir } from './helpers';
 
@@ -27,23 +28,27 @@ afterEach(async () => {
 
 test('sliceMediaBySeconds', async () => {
   const [maxSeconds, video] = [5, 'video1.webm'];
-
   await sliceMediaBySeconds(getVideoPath(video), maxSeconds);
+
+  const chunkDurations = await getDurations(tmpPath);
+  const originalDuration = await getDuration(getVideoPath(video));
+
+  const expectedChunks =
+    Math.ceil(parseTime(originalDuration) / maxSeconds) - 1;
+  expect(chunkDurations.length).toEqual(expectedChunks);
+  expect(chunkDurations.map(duration2Seconds).sort()).toEqual([5, 7]);
+});
+
+async function getDurations(tmpPath: string) {
   const files = await readdir(tmpPath);
-  const result = await Promise.all(
+
+  return await Promise.all(
     files
       .filter(isChunkFile)
       .map(file => path.resolve(tmpPath, file))
       .map(file => getDuration(file)),
   );
-
-  const duration = await getDuration(getVideoPath(video));
-  expect(result.length).toEqual(
-    Math.ceil(parseTime(duration) / maxSeconds) - 1,
-  );
-
-  expect(result.map(parseTime).map(Math.floor).sort()).toEqual([5, 7]);
-});
+}
 
 test('concatMedias', async () => {
   const result = await concatMedias(

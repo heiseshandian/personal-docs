@@ -22,6 +22,7 @@ afterEach(async () => {
   await removeTmpDir(TMP_DIR);
 });
 
+// 耗时2分钟，跳过
 test.skip('veed, parseSubtitle', async () => {
   const audiosPath = path.resolve(__dirname, `./data/videos/${TMP_DIR}`);
   const audios = await readdir(audiosPath);

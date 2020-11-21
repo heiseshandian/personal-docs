@@ -25,16 +25,7 @@ describe('tests that based on tmp srt files', () => {
 
   test('sliceSrtFile, mergeSrtFiles', async () => {
     const srtFile = 'a.srt';
-
-    const aChunks = await sliceSrtFile(path.resolve(tmpPath, srtFile), 6 * 60);
-    await Promise.all(
-      aChunks.map((chunk, i) =>
-        writeFile(
-          path.resolve(tmpPath, `a${CHUNK_FILE_SUFFIX}${i}.srt`),
-          chunk.join('\n'),
-        ),
-      ),
-    );
+    await prepareChunkSrtFiles(srtFile, tmpPath);
 
     const files = await readdir(tmpPath);
     const merged = await mergeSrtFiles(
@@ -48,15 +39,33 @@ describe('tests that based on tmp srt files', () => {
   });
 });
 
-test('fixEndTime', async () => {
-  const fixedContent = await readFile(
-    path.resolve(__dirname, './data/subtitles/a-fixed.srt'),
-    { encoding: 'utf-8' },
+async function prepareChunkSrtFiles(srtFile: string, destPath: string) {
+  const { name } = path.parse(srtFile);
+
+  const aChunks = await sliceSrtFile(path.resolve(destPath, srtFile), 6 * 60);
+  await Promise.all(
+    aChunks.map((chunk, i) =>
+      writeFile(
+        path.resolve(destPath, `${name}${CHUNK_FILE_SUFFIX}${i}.srt`),
+        chunk.join('\n'),
+      ),
+    ),
   );
-  const result = await fixEndTime(
+}
+
+test('fixEndTime', async () => {
+  const fixed = await fixEndTime(
     path.resolve(__dirname, './data/subtitles/a.srt'),
     '00:13:00.09',
   );
 
-  expect(fixedContent).toEqual(result);
+  const preFixed = await getPreFixed();
+  expect(fixed).toEqual(preFixed);
 });
+
+async function getPreFixed() {
+  return await readFile(
+    path.resolve(__dirname, './data/subtitles/a-fixed.srt'),
+    { encoding: 'utf-8' },
+  );
+}

@@ -22,7 +22,7 @@ export function getDuration(mediaPath: string) {
 }
 
 const durationReg = /(\d{1,2}):(\d{1,2}):(\d{1,2})\.(\d{2})/;
-function duration2Seconds(duration = '') {
+export function duration2Seconds(duration = '') {
   const match = duration.match(durationReg);
   if (!match) {
     return 0;
