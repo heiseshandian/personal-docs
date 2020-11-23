@@ -1,5 +1,4 @@
-import { readFile, groupByLen } from 'zgq-shared';
-import { formatTime, parseTime } from './time';
+import { readFile, groupByLen, formatTime, parseTime } from 'zgq-shared';
 
 const ONE_SUBTITLE_LENGTH = 4;
 

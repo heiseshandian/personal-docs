@@ -2,9 +2,14 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { ConcurrentTasks, execAsync, handleError, writeFile } from 'zgq-shared';
+import {
+  ConcurrentTasks,
+  execAsync,
+  handleError,
+  writeFile,
+  formatDuration,
+} from 'zgq-shared';
 import { CHUNK_FILE_SUFFIX, MINIMAL_CHUNK_SECONDS } from './contract';
-import { formatDuration } from './time';
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 export function getDuration(mediaPath: string) {

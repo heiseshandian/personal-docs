@@ -11,3 +11,12 @@ test('BilibiliParser', async () => {
       .map((_, i) => `https://www.bilibili.com/video/BV1Mh411Z7LC?p=${i + 1}`),
   );
 });
+
+test.only('BilibiliParser,parse srt', async () => {
+  const result = await BilibiliParser.parseSrt(
+    'https://m.bilibili.com/video/BV1Mh411Z7LC?p=1',
+  );
+
+  expect(result).toBeTruthy();
+  expect((result as string).split('\n')[0]).toBe('1');
+});

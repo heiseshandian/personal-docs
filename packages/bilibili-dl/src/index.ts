@@ -1,6 +1,13 @@
-import { ConcurrentTasks, download, toValidFilePath } from 'zgq-shared';
+import {
+  ConcurrentTasks,
+  download,
+  toValidFilePath,
+  writeFile,
+} from 'zgq-shared';
 import { BilibiliParser, XbeibeixParser } from './parsers';
 import path from 'path';
+
+type Series = Array<{ href: string; title: string }>;
 
 export class BilibiliDl {
   private url: string;
@@ -32,38 +39,61 @@ export class BilibiliDl {
   }
 
   private async downloadSingleUrl() {
-    const { url, dest } = this;
+    await this.downloadSingleVideo();
+    await this.downloadSingleSrt();
+  }
+
+  private async downloadSingleVideo() {
+    const { url } = this;
 
     const title = await BilibiliParser.parsePageTitle(url);
     const [videoUrl] = await XbeibeixParser.parse(url);
 
     await download(
       videoUrl,
-      path.resolve(
-        dest,
-        toValidFilePath((title || url).replace(/\//g, '-')) +
-          parseExt(videoUrl),
-      ),
+      this.getDestPath(title || url, parseExt(videoUrl)),
     );
   }
 
-  private async downloadSeries(series: Array<{ href: string; title: string }>) {
-    const { dest } = this;
+  private async downloadSingleSrt() {
+    const { url } = this;
+    const title = await BilibiliParser.parsePageTitle(url);
+    const subtitle = await BilibiliParser.parseSrt(url);
+    if (subtitle) {
+      await writeFile(this.getDestPath(title || url, '.srt'), subtitle);
+    }
+  }
 
+  private async downloadSeries(series: Series) {
+    await this.downloadSeriesVideo(series);
+    await this.downloadSeriesSrt(series);
+  }
+
+  private async downloadSeriesVideo(series: Series) {
     const titles = series.map(i => i.title);
     const realVideoUrls = await XbeibeixParser.parse(series.map(i => i.href));
 
     await new ConcurrentTasks(
       realVideoUrls.map((url, i) => async () => {
-        await download(
-          url,
-          path.resolve(
-            dest,
-            toValidFilePath(titles[i].replace(/\//g, '-')) + parseExt(url),
-          ),
-        );
+        await download(url, this.getDestPath(titles[i], parseExt(url)));
       }),
     ).run();
+  }
+
+  private async downloadSeriesSrt(series: Series) {
+    await new ConcurrentTasks(
+      series.map(({ href, title }) => async () => {
+        const subtitle = await BilibiliParser.parseSrt(href);
+        if (subtitle) {
+          await writeFile(this.getDestPath(title, '.srt'), subtitle);
+        }
+      }),
+    ).run();
+  }
+
+  private getDestPath(title: string, ext: string) {
+    const { dest } = this;
+    return path.resolve(dest, toValidFilePath(title.replace(/\//g, '-')) + ext);
   }
 }
 

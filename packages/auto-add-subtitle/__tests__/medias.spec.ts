@@ -1,12 +1,11 @@
 import path from 'path';
-import { readdir } from 'zgq-shared';
+import { readdir, parseTime } from 'zgq-shared';
 import {
   concatMedias,
   extractAudio,
   getDuration,
   isChunkFile,
   isSupportedAudio,
-  parseTime,
   sliceMediaBySeconds,
   duration2Seconds,
 } from '../src';
