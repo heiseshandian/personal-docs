@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.44.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.43.0...zgq-shared@1.44.0) (2020-11-23)
+
+
+### Bug Fixes
+
+* 缓存bug修复 ([250dfc9](https://github.com/heiseshandian/personal-docs/commit/250dfc9419d3e04ba0793badd3b9394d13cf332c))
+
+
+### Features
+
+* bilibili-dl支持下载字幕 ([6961713](https://github.com/heiseshandian/personal-docs/commit/69617130c2c50f2b574bef56d2b6c382567f184f))
+* bilibili-dl添加自动下载字幕功能 ([d51f559](https://github.com/heiseshandian/personal-docs/commit/d51f559f50673c88aa79ed7592d713f9cbc21dce))
+* 添加自动关机功能 ([dcbf82e](https://github.com/heiseshandian/personal-docs/commit/dcbf82eee6034653be4599ddbfd71fbfcf690289))
+
+
+
+
+
 # [1.43.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.42.0...zgq-shared@1.43.0) (2020-11-16)
 
 

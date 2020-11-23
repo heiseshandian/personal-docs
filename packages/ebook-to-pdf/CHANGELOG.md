@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.41.3](https://github.com/heiseshandian/personal-docs/compare/ebook-to-pdf@1.41.2...ebook-to-pdf@1.41.3) (2020-11-23)
+
+**Note:** Version bump only for package ebook-to-pdf
+
+
+
+
+
 ## [1.41.2](https://github.com/heiseshandian/personal-docs/compare/ebook-to-pdf@1.41.1...ebook-to-pdf@1.41.2) (2020-11-16)
 
 **Note:** Version bump only for package ebook-to-pdf

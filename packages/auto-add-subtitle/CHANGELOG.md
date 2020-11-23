@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.45.0](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.44.1...auto-add-subtitle@1.45.0) (2020-11-23)
+
+
+### Features
+
+* bilibili-dl支持下载字幕 ([6961713](https://github.com/heiseshandian/personal-docs/commit/69617130c2c50f2b574bef56d2b6c382567f184f))
+* 添加自动关机功能 ([dcbf82e](https://github.com/heiseshandian/personal-docs/commit/dcbf82eee6034653be4599ddbfd71fbfcf690289))
+
+
+
+
+
+
 ## [1.44.1](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.44.0...auto-add-subtitle@1.44.1) (2020-11-17)
 
 **Note:** Version bump only for package auto-add-subtitle

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.45.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.44.1...master-dl@1.45.0) (2020-11-23)
+
+
+### Bug Fixes
+
+* 类型bug修复 ([ddf96c9](https://github.com/heiseshandian/personal-docs/commit/ddf96c9fa0dad15c685931d3022c059e2154026a))
+
+
+### Features
+
+* bilibili-dl添加自动下载字幕功能 ([d51f559](https://github.com/heiseshandian/personal-docs/commit/d51f559f50673c88aa79ed7592d713f9cbc21dce))
+
+
+
+
+
+
 ## [1.44.1](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.44.0...master-dl@1.44.1) (2020-11-17)
 
 **Note:** Version bump only for package master-dl

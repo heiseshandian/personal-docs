@@ -1,6 +1,6 @@
 {
   "name": "bilibili-dl",
-  "version": "1.41.3",
+  "version": "1.42.0",
   "description": "自动下载bilibili上的视频",
   "main": "src/index.ts",
   "scripts": {
@@ -23,7 +23,7 @@
     "puppeteer-extra": "^3.1.15",
     "puppeteer-extra-plugin-stealth": "^2.6.2",
     "yargs": "^16.1.0",
-    "zgq-shared": "^1.43.0"
+    "zgq-shared": "^1.44.0"
   },
   "bin": {
     "bilibili-dl": "./bin/cli.js"

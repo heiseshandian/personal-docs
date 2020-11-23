@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.41.3...bilibili-dl@1.42.0) (2020-11-23)
+
+
+### Bug Fixes
+
+* 字幕下载bug修复 ([a77389d](https://github.com/heiseshandian/personal-docs/commit/a77389dec9f7b5dd89d6d19ea6ba7471e2bc284b))
+
+
+### Features
+
+* bilibili-dl支持下载字幕 ([6961713](https://github.com/heiseshandian/personal-docs/commit/69617130c2c50f2b574bef56d2b6c382567f184f))
+* bilibili-dl添加自动下载字幕功能 ([d51f559](https://github.com/heiseshandian/personal-docs/commit/d51f559f50673c88aa79ed7592d713f9cbc21dce))
+
+
+
+
+
+
 ## [1.41.3](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.41.2...bilibili-dl@1.41.3) (2020-11-17)
 
 **Note:** Version bump only for package bilibili-dl
