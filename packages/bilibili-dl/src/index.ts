@@ -39,8 +39,7 @@ export class BilibiliDl {
   }
 
   private async downloadSingleUrl() {
-    await this.downloadSingleVideo();
-    await this.downloadSingleSrt();
+    await Promise.all([this.downloadSingleVideo(), this.downloadSingleSrt()]);
   }
 
   private async downloadSingleVideo() {
@@ -65,8 +64,10 @@ export class BilibiliDl {
   }
 
   private async downloadSeries(series: Series) {
-    await this.downloadSeriesVideo(series);
-    await this.downloadSeriesSrt(series);
+    await Promise.all([
+      this.downloadSeriesVideo(series),
+      this.downloadSeriesSrt(series),
+    ]);
   }
 
   private async downloadSeriesVideo(series: Series) {

@@ -107,7 +107,9 @@ function json2Srt(json: SubtitleJson) {
   return (
     json.body
       .map(({ from, to, content }, i) =>
-        [i + 1, formatTime(from), formatTime(to), content].join('\n'),
+        [i + 1, `${formatTime(from)} --> ${formatTime(to)}`, content].join(
+          '\n',
+        ),
       )
       .join('\n') + '\n'
   );
