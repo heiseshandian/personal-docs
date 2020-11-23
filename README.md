@@ -16,3 +16,8 @@ coding everyday
 - 仿照 fluent-ffmpeg 更新说明文档
 - 支持通过环境变量取 ffmpeg 路径，进度通知优化（比如说去掉前面无意义的速度信息）
 - 考虑用 fluent-ffmpeg 替换裸写命令
+
+#### bilibili-dl
+
+- 仿照 youtube-dl 补充 readme 文档
+- 添加下载字幕功能
