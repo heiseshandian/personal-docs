@@ -1,4 +1,4 @@
-import { isValidMedia } from '../src';
+import { isValidMedia } from 'zgq-shared';
 import path from 'path';
 
 const videoPath = path.resolve(__dirname, './data/videos/');

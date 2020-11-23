@@ -10,3 +10,4 @@ export * from './puppter';
 export * from './envs';
 export * from './system';
 export * from './time';
+export * from './medias';

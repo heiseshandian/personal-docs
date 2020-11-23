@@ -3,9 +3,12 @@ import {
   download,
   toValidFilePath,
   writeFile,
+  isValidMedia,
+  del,
 } from 'zgq-shared';
 import { BilibiliParser, XbeibeixParser } from './parsers';
 import path from 'path';
+import fs from 'fs';
 
 type Series = Array<{ href: string; title: string }>;
 
@@ -31,65 +34,58 @@ export class BilibiliDl {
       if (series) {
         await this.downloadSeries(series);
       } else {
-        await this.downloadSingleUrl();
+        await this.downloadUrl();
       }
     } else {
-      await this.downloadSingleUrl();
+      await this.downloadUrl();
     }
   }
 
-  private async downloadSingleUrl() {
-    await Promise.all([this.downloadSingleVideo(), this.downloadSingleSrt()]);
-  }
-
-  private async downloadSingleVideo() {
+  private async downloadUrl() {
     const { url } = this;
 
-    const title = await BilibiliParser.parsePageTitle(url);
+    const title = (await BilibiliParser.parsePageTitle(url)) || url;
     const [videoUrl] = await XbeibeixParser.parse(url);
 
-    await download(
-      videoUrl,
-      this.getDestPath(title || url, parseExt(videoUrl)),
-    );
-  }
-
-  private async downloadSingleSrt() {
-    const { url } = this;
-    const title = await BilibiliParser.parsePageTitle(url);
-    const subtitle = await BilibiliParser.parseSrt(url);
-    if (subtitle) {
-      await writeFile(this.getDestPath(title || url, '.srt'), subtitle);
-    }
-  }
-
-  private async downloadSeries(series: Series) {
     await Promise.all([
-      this.downloadSeriesVideo(series),
-      this.downloadSeriesSrt(series),
+      this.downloadVideo(videoUrl, this.getDestPath(title, parseExt(videoUrl))),
+      this.downloadSrt(title, this.url),
     ]);
   }
 
-  private async downloadSeriesVideo(series: Series) {
-    const titles = series.map(i => i.title);
+  private async downloadSeries(series: Series) {
     const realVideoUrls = await XbeibeixParser.parse(series.map(i => i.href));
 
     await new ConcurrentTasks(
       realVideoUrls.map((url, i) => async () => {
-        await download(url, this.getDestPath(titles[i], parseExt(url)));
+        const { title, href } = series[i];
+
+        await Promise.all([
+          this.downloadVideo(url, this.getDestPath(title, parseExt(url))),
+          this.downloadSrt(title, href),
+        ]);
       }),
     ).run();
   }
 
-  private async downloadSeriesSrt(series: Series) {
-    await new ConcurrentTasks(
-      series.map(({ href, title }) => async () => {
-        const subtitle = await BilibiliParser.parseSrt(href);
-        if (subtitle) {
-          await writeFile(this.getDestPath(title, '.srt'), subtitle);
-        }
-      }),
-    ).run();
+  private async downloadVideo(url: string, destPath: string) {
+    if (fs.existsSync(destPath)) {
+      const isValid = await isValidMedia(destPath);
+      if (isValid) {
+        return;
+      } else {
+        await del(destPath);
+      }
+    }
+
+    await download(url, destPath);
+  }
+
+  private async downloadSrt(title: string, url: string) {
+    const subtitle = await BilibiliParser.parseSrt(url);
+    if (subtitle) {
+      await writeFile(this.getDestPath(title || url, '.srt'), subtitle);
+    }
   }
 
   private getDestPath(title: string, ext: string) {
@@ -103,3 +99,10 @@ function parseExt(url: string) {
   const match = url.match(URL_REG);
   return (match && match[1]) || '.mp4';
 }
+
+(async () => {
+  new BilibiliDl(
+    'https://m.bilibili.com/video/BV1Mh411Z7LC?p=1',
+    process.cwd(),
+  ).download();
+})();

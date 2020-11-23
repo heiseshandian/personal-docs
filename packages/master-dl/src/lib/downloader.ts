@@ -9,9 +9,9 @@ import {
   handleError,
   readFile,
   writeFile,
+  isValidMedia,
 } from 'zgq-shared';
 import { DownloadOptions, Progress } from '../global';
-import { isValidMedia } from './medias';
 import { sanitize } from './utils';
 
 // fluent-ffmpeg 依赖于系统环境变量来寻找ffmpeg和ffprobe路径，

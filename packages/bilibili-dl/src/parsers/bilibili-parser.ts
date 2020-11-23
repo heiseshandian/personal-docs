@@ -62,6 +62,7 @@ export class BilibiliParser {
     return await puppeteer.launch({ headless: true }).then(async browser => {
       const page = await this.initPage(browser, url);
 
+      // 这里使用移动模式是因为bilibili在pc端需要flash才能播放
       await page.emulate(devices['iPhone X']);
       const json = await this.parseSrtFromResponse(page);
       await browser.close();
@@ -104,13 +105,12 @@ interface SubtitleJson {
 }
 
 function json2Srt(json: SubtitleJson) {
-  return (
-    json.body
-      .map(({ from, to, content }, i) =>
-        [i + 1, `${formatTime(from)} --> ${formatTime(to)}`, content].join(
-          '\n',
-        ),
-      )
-      .join('\n') + '\n'
-  );
+  return json.body
+    .map(({ from, to, content }, i) => {
+      const sequence = i + 1;
+      const timeline = `${formatTime(from)} --> ${formatTime(to)}`;
+
+      return [sequence, timeline, content].join('\n') + '\n';
+    })
+    .join('\n');
 }
