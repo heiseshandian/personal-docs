@@ -1,6 +1,6 @@
 import { BilibiliParser } from '../src/parsers';
 
-test('BilibiliParser', async () => {
+test('BilibiliParser, parseSeries', async () => {
   const result = await BilibiliParser.parseSeries(
     'https://www.bilibili.com/video/BV1Mh411Z7LC?p=1',
   );
@@ -12,7 +12,7 @@ test('BilibiliParser', async () => {
   );
 });
 
-test.only('BilibiliParser,parse srt', async () => {
+test('BilibiliParser, parse srt', async () => {
   const result = await BilibiliParser.parseSrt(
     'https://m.bilibili.com/video/BV1Mh411Z7LC?p=1',
   );
