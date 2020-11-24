@@ -54,14 +54,14 @@ export class BilibiliDl {
   }
 
   private async downloadSeries(series: Series) {
-    const realVideoUrls = await XbeibeixParser.parse(series.map(i => i.href));
+    const videoUrls = await XbeibeixParser.parse(series.map(i => i.href));
 
     await new ConcurrentTasks(
-      realVideoUrls.map((url, i) => async () => {
+      videoUrls.map((videoUrl, i) => async () => {
         const { title, href } = series[i];
 
         await Promise.all([
-          this.downloadVideo(url, this.getDestPath(title, parseExt(url))),
+          this.downloadVideo(videoUrl, this.getDestPath(title, parseExt(videoUrl))),
           this.downloadSrt(title, href),
         ]);
       }),
@@ -82,9 +82,14 @@ export class BilibiliDl {
   }
 
   private async downloadSrt(title: string, url: string) {
+    const destPath = this.getDestPath(title, '.srt');
+    if (fs.existsSync(destPath)) {
+      return;
+    }
+
     const subtitle = await BilibiliParser.parseSrt(url);
     if (subtitle) {
-      await writeFile(this.getDestPath(title || url, '.srt'), subtitle);
+      await writeFile(destPath, subtitle);
     }
   }
 
@@ -99,10 +104,3 @@ function parseExt(url: string) {
   const match = url.match(URL_REG);
   return (match && match[1]) || '.mp4';
 }
-
-(async () => {
-  new BilibiliDl(
-    'https://m.bilibili.com/video/BV1Mh411Z7LC?p=1',
-    process.cwd(),
-  ).download();
-})();
