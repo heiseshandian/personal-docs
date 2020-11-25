@@ -20,4 +20,4 @@ coding everyday
 #### bilibili-dl
 
 - 仿照 youtube-dl 补充 readme 文档
-- 添加下载字幕功能
+- 下载字幕功能 bug 修复
