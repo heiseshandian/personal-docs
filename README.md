@@ -21,3 +21,4 @@ coding everyday
 
 - 仿照 youtube-dl 补充 readme 文档
 - 下载字幕功能 bug 修复
+- 深入研究下 jest 如何 mock 模块

@@ -1,14 +1,8 @@
-import {
-  ConcurrentTasks,
-  download,
-  toValidFilePath,
-  writeFile,
-  isValidMedia,
-  del,
-} from 'zgq-shared';
-import { BilibiliParser, XbeibeixParser } from './parsers';
-import path from 'path';
+import filenamify from 'filenamify';
 import fs from 'fs';
+import path from 'path';
+import { ConcurrentTasks, del, download, isValidMedia, writeFile } from 'zgq-shared';
+import { BilibiliParser, XbeibeixParser } from './parsers';
 
 type Series = Array<{ href: string; title: string }>;
 
@@ -49,21 +43,21 @@ export class BilibiliDl {
 
     await Promise.all([
       this.downloadVideo(videoUrl, this.getDestPath(title, parseExt(videoUrl))),
-      this.downloadSrt(title, this.url),
+      this.downloadSrts([{ title, href: url }]),
     ]);
   }
 
   private async downloadSeries(series: Series) {
-    const videoUrls = await XbeibeixParser.parse(series.map(i => i.href));
+    await this.downloadSrts(series);
+    await this.downloadVideos(series);
+  }
 
+  private async downloadVideos(series: Series) {
+    const videoUrls = await XbeibeixParser.parse(series.map(i => i.href));
     await new ConcurrentTasks(
       videoUrls.map((videoUrl, i) => async () => {
-        const { title, href } = series[i];
-
-        await Promise.all([
-          this.downloadVideo(videoUrl, this.getDestPath(title, parseExt(videoUrl))),
-          this.downloadSrt(title, href),
-        ]);
+        const { title } = series[i];
+        this.downloadVideo(videoUrl, this.getDestPath(title, parseExt(videoUrl)));
       }),
     ).run();
   }
@@ -81,21 +75,31 @@ export class BilibiliDl {
     await download(url, destPath);
   }
 
-  private async downloadSrt(title: string, url: string) {
-    const destPath = this.getDestPath(title, '.srt');
-    if (fs.existsSync(destPath)) {
-      return;
-    }
+  private async downloadSrts(series: Series) {
+    const unDownloadedSrts = this.getUnDownloadedSrts(series);
 
-    const subtitle = await BilibiliParser.parseSrt(url);
-    if (subtitle) {
-      await writeFile(destPath, subtitle);
-    }
+    await new ConcurrentTasks(
+      unDownloadedSrts.map(({ title, href }) => async () => {
+        const destPath = this.getDestPath(title, '.srt');
+        const subtitle = await BilibiliParser.parseSrt(href);
+
+        if (subtitle) {
+          await writeFile(destPath, subtitle);
+        }
+      }),
+    ).run(1);
+  }
+
+  private getUnDownloadedSrts(series: Series) {
+    return series.filter(({ title }) => {
+      const destPath = this.getDestPath(title, '.srt');
+      return !fs.existsSync(destPath);
+    });
   }
 
   private getDestPath(title: string, ext: string) {
     const { dest } = this;
-    return path.resolve(dest, toValidFilePath(title.replace(/\//g, '-')) + ext);
+    return path.resolve(dest, filenamify(title) + ext);
   }
 }
 
