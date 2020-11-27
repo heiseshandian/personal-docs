@@ -1,6 +1,6 @@
 ## Background
 
-There are many videos without subtitles on [bilibili](https://www.bilibili.com/), which is difficult for someone (like me) to understand. So, i build this tool to download videos from bilibili and another tool [auto-add-subtitle](https://www.npmjs.com/package/auto-add-subtitle) to add subtitles for videos i downloaded.
+There are many videos without subtitles on [bilibili](https://www.bilibili.com/), which is difficult for someone (like me) to understand. So, I build this tool to download videos from bilibili and another tool [auto-add-subtitle](https://www.npmjs.com/package/auto-add-subtitle) to add subtitles for videos I downloaded.
 
 Read this in other languages: [english](./README.md) | [简体中文](./README.zh-cn.md)
 

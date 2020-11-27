@@ -1,0 +1,35 @@
+{
+  "name": "create-monorepository",
+  "version": "0.0.0",
+  "description": "A simple tool for creating monorepo",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
+  },
+  "keywords": [
+    "scaffold",
+    "create",
+    "monorepo"
+  ],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "bin": {
+    "create-monorepository": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/create-monorepository"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/create-monorepository/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  }
+}
