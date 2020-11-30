@@ -15,7 +15,8 @@
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "bin": {
-    "create-monorepository": "./bin/cli.js"
+    "create-monorepository": "./bin/cli.js",
+    "create-monorepo": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "inquirer": "^7.3.3"
+    "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.3",
+    "yargs": "^16.1.1"
   }
 }

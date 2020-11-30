@@ -1,0 +1,15 @@
+{
+  "packages": ["packages/*"],
+  "version": "independent",
+  "npmClient": "npm",
+  "command": {
+    "publish": {
+      "allowBranch": "master",
+      "conventionalCommits": true,
+      "message": "chore: publish %s"
+    },
+    "bootstrap": {
+      "hoist": true
+    }
+  }
+}
