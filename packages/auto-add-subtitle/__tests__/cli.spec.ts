@@ -23,21 +23,10 @@ describe('cli normal parse', () => {
     await runCli(videoDir);
 
     const files = await readdir(videoDir);
-    expect(files.filter(isSubtitleFile).sort()).toEqual([
-      'video with space.srt',
-      'video1.srt',
-    ]);
+    expect(files.filter(isSubtitleFile).sort()).toEqual(['video with space.srt', 'video1.srt']);
   });
 });
 
-// 耗时1分钟，跳过
-test.skip('test parse', async () => {
-  const [stdout] = await runCli('-t=true');
-  expect(stdout.replace('\n', '')).toEqual('测试解析成功!');
-});
-
 async function runCli(params: string) {
-  return await execAsync(
-    `npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${params}`,
-  );
+  return await execAsync(`npx ts-node ${path.resolve(__dirname, '../src/cli.ts')} ${params}`);
 }
