@@ -22,3 +22,7 @@
 - 仿照 youtube-dl 补充 readme 文档
 - 下载字幕功能 bug 修复
 - 深入研究下 jest 如何 mock 模块
+
+#### 其他
+
+- 研究下 JavaScript Test Runner，给作者提 issures，不行的话就自己写一个类似的
