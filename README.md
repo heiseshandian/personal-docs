@@ -13,9 +13,8 @@
 
 #### auto-add-subtitle
 
-- 仿照 fluent-ffmpeg 更新说明文档
+- 优化解析策略
 - 支持通过环境变量取 ffmpeg 路径，进度通知优化（比如说去掉前面无意义的速度信息）
-- 考虑用 fluent-ffmpeg 替换裸写命令
 
 #### bilibili-dl
 
