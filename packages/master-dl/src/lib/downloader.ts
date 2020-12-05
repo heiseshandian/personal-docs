@@ -96,13 +96,11 @@ export class Downloader {
     const destPath = this.getDestPath(filename);
 
     if (fs.existsSync(destPath)) {
-      console.log(`${filename} 已存在，检测完整性中。。。`);
       const integrity = await checkIntegrity(destPath, url);
       if (integrity) {
         console.log(`${filename} 存在且完整，跳过~`);
         return;
       } else {
-        console.log(`${filename} 不完整，删除重新下载~`);
         await del(destPath);
       }
     }
