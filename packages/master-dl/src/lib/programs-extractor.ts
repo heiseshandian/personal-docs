@@ -1,12 +1,10 @@
-import { ffprobe } from 'zgq-shared';
-import { DownloadItem, Program } from '../global';
+import { ffprobe, FfprobeData } from 'zgq-shared';
+import { DownloadItem } from '../global';
 
 export async function extractPrograms(downloadList: DownloadItem[]) {
   const url = downloadList[0].streamingURL;
 
-  const { programs } = (await ffprobe(url)) as {
-    programs?: Program[];
-  };
+  const { programs } = (await ffprobe(url)) as FfprobeData;
   if (!programs) {
     return;
   }
@@ -14,8 +12,7 @@ export async function extractPrograms(downloadList: DownloadItem[]) {
   return programs
     .map(program => {
       const { program_id, streams } = program;
-      const { height, width } =
-        streams.find(x => x.codec_type == 'video') || {};
+      const { height, width } = streams.find(x => x.codec_type == 'video') || {};
       const { bit_rate } = streams.find(x => x.codec_type == 'audio') || {};
 
       return {

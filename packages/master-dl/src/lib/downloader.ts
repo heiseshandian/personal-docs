@@ -10,6 +10,9 @@ import {
   readFile,
   writeFile,
   isValidMedia,
+  ffprobe,
+  FfprobeError,
+  FfprobeData,
 } from 'zgq-shared';
 import { DownloadOptions, Progress } from '../global';
 import { sanitize } from './utils';
@@ -59,11 +62,7 @@ export class Downloader {
     return strategies[ext]();
   }
 
-  private async downloadSrt({
-    destPath,
-    url,
-    progressFormat,
-  }: InnerDownloadOptions) {
+  private async downloadSrt({ destPath, url, progressFormat }: InnerDownloadOptions) {
     if (fs.existsSync(destPath)) {
       return;
     }
@@ -78,20 +77,14 @@ export class Downloader {
     });
     body.on('data', chunk => bar.tick(chunk.length));
 
-    return new Promise(resolve =>
-      body.on('end', () => fixSrtFile(destPath).then(resolve)),
-    );
+    return new Promise(resolve => body.on('end', () => fixSrtFile(destPath).then(resolve)));
   }
 
-  private async downloadVideo({
-    destPath,
-    url,
-    programId,
-    progressFormat,
-  }: InnerDownloadOptions) {
+  private async downloadVideo({ destPath, url, programId, progressFormat }: InnerDownloadOptions) {
     if (fs.existsSync(destPath)) {
       const isValid = await isValidMedia(destPath);
-      if (isValid) {
+      const integrity = await checkIntegrity(destPath, url);
+      if (isValid && integrity) {
         return;
       } else {
         await del(destPath);
@@ -113,4 +106,31 @@ export class Downloader {
 async function fixSrtFile(filePath: string) {
   const content = await readFile(filePath, { encoding: 'utf-8' });
   await writeFile(filePath, content.replace(/^WEBVTT[\r\n]{2}/, ''));
+}
+
+async function checkIntegrity(filePath: string, url: string) {
+  const [fileFfprobeData, urlFfprobeData] = await Promise.all([ffprobe(filePath), ffprobe(url)]);
+  if (!fileFfprobeData || !urlFfprobeData) {
+    return;
+  }
+  if ((fileFfprobeData as FfprobeError).error || (urlFfprobeData as FfprobeError).error) {
+    return;
+  }
+
+  const fileDuration = getDuration(fileFfprobeData as FfprobeData);
+  const urlDuration = getDuration(urlFfprobeData as FfprobeData);
+
+  return duration2Seconds(fileDuration) >= duration2Seconds(urlDuration);
+}
+
+function getDuration(ffprobeData: FfprobeData) {
+  const {
+    format: { duration },
+  } = ffprobeData;
+
+  return duration;
+}
+
+function duration2Seconds(duration: string) {
+  return Math.floor(Number(duration));
 }
