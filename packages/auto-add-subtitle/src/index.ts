@@ -149,12 +149,7 @@ export default class SubtitleParser {
     const hasParsed = makeMap(
       files
         .filter(isSubtitleFile)
-        .map(file =>
-          file
-            .replace(Veed.subtitlePrefix, '')
-            .replace(ext, '')
-            .replace(Veed.subtitleExt, ''),
-        ),
+        .map(file => file.replace(ext, '').replace(Veed.subtitleExt, '')),
     );
 
     const {

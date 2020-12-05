@@ -1,5 +1,5 @@
 import path from 'path';
-import { Page } from 'puppeteer';
+import { Page, Response } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import {
@@ -7,10 +7,10 @@ import {
   ConcurrentTasks,
   delay,
   DynamicTasks,
+  formatTime,
   handleError,
-  move,
-  readdir,
   setWebLifecycleState,
+  writeFile,
 } from 'zgq-shared';
 import { merge } from '../utils';
 
@@ -20,6 +20,28 @@ interface VeedOptions {
   debug: boolean;
   timeout: number;
   [key: string]: any;
+}
+
+interface Subtitle {
+  from: number;
+  to: number;
+  value: string;
+}
+
+interface Project {
+  data: {
+    edit: {
+      subtitles: {
+        tracks: {
+          [key: string]: {
+            items: {
+              [key: string]: Subtitle;
+            };
+          };
+        };
+      };
+    };
+  };
 }
 
 export class Veed {
@@ -34,16 +56,10 @@ export class Veed {
     uploadBtnXpath:
       '//*[@id="root"]/main/div[1]/div[1]/div[1]/div[2]/div/div[1]/div/div/div/div/button',
     inputFileSelector: '[data-testid="file-input-dropzone"]',
+    closeSelector: '[alt^="close"]',
+
     subtitleSelector: '[href$="subtitles"]',
     autoSubtitleSelector: '[data-testid="@editor/subtitles-option/automatic"]',
-    closeSelector: '[alt^="close"]',
-    startXPath:
-      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/button',
-    subtitlesSelector: '[data-testid="@design-system/text-editor-0/textarea"]',
-    translateXpath:
-      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/nav/div[2]',
-    downloadXpath:
-      '//*[@id="root"]/main/div[1]/div/div[1]/div[1]/div/div/div/div/div[2]/div[2]/div/div/div/button[1]',
   };
 
   constructor(options: Partial<VeedOptions> = {}) {
@@ -113,11 +129,7 @@ export class Veed {
     if (browser) {
       await browser.close();
     }
-
-    await this.renameSubtitleFiles(audios[0]);
   }
-
-  public static readonly subtitlePrefix = 'default_Project Name_';
 
   public static readonly subtitleExt = '.srt';
 
@@ -151,8 +163,6 @@ export class Veed {
     const {
       subtitleSelector,
       autoSubtitleSelector,
-      startXPath,
-      subtitlesSelector,
       closeSelector,
     } = this.config;
     const { timeout } = this.options;
@@ -166,48 +176,50 @@ export class Veed {
     await this.safeClick(page, subtitleSelector);
     await page.waitForSelector(autoSubtitleSelector, { timeout });
     await this.safeClick(page, autoSubtitleSelector);
-    await this.safeClickXPath(page, startXPath);
-    await page.waitForSelector(subtitlesSelector, { timeout });
+    await this.clickStartBtn(page);
+  }
+
+  private async clickStartBtn(page: Page) {
+    await page.evaluate(() => {
+      const btns = document.querySelectorAll('button');
+      btns.forEach(btn => {
+        if (/start/i.test(btn.innerText)) {
+          btn.click();
+        }
+      });
+    });
   }
 
   private async download(page: Page, audio: string) {
-    const { dir } = path.parse(audio);
-    // https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setDownloadBehavior
-    // @ts-ignore
-    await page._client.send('Browser.setDownloadBehavior', {
-      behavior: 'allow',
-      downloadPath: path.resolve(dir),
+    const { dir, name } = path.parse(audio);
+
+    return new Promise(resolve => {
+      const listener = (response: Response) => {
+        const url = response.url();
+        const request = response.request();
+        if (!/projects\/[\d\w-]*/.test(url) || request.method() === 'OPTIONS') {
+          return;
+        }
+
+        response
+          .json()
+          .then(data => {
+            const subtitles = Object.values(
+              Object.values((data as Project).data.edit.subtitles.tracks)[0]
+                .items,
+            ).sort((a, b) => a.from - b.from);
+            const srt = subtitles2Srt(subtitles);
+
+            writeFile(path.resolve(dir, `${name}${Veed.subtitleExt}`), srt)
+              .then(resolve)
+              .catch(handleError);
+          })
+          .catch(handleError);
+      };
+
+      page.off('response', listener);
+      page.on('response', listener);
     });
-
-    const { translateXpath, downloadXpath } = this.config;
-    await this.safeClickXPath(page, translateXpath);
-
-    // 某些版本的浏览器以此方式点击元素不会触发下载（换成下面的执行js脚本写法）~
-    // await this.safeClickXPath(page, downloadXpath);
-    await page.evaluate(xpath => {
-      const downloadBtn = document.evaluate(
-        xpath,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null,
-      ).singleNodeValue;
-      (downloadBtn as HTMLElement)?.click();
-    }, downloadXpath);
-  }
-
-  private async renameSubtitleFiles(audio: string) {
-    const { dir, ext } = path.parse(audio);
-    const files = await readdir(dir);
-
-    await Promise.all(
-      files
-        .filter(isSubtitleFile)
-        .map(file => path.resolve(dir, file))
-        .map(file =>
-          move(file, file.replace(Veed.subtitlePrefix, '').replace(ext, '')),
-        ),
-    );
   }
 
   private async safeClick(page: Page, selector: string) {
@@ -229,4 +241,15 @@ export class Veed {
 const subtitleFileReg = new RegExp(`\\${Veed.subtitleExt}$`);
 export function isSubtitleFile(file: string) {
   return subtitleFileReg.test(file);
+}
+
+function subtitles2Srt(subtitles: Subtitle[]) {
+  return subtitles
+    .map(({ from, to, value }, i) => {
+      const sequence = i + 1;
+      const timeline = `${formatTime(from)} --> ${formatTime(to)}`;
+
+      return [sequence, timeline, value].join('\n') + '\n';
+    })
+    .join('\n');
 }
