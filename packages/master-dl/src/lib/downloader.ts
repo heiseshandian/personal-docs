@@ -9,7 +9,6 @@ import {
   handleError,
   readFile,
   writeFile,
-  isValidMedia,
   ffprobe,
   FfprobeError,
   FfprobeData,
@@ -22,7 +21,7 @@ import { sanitize } from './utils';
 fixFfmpegEnvs();
 
 interface InnerDownloadOptions {
-  destPath: string;
+  filename: string;
   url: string;
   progressFormat: string;
   programId?: string;
@@ -43,27 +42,33 @@ export class Downloader {
     if (!url) {
       return;
     }
-    const { destDir, total } = this;
+    const { total } = this;
 
     const filename = sanitize(`${id + 1}. ${title}.${ext}`);
-    const destPath = `${destDir}/${filename}`;
 
     const progressFormat = `[:bar] (${id + 1}/${total}): ${title} (${ext})`;
 
     const strategies = {
       srt: () => {
-        return this.downloadSrt({ url, destPath, progressFormat });
+        return this.downloadSrt({ url, filename, progressFormat });
       },
       mp4: () => {
-        return this.downloadVideo({ url, destPath, progressFormat, programId });
+        return this.downloadVideo({ url, filename, progressFormat, programId });
       },
     };
 
     return strategies[ext]();
   }
 
-  private async downloadSrt({ destPath, url, progressFormat }: InnerDownloadOptions) {
+  private async downloadSrt({
+    filename,
+    url,
+    progressFormat,
+  }: InnerDownloadOptions) {
+    const destPath = this.getDestPath(filename);
+
     if (fs.existsSync(destPath)) {
+      console.log(`${filename} 已存在，跳过~`);
       return;
     }
 
@@ -77,16 +82,27 @@ export class Downloader {
     });
     body.on('data', chunk => bar.tick(chunk.length));
 
-    return new Promise(resolve => body.on('end', () => fixSrtFile(destPath).then(resolve)));
+    return new Promise(resolve =>
+      body.on('end', () => fixSrtFile(destPath).then(resolve)),
+    );
   }
 
-  private async downloadVideo({ destPath, url, programId, progressFormat }: InnerDownloadOptions) {
+  private async downloadVideo({
+    filename,
+    url,
+    programId,
+    progressFormat,
+  }: InnerDownloadOptions) {
+    const destPath = this.getDestPath(filename);
+
     if (fs.existsSync(destPath)) {
-      const isValid = await isValidMedia(destPath);
+      console.log(`${filename} 已存在，检测完整性中。。。`);
       const integrity = await checkIntegrity(destPath, url);
-      if (isValid && integrity) {
+      if (integrity) {
+        console.log(`${filename} 存在且完整，跳过~`);
         return;
       } else {
+        console.log(`${filename} 不完整，删除重新下载~`);
         await del(destPath);
       }
     }
@@ -101,6 +117,11 @@ export class Downloader {
 
     return new Promise(resolve => run.on('end', resolve));
   }
+
+  private getDestPath(filename: string) {
+    const { destDir } = this;
+    return `${destDir}/${filename}`;
+  }
 }
 
 async function fixSrtFile(filePath: string) {
@@ -109,11 +130,17 @@ async function fixSrtFile(filePath: string) {
 }
 
 async function checkIntegrity(filePath: string, url: string) {
-  const [fileFfprobeData, urlFfprobeData] = await Promise.all([ffprobe(filePath), ffprobe(url)]);
+  const [fileFfprobeData, urlFfprobeData] = await Promise.all([
+    ffprobe(filePath),
+    ffprobe(url),
+  ]);
   if (!fileFfprobeData || !urlFfprobeData) {
     return;
   }
-  if ((fileFfprobeData as FfprobeError).error || (urlFfprobeData as FfprobeError).error) {
+  if (
+    (fileFfprobeData as FfprobeError).error ||
+    (urlFfprobeData as FfprobeError).error
+  ) {
     return;
   }
 
