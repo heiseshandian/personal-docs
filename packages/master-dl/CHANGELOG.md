@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.47.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.46.0...master-dl@1.47.0) (2020-12-05)
+
+
+### Features
+
+* 优化提示 ([1979b08](https://github.com/heiseshandian/personal-docs/commit/1979b08b0a1100c7e61273d462421e7109d207f3))
+
+
+
+
+
 # [1.46.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.45.0...master-dl@1.46.0) (2020-12-05)
 
 
