@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.46.1](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.46.0...auto-add-subtitle@1.46.1) (2020-12-05)
+
+
+### Bug Fixes
+
+* 自动解析字幕bug修复 ([fa0051b](https://github.com/heiseshandian/personal-docs/commit/fa0051bf29115355df9db075440cb55ec9081492))
+
+
+
+
+
 # [1.46.0](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.45.0...auto-add-subtitle@1.46.0) (2020-12-05)
 
 
