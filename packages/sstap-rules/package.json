@@ -1,6 +1,6 @@
 {
   "name": "sstap-rules",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "yargs": "^16.1.1",
-    "zgq-shared": "^1.44.0"
+    "zgq-shared": "^1.45.0"
   }
 }

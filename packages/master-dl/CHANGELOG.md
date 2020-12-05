@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.46.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.45.0...master-dl@1.46.0) (2020-12-05)
+
+
+### Features
+
+* 检测视频文件完整性 ([87bdc50](https://github.com/heiseshandian/personal-docs/commit/87bdc507b32cf3967f31ca2c0be892cd9081b540))
+* 添加日志提醒用户当前操作 ([918fcb2](https://github.com/heiseshandian/personal-docs/commit/918fcb2616bc305206d56679ff2f9e270e1ac4a4))
+
+
+
+
+
 # [1.45.0](https://github.com/heiseshandian/personal-docs/compare/master-dl@1.44.1...master-dl@1.45.0) (2020-11-23)
 
 

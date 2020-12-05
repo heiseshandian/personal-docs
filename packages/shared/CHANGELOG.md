@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.45.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.44.0...zgq-shared@1.45.0) (2020-12-05)
+
+
+### Features
+
+* 检测视频文件完整性 ([87bdc50](https://github.com/heiseshandian/personal-docs/commit/87bdc507b32cf3967f31ca2c0be892cd9081b540))
+
+
+
+
+
 # [1.44.0](https://github.com/heiseshandian/personal-docs/compare/zgq-shared@1.43.0...zgq-shared@1.44.0) (2020-11-23)
 
 

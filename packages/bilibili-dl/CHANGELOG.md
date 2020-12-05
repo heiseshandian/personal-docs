@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.42.0...bilibili-dl@1.43.0) (2020-12-05)
+
+
+### Features
+
+* 添加create-monorepository用于帮助创建项目 ([14edc07](https://github.com/heiseshandian/personal-docs/commit/14edc074fab8b434aee2f6b0be87a5d269850113))
+
+
+
+
+
 # [1.42.0](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.41.3...bilibili-dl@1.42.0) (2020-11-23)
 
 
