@@ -1,0 +1,21 @@
+{
+  "name": "daily-training",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "private": "false",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/daily-training"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/daily-training/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
