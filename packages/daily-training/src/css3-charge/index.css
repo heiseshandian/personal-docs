@@ -1,0 +1,54 @@
+.battery {
+  width: 100px;
+  height: 180px;
+  -webkit-box-shadow: 0 0 2px #101010;
+          box-shadow: 0 0 2px #101010;
+  border-radius: 5px 5px 2px 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.battery::before {
+  position: absolute;
+  content: '';
+  width: 10px;
+  height: 5px;
+  left: 50%;
+  top: -5px;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  background-color: #ccc;
+  border-radius: 3px 3px 0 0;
+}
+
+.battery::after {
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 90%;
+  background: -webkit-gradient(linear, left top, left bottom, from(#7abcff), color-stop(44%, #00bcd4), to(#2196f3));
+  background: linear-gradient(to bottom, #7abcff 0%, #00bcd4 44%, #2196f3 100%);
+  -webkit-filter: hue-rotate(90deg);
+          filter: hue-rotate(90deg);
+  -webkit-animation: charging 4s linear infinite;
+          animation: charging 4s linear infinite;
+}
+
+@-webkit-keyframes charging {
+  100% {
+    -webkit-filter: hue-rotate(0);
+            filter: hue-rotate(0);
+    top: 0;
+  }
+}
+
+@keyframes charging {
+  100% {
+    -webkit-filter: hue-rotate(0);
+            filter: hue-rotate(0);
+    top: 0;
+  }
+}
+/*# sourceMappingURL=index.css.map */
