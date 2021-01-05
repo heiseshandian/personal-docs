@@ -1,7 +1,6 @@
 .history
 node_modules
-tools-private
+*-private
 bin
 dist
-test-private
 *_spec_test
