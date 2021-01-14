@@ -6,7 +6,9 @@ import { handleError, fixFfmpegEnvs } from './utils';
 // 而部分电脑上 FFPROBE_PATH 设置的不是exe文件路径，而是exe文件所在的目录，这里手动修复下
 fixFfmpegEnvs();
 
-export async function ffprobe(file: string): Promise<FfprobeData | FfprobeError | undefined> {
+export async function ffprobe(
+  file: string,
+): Promise<FfprobeData | FfprobeError | void> {
   return new Promise(resolve => {
     const proc = spawn(process.env.FFPROBE_PATH || 'ffprobe', [
       '-hide_banner',

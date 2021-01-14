@@ -46,7 +46,7 @@ async function updatePlaceHolders(projectPath: string, name: string) {
 function installDeps(projectPath: string) {
   execSync(`cd ${projectPath}`);
 
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     const proc = spawn(`${isWindows() ? 'npm.cmd' : 'npm'}`, ['i']);
 
     proc.stdout.setEncoding('utf8');

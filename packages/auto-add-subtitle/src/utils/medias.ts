@@ -13,7 +13,7 @@ import { CHUNK_FILE_SUFFIX, MINIMAL_CHUNK_SECONDS } from './contract';
 
 const durationInfoReg = /duration:\s*(\d{1,2}:\d{1,2}:\d{1,2}\.\d{2})/i;
 export function getDuration(mediaPath: string) {
-  return new Promise<string | null | undefined>(resolve => {
+  return new Promise<string | null | void>(resolve => {
     exec(`ffprobe ${JSON.stringify(mediaPath)}`, (err, _, stderr) => {
       if (err) {
         handleError(err);
@@ -88,7 +88,7 @@ export async function sliceMediaBySeconds(
               maxSeconds + (i === computedChunks - 1 ? lastChunkSeconds : 0),
             )} -codec copy ${JSON.stringify(outputFile)}`;
 
-            return new Promise(resolve => {
+            return new Promise<string | void>(resolve => {
               exec(cmd, err => {
                 if (err) {
                   handleError(err);
@@ -112,7 +112,7 @@ export async function concatMedias(medias: Array<string>, output: string) {
     return;
   }
 
-  return await new Promise<string>(resolve => {
+  return await new Promise<string | void>(resolve => {
     exec(
       `ffmpeg -y -f concat -safe 0 -i ${JSON.stringify(
         tmpFilePath,
@@ -159,7 +159,7 @@ export async function changeFormat(
         outputFile,
       )}`;
 
-      return new Promise(resolve => {
+      return new Promise<string | void>(resolve => {
         exec(cmd, err => {
           if (err) {
             handleError(err);
