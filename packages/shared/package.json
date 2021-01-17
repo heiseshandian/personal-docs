@@ -16,7 +16,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "filenamify": "^4.2.0",
     "progress": "^2.0.3"
   },
