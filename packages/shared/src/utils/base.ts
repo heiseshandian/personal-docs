@@ -5,7 +5,7 @@ export function md5(data: string) {
 }
 
 export function callback2Promise<T>(fn: (...params: Array<any>) => void) {
-  return (...rest: Array<any>): Promise<T | void> => {
+  return (...rest: Array<any>): Promise<T> => {
     return new Promise(resolve => {
       fn(...rest, (err: NodeJS.ErrnoException, ...args: Array<any>) => {
         if (err) {
