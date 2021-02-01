@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.46.2](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.46.1...auto-add-subtitle@1.46.2) (2021-02-01)
+
+
+### Bug Fixes
+
+* fix veed parser ([22709b6](https://github.com/heiseshandian/personal-docs/commit/22709b63d10e40faccdd756ff398025c3f23248c))
+* 修复ts类型声明报错 ([6f9fcf3](https://github.com/heiseshandian/personal-docs/commit/6f9fcf3967b058b2c51af7757c767d5b56263995))
+
+
+
+
+
 ## [1.46.1](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.46.0...auto-add-subtitle@1.46.1) (2020-12-05)
 
 

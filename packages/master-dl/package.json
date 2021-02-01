@@ -1,6 +1,6 @@
 {
   "name": "master-dl",
-  "version": "1.47.0",
+  "version": "1.47.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "inquirer": "^7.1.0",
     "node-fetch": "^2.6.0",
     "progress": "^2.0.3",
-    "zgq-shared": "^1.45.0"
+    "zgq-shared": "^1.45.1"
   },
   "repository": {
     "type": "git",

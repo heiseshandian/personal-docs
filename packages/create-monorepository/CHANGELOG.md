@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/heiseshandian/personal-docs/compare/create-monorepository@0.1.0...create-monorepository@0.1.1) (2021-02-01)
+
+
+### Bug Fixes
+
+* 修复ts类型声明报错 ([6f9fcf3](https://github.com/heiseshandian/personal-docs/commit/6f9fcf3967b058b2c51af7757c767d5b56263995))
+
+
+
+
+
 # 0.1.0 (2020-12-05)
 
 
