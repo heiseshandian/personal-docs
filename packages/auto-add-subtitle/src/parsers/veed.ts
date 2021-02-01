@@ -53,8 +53,9 @@ export class Veed {
   private config = {
     url: 'https://www.veed.io/',
 
-    uploadBtnXpath:
-      '//*[@id="root"]/main/div[1]/div[1]/div[1]/div[2]/div/div[1]/div/div/div/div/button',
+    gotoEditPageBtnXpath: '/html/body/div[1]/div/a[1]',
+
+    uploadBtnXpath: '/html/body/div[2]/div/div/div/div/div/div/div[1]/div',
     inputFileSelector: '[data-testid="file-input-dropzone"]',
     closeSelector: '[alt^="close"]',
 
@@ -100,6 +101,7 @@ export class Veed {
               try {
                 await page.goto(url, { timeout });
                 await setWebLifecycleState(page);
+                await this.beforeUpload(page);
                 await this.upload(page, audio);
               } catch (e) {
                 handleError(e);
@@ -133,18 +135,11 @@ export class Veed {
 
   public static readonly subtitleExt = '.srt';
 
-  // 上传文件
-  private async upload(page: Page, audio: string) {
-    const { uploadBtnXpath, inputFileSelector } = this.config;
+  private async beforeUpload(page: Page) {
+    const { gotoEditPageBtnXpath } = this.config;
     const { timeout } = this.options;
 
-    // https://github.com/puppeteer/puppeteer/issues/2946
-    await this.safeClickXPath(page, uploadBtnXpath);
-    // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
-    const uploadBtn = await page.$(inputFileSelector);
-    await uploadBtn?.uploadFile(audio);
-
-    // 坐等上传完成
+    await this.safeClickXPath(page, gotoEditPageBtnXpath);
     await page.waitForFunction(
       () => {
         const match = location.pathname.match(/\w+\/(.*)/);
@@ -158,6 +153,35 @@ export class Veed {
     );
   }
 
+  // 上传文件
+  private async upload(page: Page, audio: string) {
+    const { uploadBtnXpath, inputFileSelector } = this.config;
+
+    // https://github.com/puppeteer/puppeteer/issues/2946
+    await this.safeClickXPath(page, uploadBtnXpath);
+    // https://stackoverflow.com/questions/59273294/how-to-upload-file-with-js-puppeteer
+    const uploadBtn = await page.$(inputFileSelector);
+    await uploadBtn?.uploadFile(audio);
+
+    // 坐等上传完成
+    await this.waitUntilUploadEnd(page);
+  }
+
+  private async waitUntilUploadEnd(page: Page) {
+    return new Promise(resolve => {
+      const listener = (response: Response) => {
+        const url = response.url();
+        const request = response.request();
+        if (/projects\/[\d\w-]*/.test(url) && request.method() === 'PUT') {
+          resolve(undefined);
+        }
+      };
+
+      page.off('response', listener);
+      page.on('response', listener);
+    });
+  }
+
   // 解析字幕
   private async _parseSubtitle(page: Page) {
     const {
@@ -165,16 +189,9 @@ export class Veed {
       autoSubtitleSelector,
       closeSelector,
     } = this.config;
-    const { timeout } = this.options;
-
-    await Promise.all([
-      page.waitForSelector(closeSelector, { timeout }),
-      page.waitForSelector(subtitleSelector, { timeout }),
-    ]);
 
     await this.safeClick(page, closeSelector);
     await this.safeClick(page, subtitleSelector);
-    await page.waitForSelector(autoSubtitleSelector, { timeout });
     await this.safeClick(page, autoSubtitleSelector);
     await this.clickStartBtn(page);
   }
