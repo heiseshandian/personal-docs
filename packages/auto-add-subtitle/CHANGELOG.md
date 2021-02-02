@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.46.6](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.46.4...auto-add-subtitle@1.46.6) (2021-02-02)
+
+
+### Bug Fixes
+
+* 手动更新auto-add-subtitle版本号 ([51dbc35](https://github.com/heiseshandian/personal-docs/commit/51dbc35d73327094d4f903b2db87ced462aab3de))
+
+
+
+
+
 ## [1.46.4](https://github.com/heiseshandian/personal-docs/compare/auto-add-subtitle@1.46.3...auto-add-subtitle@1.46.4) (2021-02-02)
 
 **Note:** Version bump only for package auto-add-subtitle
