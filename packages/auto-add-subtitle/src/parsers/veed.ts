@@ -242,10 +242,10 @@ export class Veed {
         response
           .json()
           .then(data => {
-            const subtitles = Object.values(
-              Object.values((data as Project).data.edit.subtitles.tracks)[0]
-                .items,
-            ).sort((a, b) => a.from - b.from);
+            const subtitles = parseSubtitles(data as Project);
+            if (!subtitles) {
+              return;
+            }
             const srt = subtitles2Srt(subtitles);
 
             writeFile(path.resolve(dir, `${name}${Veed.subtitleExt}`), srt)
@@ -279,6 +279,16 @@ export class Veed {
 const subtitleFileReg = new RegExp(`\\${Veed.subtitleExt}$`);
 export function isSubtitleFile(file: string) {
   return subtitleFileReg.test(file);
+}
+
+function parseSubtitles(data: Project) {
+  try {
+    return Object.values(
+      Object.values((data as Project).data.edit.subtitles.tracks)[0].items,
+    ).sort((a, b) => a.from - b.from);
+  } catch (e) {
+    return undefined;
+  }
 }
 
 function subtitles2Srt(subtitles: Subtitle[]) {
