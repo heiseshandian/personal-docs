@@ -13,7 +13,7 @@ function updateContentPath(content: string, packageName: string) {
       (_, p1: string) =>
         `![](${p1.replace(
           /^.*assets\//,
-          '//raw.githubusercontent.com/heiseshandian/personal-docs/HEAD/assets/',
+          'https://raw.githubusercontent.com/heiseshandian/personal-docs/HEAD/assets/',
         )})`,
     )
     .replace(
