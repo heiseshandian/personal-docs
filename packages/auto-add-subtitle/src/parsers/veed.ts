@@ -97,6 +97,7 @@ export class Veed {
             audios.map((audio, i) => async () => {
               const { timeout } = this.options;
               const page = await browser.newPage();
+              page.setDefaultNavigationTimeout(timeout);
               await clearCookies(page);
               try {
                 await page.goto(url, { timeout });
@@ -163,11 +164,11 @@ export class Veed {
     const uploadBtn = await page.$(inputFileSelector);
     await uploadBtn?.uploadFile(audio);
 
-    // 坐等上传完成
-    await this.waitUntilUploadEnd(page);
+    // 坐等项目创建完成
+    await this.waitUntilProjectCreated(page);
   }
 
-  private async waitUntilUploadEnd(page: Page) {
+  private async waitUntilProjectCreated(page: Page) {
     return new Promise(resolve => {
       const listener = (response: Response) => {
         const url = response.url();
@@ -191,9 +192,29 @@ export class Veed {
     } = this.config;
 
     await this.safeClick(page, closeSelector);
+
     await this.safeClick(page, subtitleSelector);
+    // !视频上传过程中 autoSubtitleSelector 按钮不可点击，这里等待按钮可点击后再开始转化
+    await this.waitUntilCanClick(page, autoSubtitleSelector);
     await this.safeClick(page, autoSubtitleSelector);
+
     await this.clickStartBtn(page);
+  }
+
+  private async waitUntilCanClick(page: Page, selector: string) {
+    const { timeout } = this.options;
+
+    await page.waitForFunction(
+      selector => {
+        const btn: HTMLButtonElement | null = document.querySelector(selector);
+        if (!btn) {
+          return false;
+        }
+        return !btn.disabled;
+      },
+      { timeout },
+      selector,
+    );
   }
 
   private async clickStartBtn(page: Page) {

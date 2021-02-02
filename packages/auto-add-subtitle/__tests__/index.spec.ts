@@ -85,7 +85,7 @@ describe('tests that based on temp videos', () => {
     expect(audios.every(isChunkFile)).toBe(true);
   });
 
-  test.skip('subtitleParser', async () => {
+  test('subtitleParser', async () => {
     await new SubtitleParser(tmpPath).generateSrtFiles();
 
     const files = await readdir(tmpPath);
