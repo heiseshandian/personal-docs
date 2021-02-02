@@ -10,7 +10,11 @@ function updateContentPath(content: string, packageName: string) {
   return content
     .replace(
       assetReg,
-      (_, p1: string) => `![](${p1.replace(/^.*assets\//, 'assets/')})`,
+      (_, p1: string) =>
+        `![](${p1.replace(
+          /^.*assets\//,
+          '//raw.githubusercontent.com/heiseshandian/personal-docs/HEAD/assets/',
+        )})`,
     )
     .replace(
       mdReg,
