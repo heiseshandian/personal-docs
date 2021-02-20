@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.2](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.43.1...bilibili-dl@1.43.2) (2021-02-20)
+
+
+### Bug Fixes
+
+* bilibili字幕解析bug修复 ([30124f4](https://github.com/heiseshandian/personal-docs/commit/30124f44a5eb160db5e9bedc89261d7705017497))
+
+
+
+
+
 ## [1.43.1](https://github.com/heiseshandian/personal-docs/compare/bilibili-dl@1.43.0...bilibili-dl@1.43.1) (2021-02-01)
 
 **Note:** Version bump only for package bilibili-dl
