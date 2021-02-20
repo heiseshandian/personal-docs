@@ -1,7 +1,13 @@
 import { Browser, devices, Page, Response } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { clearCookies, formatTime, log, logWrapper } from 'zgq-shared';
+import {
+  clearCookies,
+  formatTime,
+  handleError,
+  log,
+  logWrapper,
+} from 'zgq-shared';
 
 puppeteer.use(StealthPlugin());
 
@@ -75,11 +81,14 @@ export class BilibiliParser {
     return new Promise(resolve => {
       const listener = (response: Response) => {
         const url = response.url();
-        if (!/subtitle/.test(url)) {
+        if (!/subtitle\/.*\.json/.test(url)) {
           return;
         }
         page.off('response', listener);
-        response.json().then(data => resolve(data));
+        response
+          .json()
+          .then(data => resolve(data))
+          .catch(handleError);
       };
 
       page.off('response', listener);
