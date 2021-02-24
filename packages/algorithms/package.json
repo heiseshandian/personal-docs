@@ -1,0 +1,29 @@
+{
+  "name": "algorithms",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "private": "true",
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "bin": {
+    "algorithms": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/algorithms"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/algorithms/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
