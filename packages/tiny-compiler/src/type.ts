@@ -11,11 +11,24 @@ export type LispASTNode = {
   value?: string;
   name?: string;
   params?: LispASTNode[];
+  _context?: unknown;
+};
+
+type CNodeType = LispNodeType | 'ExpressionStatement' | 'Identifier';
+
+export type CASTNode = {
+  type: CNodeType;
+  body?: CASTNode[];
+  expression?: CASTNode;
+  callee?: CASTNode;
+  name?: string;
+  arguments?: CASTNode[];
+  value?: string;
 };
 
 export type Visitor = {
   [key in LispNodeType]?: {
-    enter?: (node: LispASTNode, parent: LispASTNode) => void;
-    exit?: (node: LispASTNode, parent: LispASTNode) => void;
+    enter?: (node: LispASTNode, parent: LispASTNode | null) => void;
+    exit?: (node: LispASTNode, parent: LispASTNode | null) => void;
   };
 };
