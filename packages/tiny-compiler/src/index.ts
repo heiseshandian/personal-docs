@@ -237,6 +237,7 @@ export function traverse(ast: LispASTNode, visitor: Visitor) {
   traverseNode(ast, null);
 }
 
+// ! 对于这个简单的例子而言不用转换ast也能直接根据旧的ast生成目标代码，这里转换只是为了演示怎么把原有ast转为目标ast
 /**
  * 将左边的ast转化成右边的ast
  *
