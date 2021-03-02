@@ -1,8 +1,9 @@
 {
   "name": "project_place_holder",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "private": "true",
   "scripts": {
     "prebuild": "npx rimraf bin",
     "build": "tsc"
