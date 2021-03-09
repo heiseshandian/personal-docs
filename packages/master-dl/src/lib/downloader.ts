@@ -106,7 +106,7 @@ export class Downloader {
     }
 
     const run = ffmpeg(url)
-      .outputOptions([`-map p:${programId}`, '-c copy'])
+      .outputOptions([`-map p:${programId}`])
       .on('error', handleError)
       .save(destPath);
 
