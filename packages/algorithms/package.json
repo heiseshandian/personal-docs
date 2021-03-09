@@ -1,14 +1,14 @@
 {
   "name": "algorithms",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "private": "true",
   "scripts": {
     "prebuild": "npx rimraf bin",
     "build": "tsc"
   },
   "keywords": [],
-  "private": "true",
   "author": "gqzhang5 <gqzhang5@iflytek.com>",
   "license": "ISC",
   "bin": {
