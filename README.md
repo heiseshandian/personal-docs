@@ -13,4 +13,3 @@
 ### 待办事项
 
 - [excalidraw](https://github.com/excalidraw/excalidraw) 深度使用 excalidraw 来绘图并尝试添加新功能，成为 contributor
-- 花半年时间阅读 vue3 源码，写出像 [react 技术揭秘](https://react.iamkasong.com/) 的小册子
