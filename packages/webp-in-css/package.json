@@ -1,0 +1,32 @@
+{
+  "name": "webp-in-css",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "private": "true",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "bin": {
+    "webp-in-css": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/webp-in-css"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/webp-in-css/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "postcss": "^8.2.8"
+  }
+}

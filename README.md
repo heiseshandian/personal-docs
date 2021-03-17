@@ -2,14 +2,9 @@
 
 完成比完美更重要
 
-### 待学习的点
-
-- babel 工作原理，怎么编写一个 babel 插件
-- 前端安全
-- 前端模块化发展（es6 的模块与 commonjs 有何不同，早先模拟的模块化是如何实现的？）
-- vue3 相比于 v2 有哪些改进？
-- [react 技术揭秘](https://react.iamkasong.com/)
-
 ### 待办事项
 
-- [excalidraw](https://github.com/excalidraw/excalidraw) 深度使用 excalidraw 来绘图并尝试添加新功能，成为 contributor
+- postcss 插件，webp 图片
+- progress 图片
+- webpack 插件，enhanced-resolve 插件
+- 责任链模式
