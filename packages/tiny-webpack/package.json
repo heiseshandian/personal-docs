@@ -1,0 +1,33 @@
+{
+  "name": "tiny-webpack",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "private": "true",
+  "scripts": {
+    "prebuild": "npx rimraf bin",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "gqzhang5 <gqzhang5@iflytek.com>",
+  "license": "ISC",
+  "bin": {
+    "tiny-webpack": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heiseshandian/personal-docs.git",
+    "directory": "packages/tiny-webpack"
+  },
+  "bugs": {
+    "url": "https://github.com/heiseshandian/personal-docs/issues"
+  },
+  "homepage": "https://github.com/heiseshandian/personal-docs/blob/master/packages/tiny-webpack/README.md",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10"
+  }
+}
