@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
-import { transformFromAst } from '@babel/core';
+import { transformFromAstSync } from '@babel/core';
 
 export function parseFile(filename: string) {
   const content = fs.readFileSync(filename, { encoding: 'utf8' });
@@ -10,7 +10,6 @@ export function parseFile(filename: string) {
   const deps: Record<string, string> = {};
 
   // 收集依赖
-  // @ts-expect-error
   traverse(ast, {
     ImportDeclaration({ node }) {
       const dirname = path.dirname(filename);
@@ -20,15 +19,14 @@ export function parseFile(filename: string) {
   });
 
   // 转化代码
-  // @ts-expect-error
-  const { code } = transformFromAst(ast, null, {
+  const result = transformFromAstSync(ast, undefined, {
     presets: ['@babel/preset-env'],
   });
 
   return {
     filename,
     deps,
-    code,
+    code: result?.code || '',
   };
 }
 
@@ -59,4 +57,23 @@ export function generateGraph(entry: string) {
   });
 
   return graph;
+}
+
+export function printCode(entry: string) {
+  // 这里需要使用JSON.stringify字符串化，不然下面字符串化的时候会直接变成[object Object]
+  const graph = JSON.stringify(generateGraph(entry));
+
+  return `(function (graph) {
+    function require(module) {
+      function innerRequire(relativePath) {
+        return graph[module].deps[relativePath];
+      }
+      var exports = {};
+      (function(require,exports,code){
+        eval(code);
+      })(innerRequire,exports,graph[module].code)
+    }
+
+    require('${entry}');
+  })(${graph})`;
 }
