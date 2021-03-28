@@ -96,7 +96,8 @@ export class Veed {
           await new ConcurrentTasks(
             audios.map((audio, i) => async () => {
               const { timeout } = this.options;
-              const page = await browser.newPage();
+              // @ts-expect-error
+              const page: Page = await browser.newPage();
               page.setDefaultNavigationTimeout(timeout);
               await clearCookies(page);
               try {
