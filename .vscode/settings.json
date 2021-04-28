@@ -6,8 +6,5 @@
     "source.fixAll.eslint": true
   },
   "vetur.format.defaultFormatter.html": "prettier",
-  "[html]": {
-    "editor.defaultFormatter": "vscode.html-language-features"
-  },
   "liveSassCompile.settings.generateMap": false
 }
