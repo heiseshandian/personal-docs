@@ -27,6 +27,6 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "postcss": "^8.2.8"
+    "postcss": "^8.2.10"
   }
 }
