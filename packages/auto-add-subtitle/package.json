@@ -15,7 +15,7 @@
   "author": "gqzhang5@iflytek.com",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "filenamify": "^4.2.0",
     "fs-extra": "^9.0.1",
     "progress": "^2.0.3",
