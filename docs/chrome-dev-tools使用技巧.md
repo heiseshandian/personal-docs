@@ -80,6 +80,11 @@ Logpoints （日志点）是一种向控制台提供调试信息的方式，而�
 
 ![快速编辑元素样式](../assets/20240131094831.png)
 
+## show user agent shadow dom
+
+[inspect-user-agent-dom](https://devtoolstips.org/tips/en/inspect-user-agent-dom/)
+![show user agent shadow dom](../assets/20240201121827.png)
+
 ## 参考
 
 - [devtoolstips](https://devtoolstips.org/)
